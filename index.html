@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>취향 유전자 지도 — 영화판 (배포 테스트)</title>
+<style>
+  :root{ --navy:#0a1120; --navy2:#101a2e; --line:#22314f; --ink:#dbe4f2; --dim:#8b9ab5; --neon:#39ff88; }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--navy);color:var(--ink);font-family:"Malgun Gothic","맑은 고딕",sans-serif;padding:24px}
+  .wrap{max-width:640px;margin:0 auto}
+  h1{font-size:22px;margin:0 0 4px}
+  .sub{color:var(--dim);font-size:13px;margin:0 0 24px}
+  .badge{display:inline-block;font-size:11px;color:var(--neon);border:1px solid var(--neon);
+    border-radius:99px;padding:2px 10px;margin-bottom:14px}
+  .box{background:var(--navy2);border:1px solid var(--line);border-radius:6px;padding:16px 18px;margin-bottom:16px}
+  input[type=text]{width:100%;padding:9px 10px;border-radius:4px;border:1px solid var(--line);
+    background:var(--navy);color:var(--ink);font-size:14px}
+  #results{max-height:180px;overflow-y:auto;margin-top:8px}
+  .r-item{padding:7px 8px;border-radius:4px;cursor:pointer;font-size:13.5px;display:flex;justify-content:space-between}
+  .r-item:hover{background:var(--navy)}
+  .r-item span.meta{color:var(--dim);font-size:12px}
+  #picked{list-style:none;padding:0;margin:10px 0}
+  #picked li{background:var(--navy);border:1px solid var(--line);border-radius:4px;
+    padding:6px 10px;margin-bottom:5px;font-size:13.5px;display:flex;justify-content:space-between}
+  #picked li button{background:none;border:none;color:#ff6b6b;cursor:pointer;font-size:13px}
+  button.main{background:var(--neon);color:#04120a;border:none;border-radius:4px;
+    padding:10px 16px;font-weight:700;cursor:pointer;font-size:14px}
+  button.main:disabled{opacity:.4;cursor:not-allowed}
+  #status{font-size:12.5px;color:var(--dim);margin-top:8px;white-space:pre-wrap}
+  #memberList{font-size:13.5px;line-height:1.8}
+  .cnt{color:var(--neon);font-family:monospace}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="badge">배포 파이프라인 테스트용 뼈대 · 실제 UI는 M2에서 완성</div>
+  <h1>취향 유전자 지도 — 영화판</h1>
+  <p class="sub">이 페이지가 뜨고, 검색·제출·목록 불러오기가 되면
+    GitHub → Vercel → Upstash 연결이 전부 정상이라는 뜻입니다.</p>
+
+  <div class="box">
+    <strong>사전에서 작품 검색</strong> (<span class="cnt" id="dictCount">-</span>편 로드됨)
+    <input type="text" id="q" placeholder="예: 기생충, 화양연화, Parasite ...">
+    <div id="results"></div>
+  </div>
+
+  <div class="box">
+    <strong>고른 작품 (<span id="pickedCount">0</span>/10)</strong>
+    <ul id="picked"></ul>
+    <input type="text" id="name" placeholder="이름 (실명 아니어도 됩니다)" style="margin-top:8px">
+    <div style="margin-top:12px">
+      <button class="main" id="submitBtn" disabled>제출</button>
+    </div>
+    <div id="status"></div>
+  </div>
+
+  <div class="box">
+    <strong>제출된 멤버</strong>
+    <button class="main" id="reloadBtn" style="margin-left:8px;padding:5px 10px;font-size:12px">새로고침</button>
+    <div id="memberList" style="margin-top:10px">불러오는 중...</div>
+  </div>
+</div>
+
+<script>
+let DICT = [];       // [한글, 원제, 국가, 연도, 감독, 대중, 감정, 장르, x, y]
+let picked = [];      // 고른 한글 제목들
+
+const norm = s => String(s || '').toLowerCase().replace(/\s/g, '');
+
+fetch('/movie_dict.json').then(r => r.json()).then(d => {
+  DICT = d.rows;
+  document.getElementById('dictCount').textContent = d.n;
+});
+
+document.getElementById('q').addEventListener('input', (e) => {
+  const q = norm(e.target.value);
+  const box = document.getElementById('results');
+  if (!q) { box.innerHTML = ''; return; }
+  const hits = DICT.filter(r => norm(r[0]).includes(q) || norm(r[1]).includes(q)).slice(0, 15);
+  box.innerHTML = hits.map(r =>
+    `<div class="r-item" data-t="${r[0]}"><span>${r[0]}</span><span class="meta">${r[4]} · ${r[3]}</span></div>`
+  ).join('') || '<div class="r-item"><span class="meta">검색 결과 없음</span></div>';
+});
+
+document.getElementById('results').addEventListener('click', (e) => {
+  const el = e.target.closest('.r-item[data-t]');
+  if (!el) return;
+  const t = el.dataset.t;
+  if (picked.includes(t) || picked.length >= 10) return;
+  picked.push(t);
+  renderPicked();
+  document.getElementById('q').value = '';
+  document.getElementById('results').innerHTML = '';
+});
+
+function renderPicked() {
+  document.getElementById('pickedCount').textContent = picked.length;
+  document.getElementById('picked').innerHTML = picked.map(t =>
+    `<li>${t}<button data-t="${t}">✕</button></li>`
+  ).join('');
+  checkReady();
+}
+
+document.getElementById('picked').addEventListener('click', (e) => {
+  if (e.target.tagName !== 'BUTTON') return;
+  picked = picked.filter(t => t !== e.target.dataset.t);
+  renderPicked();
+});
+
+document.getElementById('name').addEventListener('input', checkReady);
+function checkReady() {
+  const ok = picked.length >= 1 && document.getElementById('name').value.trim().length > 0;
+  document.getElementById('submitBtn').disabled = !ok;
+}
+
+document.getElementById('submitBtn').addEventListener('click', async () => {
+  const name = document.getElementById('name').value.trim();
+  const status = document.getElementById('status');
+  status.textContent = '제출 중...';
+  try {
+    const r = await fetch('/api/club', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, works: picked }),
+    });
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.error || ('HTTP ' + r.status));
+    status.textContent = '제출 완료 — 아래 목록에서 확인하세요.';
+    picked = []; renderPicked();
+    document.getElementById('name').value = '';
+    loadMembers();
+  } catch (e) {
+    status.textContent = '실패: ' + e.message + '\n(Vercel에 Upstash Redis를 연결했는지 확인하세요)';
+  }
+});
+
+async function loadMembers() {
+  const box = document.getElementById('memberList');
+  box.textContent = '불러오는 중...';
+  try {
+    const j = await (await fetch('/api/club')).json();
+    const members = j.members || [];
+    box.innerHTML = members.length
+      ? members.map(m => `<div>· <strong>${m.id}</strong> — ${m.works.length}편 (${m.works.slice(0,3).join(', ')}${m.works.length>3?' …':''})</div>`).join('')
+      : '<span style="color:var(--dim)">아직 제출된 멤버가 없습니다.</span>';
+  } catch (e) {
+    box.innerHTML = `<span style="color:#ff6b6b">불러오기 실패: ${e.message}</span>`;
+  }
+}
+document.getElementById('reloadBtn').addEventListener('click', loadMembers);
+loadMembers();
+</script>
+</body>
+</html>
