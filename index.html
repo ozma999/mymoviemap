@@ -3,152 +3,604 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>취향 유전자 지도 — 영화판 (배포 테스트)</title>
+<title>취향 유전자 지도 — 영화판 · 애독자 카드</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@400;700;900&family=Noto+Serif+KR:wght@400;600;900&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
-  :root{ --navy:#0a1120; --navy2:#101a2e; --line:#22314f; --ink:#dbe4f2; --dim:#8b9ab5; --neon:#39ff88; }
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--navy);color:var(--ink);font-family:"Malgun Gothic","맑은 고딕",sans-serif;padding:24px}
-  .wrap{max-width:640px;margin:0 auto}
-  h1{font-size:22px;margin:0 0 4px}
-  .sub{color:var(--dim);font-size:13px;margin:0 0 24px}
-  .badge{display:inline-block;font-size:11px;color:var(--neon);border:1px solid var(--neon);
-    border-radius:99px;padding:2px 10px;margin-bottom:14px}
-  .box{background:var(--navy2);border:1px solid var(--line);border-radius:6px;padding:16px 18px;margin-bottom:16px}
-  input[type=text]{width:100%;padding:9px 10px;border-radius:4px;border:1px solid var(--line);
-    background:var(--navy);color:var(--ink);font-size:14px}
-  #results{max-height:180px;overflow-y:auto;margin-top:8px}
-  .r-item{padding:7px 8px;border-radius:4px;cursor:pointer;font-size:13.5px;display:flex;justify-content:space-between}
-  .r-item:hover{background:var(--navy)}
-  .r-item span.meta{color:var(--dim);font-size:12px}
-  #picked{list-style:none;padding:0;margin:10px 0}
-  #picked li{background:var(--navy);border:1px solid var(--line);border-radius:4px;
-    padding:6px 10px;margin-bottom:5px;font-size:13.5px;display:flex;justify-content:space-between}
-  #picked li button{background:none;border:none;color:#ff6b6b;cursor:pointer;font-size:13px}
-  button.main{background:var(--neon);color:#04120a;border:none;border-radius:4px;
-    padding:10px 16px;font-weight:700;cursor:pointer;font-size:14px}
-  button.main:disabled{opacity:.4;cursor:not-allowed}
-  #status{font-size:12.5px;color:var(--dim);margin-top:8px;white-space:pre-wrap}
-  #memberList{font-size:13.5px;line-height:1.8}
-  .cnt{color:var(--neon);font-family:monospace}
+:root{
+  --black:#0d0c0b;      /* 극장 암전 */
+  --panel:#151310;
+  --panel2:#1d1a15;
+  --rule:#332e26;
+  --ink:#f0e9dc;        /* 스크린 화이트 */
+  --dim:#8c8578;
+  --amber:#e0a83c;      /* 영사기 빛 */
+  --red:#c4402f;        /* 시네마 레드 */
+  --ok:#7fb069;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--black);color:var(--ink);
+  font-family:"Gothic A1","Malgun Gothic","맑은 고딕",-apple-system,sans-serif;
+  font-size:15px;line-height:1.7;-webkit-font-smoothing:antialiased;
+}
+/* 필름 그레인 */
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.035;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.wrap{max-width:700px;margin:0 auto;padding:0 20px 100px;position:relative;z-index:2}
+
+/* ── 제호 ── */
+header{padding:44px 0 22px;border-bottom:2px solid var(--rule)}
+.slug{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.2em;
+  color:var(--amber);text-transform:uppercase;margin-bottom:16px}
+h1{font-family:"Noto Serif KR",serif;font-weight:900;font-size:38px;line-height:1.15;
+  margin:0 0 12px;letter-spacing:-.02em}
+h1 .ed{display:block;font-size:20px;color:var(--amber);margin-top:6px;letter-spacing:.02em}
+.lede{font-family:"Noto Serif KR",serif;font-size:15px;line-height:1.85;color:var(--ink);
+  margin:18px 0 0;max-width:600px}
+.byline{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--dim);
+  margin-top:14px;letter-spacing:.04em}
+
+/* ── 미션 브리핑 ── */
+.brief{border:1px solid var(--rule);background:var(--panel);border-radius:3px;
+  padding:20px 22px;margin:28px 0}
+.brief-h{display:flex;justify-content:space-between;align-items:baseline;
+  border-bottom:1px solid var(--rule);padding-bottom:12px;margin-bottom:6px}
+.brief-h b{font-family:"Noto Serif KR",serif;font-size:16px;font-weight:900}
+.brief-h span{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--amber)}
+.mrow{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dotted var(--rule)}
+.mrow:last-child{border-bottom:none}
+.mrow .n{font-family:"IBM Plex Mono",monospace;font-size:12px;width:20px;flex:none;
+  color:var(--dim);padding-top:2px}
+.mrow .tx{flex:1}
+.mrow .tt{font-weight:700;font-size:14.5px}
+.mrow .dd{font-size:12.5px;color:var(--dim);margin-top:1px}
+.mrow .st{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--dim);
+  flex:none;padding-top:3px}
+.mrow.now .n,.mrow.now .tt{color:var(--amber)}
+.mrow.now .st{color:var(--amber)}
+.mrow.done .st{color:var(--ok)}
+.mrow.done .tt{color:var(--dim)}
+
+/* ── 단계 섹션 ── */
+section.step{border:1px solid var(--rule);border-radius:3px;margin-bottom:14px;
+  background:var(--panel);overflow:hidden}
+section.step.now{border-color:var(--amber)}
+.shead{display:flex;align-items:center;gap:12px;padding:15px 20px;cursor:default}
+.shead .sn{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--amber);
+  border:1px solid var(--amber);border-radius:99px;width:22px;height:22px;flex:none;
+  display:flex;align-items:center;justify-content:center}
+section.step:not(.now) .shead .sn{color:var(--dim);border-color:var(--rule)}
+.shead h2{font-family:"Noto Serif KR",serif;font-size:17px;font-weight:900;margin:0;flex:1}
+.shead .sum{font-size:12.5px;color:var(--dim);flex:none;max-width:45%;text-align:right;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.shead button.edit{background:none;border:1px solid var(--rule);color:var(--dim);
+  border-radius:3px;padding:3px 10px;font-size:11.5px;cursor:pointer;flex:none;
+  font-family:"IBM Plex Mono",monospace}
+.shead button.edit:hover{border-color:var(--amber);color:var(--amber)}
+.sbody{padding:0 20px 20px;border-top:1px solid var(--rule);padding-top:16px}
+section.step:not(.open) .sbody{display:none}
+.why{font-size:13px;color:var(--dim);margin:0 0 14px;
+  border-left:2px solid var(--rule);padding-left:11px}
+
+/* ── 태그 칩 ── */
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin:8px 0 4px}
+.chip{border:1px solid var(--rule);background:none;color:var(--ink);border-radius:99px;
+  padding:5px 13px;font-size:13px;cursor:pointer;font-family:inherit;transition:.12s}
+.chip:hover{border-color:var(--dim)}
+.chip.on{background:var(--amber);border-color:var(--amber);color:#20180a;font-weight:700}
+.chip:disabled{opacity:.32;cursor:not-allowed}
+.grouphead{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--dim);
+  letter-spacing:.1em;margin:16px 0 2px;display:flex;justify-content:space-between}
+.grouphead .cnt{color:var(--amber)}
+
+/* ── 검색 ── */
+input[type=text]{width:100%;padding:11px 13px;border-radius:3px;border:1px solid var(--rule);
+  background:var(--black);color:var(--ink);font-size:14.5px;font-family:inherit}
+input[type=text]:focus{outline:none;border-color:var(--amber)}
+input[type=text]::placeholder{color:#5c564c}
+#results{margin-top:6px;max-height:230px;overflow-y:auto;border:1px solid var(--rule);
+  border-radius:3px;display:none}
+#results.show{display:block}
+.ritem{padding:9px 13px;cursor:pointer;display:flex;justify-content:space-between;
+  gap:10px;border-bottom:1px solid var(--rule);font-size:14px}
+.ritem:last-child{border-bottom:none}
+.ritem:hover{background:var(--panel2)}
+.ritem .meta{font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--dim);flex:none}
+.ritem.dup{opacity:.35;cursor:not-allowed}
+.hint{font-size:12.5px;color:var(--dim);margin-top:10px}
+.sugg{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+.sugg button{background:var(--panel2);border:1px solid var(--rule);color:var(--dim);
+  border-radius:3px;padding:4px 10px;font-size:12.5px;cursor:pointer;font-family:inherit}
+.sugg button:hover{color:var(--amber);border-color:var(--amber)}
+
+/* ── 고른 목록 ── */
+ol.picked{list-style:none;padding:0;margin:14px 0 0;counter-reset:p}
+ol.picked li{counter-increment:p;display:flex;align-items:center;gap:10px;
+  padding:8px 0;border-bottom:1px dotted var(--rule)}
+ol.picked li::before{content:counter(p,decimal-leading-zero);
+  font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--dim);width:20px;flex:none}
+ol.picked .t{flex:1;font-size:14.5px}
+ol.picked .m{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--dim);flex:none}
+ol.picked button{background:none;border:none;color:var(--red);cursor:pointer;
+  font-size:14px;flex:none;padding:0 2px}
+.slotline{display:flex;gap:4px;margin-top:14px}
+.slot{flex:1;height:3px;background:var(--rule);border-radius:2px}
+.slot.f{background:var(--amber)}
+
+/* ── 감정 배치 ── */
+.moodhead{display:grid;grid-template-columns:1.6fr repeat(5,1fr);gap:4px;
+  font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--dim);
+  text-align:center;padding-bottom:8px;border-bottom:1px solid var(--rule);line-height:1.35}
+.moodhead div:first-child{text-align:left}
+.moodrow{display:grid;grid-template-columns:1.6fr repeat(5,1fr);gap:4px;align-items:center;
+  padding:7px 0;border-bottom:1px dotted var(--rule)}
+.moodrow .tt{font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  padding-right:6px}
+.dot{height:26px;border:1px solid var(--rule);border-radius:3px;cursor:pointer;
+  background:none;display:flex;align-items:center;justify-content:center}
+.dot:hover{border-color:var(--dim)}
+.dot.on{background:var(--amber);border-color:var(--amber)}
+.dot.on::after{content:"●";font-size:9px;color:#20180a}
+.dot.seed{border-color:var(--rule);background:#2a251c}
+.dot.seed::after{content:"·";color:var(--dim);font-size:15px;line-height:0}
+
+/* ── 제출 ── */
+.actions{margin-top:26px;padding-top:20px;border-top:2px solid var(--rule)}
+button.go{background:var(--amber);color:#20180a;border:none;border-radius:3px;
+  padding:13px 26px;font-weight:900;cursor:pointer;font-size:15px;font-family:inherit;
+  letter-spacing:.02em}
+button.go:disabled{background:var(--rule);color:#6b6459;cursor:not-allowed}
+button.ghost{background:none;border:1px solid var(--rule);color:var(--dim);border-radius:3px;
+  padding:6px 13px;font-size:12.5px;cursor:pointer;font-family:"IBM Plex Mono",monospace}
+button.ghost:hover{border-color:var(--amber);color:var(--amber)}
+#status{font-size:13px;margin-top:12px;white-space:pre-wrap;line-height:1.6}
+#status.err{color:var(--red)}
+#status.ok{color:var(--ok)}
+.blocked{font-size:12.5px;color:var(--dim);margin-top:9px;font-family:"IBM Plex Mono",monospace}
+
+/* ── 결과 ── */
+.card{border:1px solid var(--amber);border-radius:3px;background:var(--panel);
+  padding:22px;margin-top:20px}
+.card h3{font-family:"Noto Serif KR",serif;font-size:20px;font-weight:900;margin:0 0 4px}
+.card .decl{font-family:"Noto Serif KR",serif;font-style:italic;color:var(--amber);
+  font-size:14px;margin:0 0 16px}
+.stat{display:flex;gap:22px;flex-wrap:wrap;font-size:13px;margin-bottom:18px}
+.stat b{display:block;font-family:"IBM Plex Mono",monospace;font-size:19px;color:var(--amber);
+  font-weight:600;line-height:1.3}
+.stat span{color:var(--dim);font-size:11.5px}
+.ribbon{margin-top:6px}
+.ribbon .bar{position:relative;height:34px;border-bottom:1px solid var(--rule);margin-bottom:4px}
+.ribbon .tick{position:absolute;bottom:0;width:1px;height:6px;background:var(--rule)}
+.ribbon .pt{position:absolute;bottom:8px;width:7px;height:7px;border-radius:50%;
+  background:var(--amber);transform:translateX(-50%);opacity:.85}
+.ribbon .lab{position:relative;height:14px;
+  font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--dim)}
+.ribbon .lab span{position:absolute;transform:translateX(-50%)}
+
+/* ── 멤버 목록 ── */
+.mlist{margin-top:12px}
+.mitem{padding:11px 0;border-bottom:1px dotted var(--rule);font-size:13.5px}
+.mitem:last-child{border-bottom:none}
+.mitem b{font-size:14.5px}
+.mitem .w{color:var(--dim);font-size:12.5px;margin-top:2px}
+.empty{color:var(--dim);font-size:13px;padding:14px 0}
+h4.sec{font-family:"Noto Serif KR",serif;font-size:17px;font-weight:900;
+  margin:38px 0 0;padding-top:22px;border-top:2px solid var(--rule);
+  display:flex;justify-content:space-between;align-items:center}
+@media(max-width:560px){
+  h1{font-size:29px} h1 .ed{font-size:17px}
+  .moodhead,.moodrow{grid-template-columns:1.25fr repeat(5,1fr)}
+  .moodhead{font-size:9px}
+  .shead .sum{display:none}
+}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="badge">배포 파이프라인 테스트용 뼈대 · 실제 UI는 M2에서 완성</div>
-  <h1>취향 유전자 지도 — 영화판</h1>
-  <p class="sub">이 페이지가 뜨고, 검색·제출·목록 불러오기가 되면
-    GitHub → Vercel → Upstash 연결이 전부 정상이라는 뜻입니다.</p>
 
-  <div class="box">
-    <strong>사전에서 작품 검색</strong> (<span class="cnt" id="dictCount">-</span>편 로드됨)
-    <input type="text" id="q" placeholder="예: 기생충, 화양연화, Parasite ...">
-    <div id="results"></div>
+<header>
+  <div class="slug">Taste DNA Map · Cinema Edition · 사전 <span id="dictN">—</span>편 내장</div>
+  <h1>취향 유전자 지도<span class="ed">영화판 — 애독자 카드</span></h1>
+  <p class="lede">인생 영화 열 편을 올리면 포스터가 좌표 위에 놓입니다.
+    세로는 얼마나 알려진 작품인가, 가로는 보고 난 뒤 마음이 어땠나.
+    수면 아래에 잠긴 표지가 이 클럽의 뒷골목입니다.</p>
+  <div class="byline">클럽 공용 서버에 저장됩니다 · 다른 멤버의 카드가 함께 보입니다</div>
+</header>
+
+<!-- 미션 브리핑 -->
+<div class="brief">
+  <div class="brief-h"><b>제출까지 네 단계</b><span id="briefPct">0 / 4 완료 · 약 5분</span></div>
+  <div class="mrow" data-m="1">
+    <div class="n">01</div>
+    <div class="tx"><div class="tt">취향 축 고르기</div>
+      <div class="dd">장르 최대 3개 · 성향 최대 2개. 10초면 끝납니다.</div></div>
+    <div class="st">대기</div>
   </div>
-
-  <div class="box">
-    <strong>고른 작품 (<span id="pickedCount">0</span>/10)</strong>
-    <ul id="picked"></ul>
-    <input type="text" id="name" placeholder="이름 (실명 아니어도 됩니다)" style="margin-top:8px">
-    <div style="margin-top:12px">
-      <button class="main" id="submitBtn" disabled>제출</button>
-    </div>
-    <div id="status"></div>
+  <div class="mrow" data-m="2">
+    <div class="n">02</div>
+    <div class="tx"><div class="tt">인생 영화 열 편</div>
+      <div class="dd">내장 사전에서 고르거나 직접 검색. 다섯 편부터 제출할 수 있습니다.</div></div>
+    <div class="st">대기</div>
   </div>
-
-  <div class="box">
-    <strong>제출된 멤버</strong>
-    <button class="main" id="reloadBtn" style="margin-left:8px;padding:5px 10px;font-size:12px">새로고침</button>
-    <div id="memberList" style="margin-top:10px">불러오는 중...</div>
+  <div class="mrow" data-m="3">
+    <div class="n">03</div>
+    <div class="tx"><div class="tt">보고 난 뒤의 마음</div>
+      <div class="dd">이미 임시로 배치해 뒀습니다. 다르다고 느끼는 것만 고치세요.</div></div>
+    <div class="st">대기</div>
+  </div>
+  <div class="mrow" data-m="4">
+    <div class="n">04</div>
+    <div class="tx"><div class="tt">이름과 한 줄</div>
+      <div class="dd">실명이 아니어도 됩니다.</div></div>
+    <div class="st">대기</div>
   </div>
 </div>
 
+<!-- 1 -->
+<section class="step" id="s1">
+  <div class="shead"><div class="sn">1</div><h2>취향 축 고르기</h2>
+    <div class="sum" id="sum1"></div><button class="edit" data-go="1">고치기</button></div>
+  <div class="sbody">
+    <p class="why">이 두 줄이 지도에서 당신을 어느 부족 옆에 놓을지를 정합니다.
+      겹치는 영화가 한 편도 없는 사람과도 여기서 연결됩니다.</p>
+    <div class="grouphead"><span>장르 — 최대 3개</span><span class="cnt" id="gc">0/3</span></div>
+    <div class="chips" id="genres"></div>
+    <div class="grouphead"><span>성향 — 최대 2개</span><span class="cnt" id="mc">0/2</span></div>
+    <div class="chips" id="moods"></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="step" id="s2">
+  <div class="shead"><div class="sn">2</div><h2>인생 영화 열 편</h2>
+    <div class="sum" id="sum2"></div><button class="edit" data-go="2">고치기</button></div>
+  <div class="sbody">
+    <p class="why">순서는 상관없습니다. 지금 떠오르는 것부터 넣으세요.
+      사전에 없는 작품은 제목을 그대로 적어 넣어도 됩니다.</p>
+    <input type="text" id="q" placeholder="제목 검색 — 예: 기생충, 화양연화, Parasite">
+    <div id="results"></div>
+    <div class="hint">사전에서 몇 편 골라볼까요 <button class="ghost" id="reroll" style="padding:2px 8px;margin-left:4px">다른 것 보기</button></div>
+    <div class="sugg" id="sugg"></div>
+    <div class="slotline" id="slots"></div>
+    <ol class="picked" id="picked"></ol>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="step" id="s3">
+  <div class="shead"><div class="sn">3</div><h2>보고 난 뒤의 마음</h2>
+    <div class="sum" id="sum3"></div><button class="edit" data-go="3">고치기</button></div>
+  <div class="sbody">
+    <p class="why">아직 아무도 옮기지 않아 임시 위치에 놓여 있습니다.
+      점(·)이 임시, 채워진 칸이 당신이 직접 고른 자리입니다.</p>
+    <div class="moodhead">
+      <div>작품</div><div>마음이<br>데워짐</div><div>조금<br>따뜻함</div><div>그<br>사이</div>
+      <div>조금<br>아픔</div><div>마음이<br>부서짐</div>
+    </div>
+    <div id="moodRows"></div>
+    <div class="hint" id="moodNote"></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="step" id="s4">
+  <div class="shead"><div class="sn">4</div><h2>이름과 한 줄</h2>
+    <div class="sum" id="sum4"></div><button class="edit" data-go="4">고치기</button></div>
+  <div class="sbody">
+    <p class="why">한 줄은 카드에 그대로 인쇄됩니다. 안 적어도 됩니다.</p>
+    <input type="text" id="name" placeholder="이름 (실명 아니어도 됩니다)" maxlength="20">
+    <input type="text" id="decl" placeholder="한 줄 — 예: 마음이 부서지라고 있는 것" maxlength="60" style="margin-top:9px">
+  </div>
+</section>
+
+<div class="actions">
+  <button class="go" id="submitBtn" disabled>카드 제출</button>
+  <div class="blocked" id="blocked"></div>
+  <div id="status"></div>
+</div>
+
+<div id="result"></div>
+
+<h4 class="sec">클럽 명단 <button class="ghost" id="reload">새로고침</button></h4>
+<div class="mlist" id="mlist"><div class="empty">불러오는 중…</div></div>
+
+</div>
+
 <script>
-let DICT = [];       // [한글, 원제, 국가, 연도, 감독, 대중, 감정, 장르, x, y]
-let picked = [];      // 고른 한글 제목들
+/* ───────── 데이터 ───────── */
+const GENRES = ["느와르·범죄","사회고발·실화","스릴러·미스터리","SF","판타지·동화","호러·오컬트",
+  "로맨스","코미디","액션·블록버스터","시대극·사극","전쟁","청춘·성장","가족·일상",
+  "애니메이션","다큐멘터리","뮤지컬·음악","스포츠","예술·실험"];
+const MOODS = ["극장파","집관파","미장센파","서사파","감독 따라가는 편","재관람파"];
+const ZONE = ["마음이 데워짐","조금 따뜻함","그 사이","조금 아픔","마음이 부서짐"];
+const MAXG = 3, MAXM = 2, GOAL = 10, MIN = 5;
 
-const norm = s => String(s || '').toLowerCase().replace(/\s/g, '');
+let DICT = [], BY = {};
+const draft = { tags: [], works: [], name: "", decl: "" };  // works: {t, mood, seeded}
+let step = 1;
 
-fetch('/movie_dict.json').then(r => r.json()).then(d => {
+const $ = s => document.querySelector(s);
+const norm = s => String(s||"").toLowerCase().replace(/\s/g,"");
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ───────── 초기 로드 ───────── */
+fetch('/movie_dict.json').then(r=>r.json()).then(d=>{
   DICT = d.rows;
-  document.getElementById('dictCount').textContent = d.n;
-});
+  DICT.forEach(r => BY[r[0]] = r);
+  $('#dictN').textContent = d.n;
+  reroll();
+}).catch(()=>{ $('#dictN').textContent = '로드 실패'; });
 
-document.getElementById('q').addEventListener('input', (e) => {
-  const q = norm(e.target.value);
-  const box = document.getElementById('results');
-  if (!q) { box.innerHTML = ''; return; }
-  const hits = DICT.filter(r => norm(r[0]).includes(q) || norm(r[1]).includes(q)).slice(0, 15);
-  box.innerHTML = hits.map(r =>
-    `<div class="r-item" data-t="${r[0]}"><span>${r[0]}</span><span class="meta">${r[4]} · ${r[3]}</span></div>`
-  ).join('') || '<div class="r-item"><span class="meta">검색 결과 없음</span></div>';
-});
+/* ───────── 단계 이동 ───────── */
+function go(n){ step = n; render();
+  const el = document.getElementById('s'+n);
+  if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
+}
+document.querySelectorAll('.edit').forEach(b => b.onclick = () => go(+b.dataset.go));
 
-document.getElementById('results').addEventListener('click', (e) => {
-  const el = e.target.closest('.r-item[data-t]');
-  if (!el) return;
-  const t = el.dataset.t;
-  if (picked.includes(t) || picked.length >= 10) return;
-  picked.push(t);
-  renderPicked();
-  document.getElementById('q').value = '';
-  document.getElementById('results').innerHTML = '';
-});
-
-function renderPicked() {
-  document.getElementById('pickedCount').textContent = picked.length;
-  document.getElementById('picked').innerHTML = picked.map(t =>
-    `<li>${t}<button data-t="${t}">✕</button></li>`
-  ).join('');
-  checkReady();
+function okStep(n){
+  const g = draft.tags.filter(t=>GENRES.includes(t)).length;
+  const m = draft.tags.filter(t=>MOODS.includes(t)).length;
+  if(n===1) return g>=1 && m>=1;
+  if(n===2) return draft.works.length >= MIN;
+  if(n===3) return draft.works.length >= MIN;
+  if(n===4) return !!draft.name.trim();
+  return false;
 }
 
-document.getElementById('picked').addEventListener('click', (e) => {
-  if (e.target.tagName !== 'BUTTON') return;
-  picked = picked.filter(t => t !== e.target.dataset.t);
-  renderPicked();
-});
+/* ───────── 렌더 ───────── */
+function render(){
+  // 섹션 열림/닫힘
+  for(let i=1;i<=4;i++){
+    const s = document.getElementById('s'+i);
+    s.classList.toggle('open', i===step);
+    s.classList.toggle('now', i===step);
+    s.querySelector('.edit').style.display = (i===step) ? 'none' : '';
+  }
+  // 브리핑 상태
+  let done = 0;
+  document.querySelectorAll('.mrow').forEach(r=>{
+    const n = +r.dataset.m, ok = okStep(n);
+    if(ok) done++;
+    r.classList.toggle('now', n===step);
+    r.classList.toggle('done', ok && n!==step);
+    r.querySelector('.st').textContent = ok ? '완료' : (n===step ? '진행 중' : '대기');
+  });
+  $('#briefPct').textContent = `${done} / 4 완료 · 약 5분`;
 
-document.getElementById('name').addEventListener('input', checkReady);
-function checkReady() {
-  const ok = picked.length >= 1 && document.getElementById('name').value.trim().length > 0;
-  document.getElementById('submitBtn').disabled = !ok;
+  // 요약
+  const g = draft.tags.filter(t=>GENRES.includes(t));
+  const m = draft.tags.filter(t=>MOODS.includes(t));
+  $('#gc').textContent = `${g.length}/${MAXG}`;
+  $('#mc').textContent = `${m.length}/${MAXM}`;
+  $('#sum1').textContent = draft.tags.join(' · ');
+  $('#sum2').textContent = draft.works.length ? `${draft.works.length}편` : '';
+  const moved = draft.works.filter(w=>!w.seeded).length;
+  $('#sum3').textContent = draft.works.length ? `${moved}편 직접 배치` : '';
+  $('#sum4').textContent = draft.name || '';
+
+  renderChips(); renderPicked(); renderMood();
+
+  // 제출 가능?
+  const can = okStep(1) && okStep(2) && okStep(4);
+  $('#submitBtn').disabled = !can;
+  const miss = [];
+  if(!okStep(1)) miss.push('장르 1개 이상 + 성향 1개 이상');
+  if(!okStep(2)) miss.push(`영화 ${MIN}편 이상 (지금 ${draft.works.length}편)`);
+  if(!okStep(4)) miss.push('이름');
+  $('#blocked').textContent = miss.length ? '남은 것 — ' + miss.join(' / ')
+    : (draft.works.length < GOAL ? `제출할 수 있습니다. 열 편을 채우면 더 정확해집니다 (지금 ${draft.works.length}편).` : '열 편 모두 채웠습니다.');
 }
 
-document.getElementById('submitBtn').addEventListener('click', async () => {
-  const name = document.getElementById('name').value.trim();
-  const status = document.getElementById('status');
-  status.textContent = '제출 중...';
-  try {
-    const r = await fetch('/api/club', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, works: picked }),
+function renderChips(){
+  const g = draft.tags.filter(t=>GENRES.includes(t));
+  const m = draft.tags.filter(t=>MOODS.includes(t));
+  $('#genres').innerHTML = GENRES.map(t=>{
+    const on = draft.tags.includes(t);
+    const dis = !on && g.length>=MAXG;
+    return `<button class="chip${on?' on':''}" data-t="${esc(t)}"${dis?' disabled':''}>${esc(t)}</button>`;
+  }).join('');
+  $('#moods').innerHTML = MOODS.map(t=>{
+    const on = draft.tags.includes(t);
+    const dis = !on && m.length>=MAXM;
+    return `<button class="chip${on?' on':''}" data-t="${esc(t)}"${dis?' disabled':''}>${esc(t)}</button>`;
+  }).join('');
+}
+document.addEventListener('click', e=>{
+  const c = e.target.closest('.chip'); if(!c || c.disabled) return;
+  const t = c.dataset.t;
+  const i = draft.tags.indexOf(t);
+  if(i>=0) draft.tags.splice(i,1); else draft.tags.push(t);
+  render();
+});
+
+/* ── 검색 ── */
+let sTimer;
+$('#q').addEventListener('input', e=>{
+  clearTimeout(sTimer);
+  const raw = e.target.value.trim(), q = norm(raw);
+  const box = $('#results');
+  if(!q){ box.className=''; box.innerHTML=''; return; }
+  sTimer = setTimeout(()=>{
+    const hits = DICT.filter(r=>norm(r[0]).includes(q)||norm(r[1]).includes(q)).slice(0,14);
+    const has = t => draft.works.some(w=>w.t===t);
+    let html = hits.map(r=>
+      `<div class="ritem${has(r[0])?' dup':''}" data-t="${esc(r[0])}">
+         <span>${esc(r[0])}</span>
+         <span class="meta">${esc(r[4])} · ${r[3]}</span></div>`).join('');
+    if(!hits.length){
+      html = `<div class="ritem" data-new="${esc(raw)}">
+        <span>“${esc(raw)}” 직접 추가</span><span class="meta">사전에 없음</span></div>`;
+    }
+    box.innerHTML = html; box.className='show';
+  }, 120);
+});
+$('#results').addEventListener('click', e=>{
+  const it = e.target.closest('.ritem'); if(!it || it.classList.contains('dup')) return;
+  add(it.dataset.t || it.dataset.new, !it.dataset.t);
+  $('#q').value=''; $('#results').className=''; $('#results').innerHTML='';
+});
+
+function add(title, isNew){
+  if(!title || draft.works.length>=GOAL) return;
+  if(draft.works.some(w=>w.t===title)) return;
+  const r = BY[title];
+  draft.works.push({ t:title, mood: r ? r[6] : 3, seeded:true, custom: !!isNew });
+  render();
+}
+
+/* ── 추천 ── */
+function reroll(){
+  if(!DICT.length) return;
+  const pool = DICT.filter(r=>r[5]<=4);
+  const pick = [];
+  while(pick.length<8 && pool.length){
+    const r = pool.splice(Math.floor(Math.random()*pool.length),1)[0];
+    if(!draft.works.some(w=>w.t===r[0])) pick.push(r);
+  }
+  $('#sugg').innerHTML = pick.map(r=>`<button data-add="${esc(r[0])}">${esc(r[0])}</button>`).join('');
+}
+$('#reroll').onclick = reroll;
+$('#sugg').addEventListener('click', e=>{
+  const b = e.target.closest('button[data-add]'); if(!b) return;
+  add(b.dataset.add); reroll();
+});
+
+/* ── 고른 목록 ── */
+function renderPicked(){
+  $('#slots').innerHTML = Array.from({length:GOAL},(_,i)=>
+    `<div class="slot${i<draft.works.length?' f':''}"></div>`).join('');
+  $('#picked').innerHTML = draft.works.map(w=>{
+    const r = BY[w.t];
+    return `<li><span class="t">${esc(w.t)}</span>
+      <span class="m">${r? esc(r[4])+' · '+r[3] : '직접 입력'}</span>
+      <button data-del="${esc(w.t)}">✕</button></li>`;
+  }).join('');
+}
+$('#picked').addEventListener('click', e=>{
+  const b = e.target.closest('button[data-del]'); if(!b) return;
+  draft.works = draft.works.filter(w=>w.t!==b.dataset.del);
+  render();
+});
+
+/* ── 감정 배치 ── */
+function renderMood(){
+  if(!draft.works.length){ $('#moodRows').innerHTML='<div class="empty">먼저 2단계에서 영화를 고르세요.</div>';
+    $('#moodNote').textContent=''; return; }
+  $('#moodRows').innerHTML = draft.works.map(w=>
+    `<div class="moodrow"><div class="tt">${esc(w.t)}</div>` +
+    [1,2,3,4,5].map(v=>{
+      const sel = w.mood===v;
+      const cls = sel ? (w.seeded?'dot seed':'dot on') : 'dot';
+      return `<button class="${cls}" data-mt="${esc(w.t)}" data-mv="${v}" title="${ZONE[v-1]}"></button>`;
+    }).join('') + `</div>`).join('');
+  const moved = draft.works.filter(w=>!w.seeded).length;
+  $('#moodNote').textContent = `${draft.works.length}편 중 ${moved}편을 직접 배치했습니다. 안 옮겨도 제출됩니다.`;
+}
+$('#moodRows').addEventListener('click', e=>{
+  const b = e.target.closest('button[data-mt]'); if(!b) return;
+  const w = draft.works.find(x=>x.t===b.dataset.mt); if(!w) return;
+  w.mood = +b.dataset.mv; w.seeded = false;
+  render();
+});
+
+/* ── 이름 ── */
+$('#name').addEventListener('input', e=>{ draft.name = e.target.value; render(); });
+$('#decl').addEventListener('input', e=>{ draft.decl = e.target.value; });
+
+/* ───────── 제출 ───────── */
+$('#submitBtn').onclick = async ()=>{
+  const st = $('#status'); st.className=''; st.textContent='제출 중…';
+  try{
+    const r = await fetch('/api/club',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        name: draft.name.trim(),
+        works: draft.works.map(w=>({t:w.t, mood:w.mood})),
+        tags: draft.tags, decl: draft.decl.trim()
+      })
     });
-    const j = await r.json();
-    if (!r.ok) throw new Error(j.error || ('HTTP ' + r.status));
-    status.textContent = '제출 완료 — 아래 목록에서 확인하세요.';
-    picked = []; renderPicked();
-    document.getElementById('name').value = '';
-    loadMembers();
-  } catch (e) {
-    status.textContent = '실패: ' + e.message + '\n(Vercel에 Upstash Redis를 연결했는지 확인하세요)';
+    const j = await r.json().catch(()=>({error:'서버 응답을 읽지 못했습니다'}));
+    if(!r.ok) throw new Error(j.error || ('HTTP '+r.status));
+    st.className='ok'; st.textContent='제출 완료 — 아래에 카드가 나왔습니다.';
+    showCard();
+    renderMembers(j.members || []);
+    $('#result').scrollIntoView({behavior:'smooth', block:'start'});
+  }catch(e){
+    st.className='err';
+    st.textContent = '실패: ' + e.message;
   }
-});
+};
 
-async function loadMembers() {
-  const box = document.getElementById('memberList');
-  box.textContent = '불러오는 중...';
-  try {
-    const j = await (await fetch('/api/club')).json();
-    const members = j.members || [];
-    box.innerHTML = members.length
-      ? members.map(m => `<div>· <strong>${m.id}</strong> — ${m.works.length}편 (${m.works.slice(0,3).join(', ')}${m.works.length>3?' …':''})</div>`).join('')
-      : '<span style="color:var(--dim)">아직 제출된 멤버가 없습니다.</span>';
-  } catch (e) {
-    box.innerHTML = `<span style="color:#ff6b6b">불러오기 실패: ${e.message}</span>`;
+/* ── 결과 카드 (연대 리본 포함) ── */
+function showCard(){
+  const years = draft.works.map(w=>BY[w.t] && BY[w.t][3]).filter(Boolean).sort((a,b)=>a-b);
+  const med = years.length ? years[Math.floor(years.length/2)] : null;
+  const span = years.length ? years[years.length-1]-years[0] : 0;
+  const dirs = {};
+  draft.works.forEach(w=>{ const r=BY[w.t]; if(r) dirs[r[4]]=(dirs[r[4]]||0)+1; });
+  const topDir = Object.entries(dirs).sort((a,b)=>b[1]-a[1]).filter(d=>d[1]>1)[0];
+  const deep = draft.works.filter(w=>BY[w.t] && BY[w.t][5]>=5).length;
+  const A=1940, B=2030, pos = y => ((y-A)/(B-A)*100).toFixed(1);
+  const MARK = [1950,1970,1990,2010,2025];
+  const pts = years.map(y=>`<div class="pt" style="left:${pos(y)}%"></div>`).join('');
+  const ticks = MARK.map(y=>`<div class="tick" style="left:${pos(y)}%"></div>`).join('');
+  const labs = MARK.map(y=>`<span style="left:${pos(y)}%">${y}</span>`).join('');
+
+  $('#result').innerHTML = `
+  <div class="card">
+    <h3>${esc(draft.name)}</h3>
+    ${draft.decl ? `<p class="decl">“${esc(draft.decl)}”</p>` : ''}
+    <div class="stat">
+      <div><b>${draft.works.length}</b><span>등록한 영화</span></div>
+      <div><b>${med||'—'}</b><span>취향 중앙값</span></div>
+      <div><b>${span}년</b><span>연대 폭</span></div>
+      <div><b>${deep}</b><span>수면 아래 작품</span></div>
+    </div>
+    ${topDir ? `<div style="font-size:13.5px;color:var(--dim);margin-bottom:14px">
+      가장 많이 고른 감독 — <span style="color:var(--amber)">${esc(topDir[0])} ${topDir[1]}편</span></div>` : ''}
+    <div class="ribbon">
+      <div class="bar">${ticks}${pts}</div>
+      <div class="lab">${labs}</div>
+    </div>
+    <div style="font-size:12.5px;color:var(--dim);margin-top:10px">
+      ${draft.tags.join(' · ')}
+    </div>
+  </div>`;
+}
+
+/* ── 명단 ── */
+async function loadMembers(){
+  const box = $('#mlist'); box.innerHTML = '<div class="empty">불러오는 중…</div>';
+  try{
+    const r = await fetch('/api/club');
+    const j = await r.json();
+    if(!r.ok) throw new Error(j.error || ('HTTP '+r.status));
+    renderMembers(j.members || []);
+  }catch(e){
+    box.innerHTML = `<div class="empty" style="color:var(--red)">불러오기 실패: ${esc(e.message)}</div>`;
   }
 }
-document.getElementById('reloadBtn').addEventListener('click', loadMembers);
+function renderMembers(ms){
+  const box = $('#mlist');
+  if(!ms.length){ box.innerHTML='<div class="empty">아직 아무도 카드를 내지 않았습니다. 첫 번째가 되어 보세요.</div>'; return; }
+  box.innerHTML = ms.slice().reverse().map(m=>{
+    const ws = (m.works||[]).map(w=> typeof w==='string' ? w : w.t);
+    return `<div class="mitem"><b>${esc(m.name||m.id)}</b>
+      ${m.decl?` <span style="color:var(--amber);font-size:12.5px">“${esc(m.decl)}”</span>`:''}
+      <div class="w">${ws.length}편 — ${esc(ws.slice(0,4).join(' / '))}${ws.length>4?' …':''}</div>
+      ${(m.tags&&m.tags.length)?`<div class="w" style="color:#6b6459">${esc(m.tags.join(' · '))}</div>`:''}
+    </div>`;
+  }).join('');
+}
+$('#reload').onclick = loadMembers;
+
+render();
 loadMembers();
 </script>
 </body>
