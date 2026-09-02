@@ -5,6 +5,7 @@
   "type": "module",
   "description": "취향 유전자 지도 영화판 — 배포 파이프라인 확인용 최소 뼈대 (기획안 M2 이전 단계)",
   "dependencies": {
-    "@upstash/redis": "^1.34.0"
+    "@upstash/redis": "^1.38.3",
+    "ioredis": "^5.11.1"
   }
 }

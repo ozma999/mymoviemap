@@ -9,194 +9,250 @@
 <link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@400;700;900&family=Noto+Serif+KR:wght@400;600;900&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --black:#0d0c0b;      /* 극장 암전 */
-  --panel:#151310;
-  --panel2:#1d1a15;
-  --rule:#332e26;
-  --ink:#f0e9dc;        /* 스크린 화이트 */
-  --dim:#8c8578;
-  --amber:#e0a83c;      /* 영사기 빛 */
-  --red:#c4402f;        /* 시네마 레드 */
-  --ok:#7fb069;
+  /* 지면 — 따뜻한 종이 (만화판과 같은 계열, 톤만 다름) */
+  --paper:#e9e4d8;
+  --panel:#f7f4ec;
+  --inset:#efeadd;
+  --rule:#cbc3b1;
+  --rule2:#ded6c5;
+  --ink:#1e1a16;
+  --dim:#6d6558;
+  --red:#b3382c;        /* 시네마 레드 — 주 강조 */
+  --gold:#8a6512;       /* 밝은 지면에서 읽히는 금색 */
+  --ok:#4a7c3f;
+  /* 결과 카드 = '스크린'. 여기만 어둡게 */
+  --scr:#17140f;
+  --scr-ink:#f2ece0;
+  --scr-dim:#9a917f;
+  --scr-amber:#e6b552;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:"Gothic A1","Malgun Gothic","맑은 고딕",-apple-system,BlinkMacSystemFont,sans-serif;
+  --serif:"Noto Serif KR","Nanum Myeongjo",Georgia,serif;
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
 body{
-  background:var(--black);color:var(--ink);
-  font-family:"Gothic A1","Malgun Gothic","맑은 고딕",-apple-system,sans-serif;
-  font-size:15px;line-height:1.7;-webkit-font-smoothing:antialiased;
+  background:var(--paper);color:var(--ink);
+  font-family:var(--sans);font-size:15.5px;line-height:1.72;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
 }
-/* 필름 그레인 */
+/* 종이 결 */
 body::before{
-  content:"";position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.035;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 .wrap{max-width:700px;margin:0 auto;padding:0 20px 100px;position:relative;z-index:2}
+/* 숫자·로마자 전용 — 한글에는 절대 쓰지 않는다 */
+.mono{font-family:var(--mono);font-feature-settings:"tnum" 1}
 
 /* ── 제호 ── */
-header{padding:44px 0 22px;border-bottom:2px solid var(--rule)}
-.slug{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.2em;
-  color:var(--amber);text-transform:uppercase;margin-bottom:16px}
-h1{font-family:"Noto Serif KR",serif;font-weight:900;font-size:38px;line-height:1.15;
-  margin:0 0 12px;letter-spacing:-.02em}
-h1 .ed{display:block;font-size:20px;color:var(--amber);margin-top:6px;letter-spacing:.02em}
-.lede{font-family:"Noto Serif KR",serif;font-size:15px;line-height:1.85;color:var(--ink);
-  margin:18px 0 0;max-width:600px}
-.byline{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--dim);
-  margin-top:14px;letter-spacing:.04em}
+header{padding:44px 0 22px;border-bottom:2px solid var(--ink)}
+.slug{font-size:11px;color:var(--dim);margin-bottom:16px}
+.slug .lat{font-family:var(--mono);letter-spacing:.18em;color:var(--red);font-weight:600}
+h1{font-family:var(--serif);font-weight:900;font-size:39px;line-height:1.16;
+  margin:0 0 10px;letter-spacing:-.02em}
+h1 .ed{display:block;font-size:19px;color:var(--red);margin-top:8px;letter-spacing:0;font-weight:600}
+.lede{font-family:var(--serif);font-size:15.5px;line-height:1.92;margin:18px 0 0;max-width:610px}
+.byline{font-size:12.5px;color:var(--dim);margin-top:14px}
 
 /* ── 미션 브리핑 ── */
-.brief{border:1px solid var(--rule);background:var(--panel);border-radius:3px;
+.brief{border:1px solid var(--rule);background:var(--panel);border-radius:2px;
   padding:20px 22px;margin:28px 0}
-.brief-h{display:flex;justify-content:space-between;align-items:baseline;
-  border-bottom:1px solid var(--rule);padding-bottom:12px;margin-bottom:6px}
-.brief-h b{font-family:"Noto Serif KR",serif;font-size:16px;font-weight:900}
-.brief-h span{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--amber)}
-.mrow{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dotted var(--rule)}
+.brief-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px;
+  border-bottom:1px solid var(--ink);padding-bottom:11px;margin-bottom:4px}
+.brief-h b{font-family:var(--serif);font-size:17px;font-weight:900}
+.brief-h span{font-size:12px;color:var(--dim);flex:none}
+.brief-h span em{font-family:var(--mono);font-style:normal;color:var(--red);font-weight:600}
+.mrow{display:flex;gap:13px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--rule2)}
 .mrow:last-child{border-bottom:none}
-.mrow .n{font-family:"IBM Plex Mono",monospace;font-size:12px;width:20px;flex:none;
-  color:var(--dim);padding-top:2px}
+.mrow .n{font-family:var(--mono);font-size:12px;width:22px;flex:none;color:#a49a86;padding-top:3px}
 .mrow .tx{flex:1}
-.mrow .tt{font-weight:700;font-size:14.5px}
-.mrow .dd{font-size:12.5px;color:var(--dim);margin-top:1px}
-.mrow .st{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--dim);
-  flex:none;padding-top:3px}
-.mrow.now .n,.mrow.now .tt{color:var(--amber)}
-.mrow.now .st{color:var(--amber)}
+.mrow .tt{font-weight:700;font-size:15px}
+.mrow .dd{font-size:13px;color:var(--dim);margin-top:1px;line-height:1.6}
+.mrow .st{font-size:12px;color:#9a9182;flex:none;padding-top:3px}
+.mrow.now .n{color:var(--red)}
+.mrow.now .tt{color:var(--red)}
+.mrow.now .st{color:var(--red);font-weight:700}
 .mrow.done .st{color:var(--ok)}
-.mrow.done .tt{color:var(--dim)}
+.mrow.done .tt{color:var(--dim);font-weight:400}
 
 /* ── 단계 섹션 ── */
-section.step{border:1px solid var(--rule);border-radius:3px;margin-bottom:14px;
-  background:var(--panel);overflow:hidden}
-section.step.now{border-color:var(--amber)}
-.shead{display:flex;align-items:center;gap:12px;padding:15px 20px;cursor:default}
-.shead .sn{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--amber);
-  border:1px solid var(--amber);border-radius:99px;width:22px;height:22px;flex:none;
+section.step{border:1px solid var(--rule);border-radius:2px;margin-bottom:13px;
+  background:var(--panel)}
+section.step.now{border:2px solid var(--ink)}
+.shead{display:flex;align-items:center;gap:12px;padding:15px 19px}
+section.step.now .shead{padding:14px 18px}
+.shead .sn{font-family:var(--mono);font-size:11.5px;width:23px;height:23px;flex:none;
+  border:1px solid var(--rule);border-radius:50%;color:#9a9182;
   display:flex;align-items:center;justify-content:center}
-section.step:not(.now) .shead .sn{color:var(--dim);border-color:var(--rule)}
-.shead h2{font-family:"Noto Serif KR",serif;font-size:17px;font-weight:900;margin:0;flex:1}
-.shead .sum{font-size:12.5px;color:var(--dim);flex:none;max-width:45%;text-align:right;
+section.step.now .shead .sn{background:var(--ink);border-color:var(--ink);color:var(--panel);font-weight:600}
+.shead h2{font-family:var(--serif);font-size:18px;font-weight:900;margin:0;flex:1;letter-spacing:-.01em}
+.shead .sum{font-size:12.5px;color:var(--dim);flex:none;max-width:44%;text-align:right;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .shead button.edit{background:none;border:1px solid var(--rule);color:var(--dim);
-  border-radius:3px;padding:3px 10px;font-size:11.5px;cursor:pointer;flex:none;
-  font-family:"IBM Plex Mono",monospace}
-.shead button.edit:hover{border-color:var(--amber);color:var(--amber)}
-.sbody{padding:0 20px 20px;border-top:1px solid var(--rule);padding-top:16px}
+  border-radius:2px;padding:4px 11px;font-size:12.5px;cursor:pointer;flex:none;font-family:var(--sans)}
+.shead button.edit:hover{border-color:var(--ink);color:var(--ink)}
+.sbody{padding:16px 19px 20px;border-top:1px solid var(--rule2)}
 section.step:not(.open) .sbody{display:none}
-.why{font-size:13px;color:var(--dim);margin:0 0 14px;
-  border-left:2px solid var(--rule);padding-left:11px}
+.why{font-size:13.5px;color:var(--dim);margin:0 0 15px;line-height:1.7;
+  border-left:2px solid var(--red);padding-left:12px}
 
 /* ── 태그 칩 ── */
 .chips{display:flex;flex-wrap:wrap;gap:7px;margin:8px 0 4px}
-.chip{border:1px solid var(--rule);background:none;color:var(--ink);border-radius:99px;
-  padding:5px 13px;font-size:13px;cursor:pointer;font-family:inherit;transition:.12s}
-.chip:hover{border-color:var(--dim)}
-.chip.on{background:var(--amber);border-color:var(--amber);color:#20180a;font-weight:700}
-.chip:disabled{opacity:.32;cursor:not-allowed}
-.grouphead{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--dim);
-  letter-spacing:.1em;margin:16px 0 2px;display:flex;justify-content:space-between}
-.grouphead .cnt{color:var(--amber)}
+.chip{border:1px solid var(--rule);background:#fff;color:var(--ink);border-radius:99px;
+  padding:6px 14px;font-size:13.5px;cursor:pointer;font-family:var(--sans);transition:.12s}
+.chip:hover{border-color:var(--ink)}
+.chip.on{background:var(--red);border-color:var(--red);color:#fff;font-weight:700}
+.chip:disabled{opacity:.36;cursor:not-allowed;background:transparent}
+.grouphead{font-size:12.5px;color:var(--dim);margin:17px 0 2px;
+  display:flex;justify-content:space-between;align-items:baseline}
+.grouphead .cnt{font-family:var(--mono);font-size:12px;color:var(--red);font-weight:600}
 
 /* ── 검색 ── */
-input[type=text]{width:100%;padding:11px 13px;border-radius:3px;border:1px solid var(--rule);
-  background:var(--black);color:var(--ink);font-size:14.5px;font-family:inherit}
-input[type=text]:focus{outline:none;border-color:var(--amber)}
-input[type=text]::placeholder{color:#5c564c}
-#results{margin-top:6px;max-height:230px;overflow-y:auto;border:1px solid var(--rule);
-  border-radius:3px;display:none}
+input[type=text]{width:100%;padding:11px 13px;border-radius:2px;border:1px solid var(--rule);
+  background:#fff;color:var(--ink);font-size:15px;font-family:var(--sans)}
+input[type=text]:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 2px rgba(30,26,22,.08)}
+input[type=text]::placeholder{color:#a49a86}
+#results{margin-top:6px;max-height:236px;overflow-y:auto;border:1px solid var(--rule);
+  border-radius:2px;display:none;background:#fff}
 #results.show{display:block}
 .ritem{padding:9px 13px;cursor:pointer;display:flex;justify-content:space-between;
-  gap:10px;border-bottom:1px solid var(--rule);font-size:14px}
+  gap:10px;border-bottom:1px solid var(--rule2);font-size:14.5px;align-items:baseline}
 .ritem:last-child{border-bottom:none}
-.ritem:hover{background:var(--panel2)}
-.ritem .meta{font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--dim);flex:none}
-.ritem.dup{opacity:.35;cursor:not-allowed}
-.hint{font-size:12.5px;color:var(--dim);margin-top:10px}
+.ritem:hover{background:var(--inset)}
+.ritem .meta{font-size:12.5px;color:var(--dim);flex:none}
+.ritem .meta .y{font-family:var(--mono)}
+.ritem.dup{opacity:.4;cursor:not-allowed}
+.hint{font-size:13px;color:var(--dim);margin-top:11px}
 .sugg{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
-.sugg button{background:var(--panel2);border:1px solid var(--rule);color:var(--dim);
-  border-radius:3px;padding:4px 10px;font-size:12.5px;cursor:pointer;font-family:inherit}
-.sugg button:hover{color:var(--amber);border-color:var(--amber)}
+.sugg button{background:#fff;border:1px solid var(--rule);color:var(--dim);
+  border-radius:2px;padding:5px 11px;font-size:13px;cursor:pointer;font-family:var(--sans)}
+.sugg button:hover{color:var(--red);border-color:var(--red)}
 
 /* ── 고른 목록 ── */
 ol.picked{list-style:none;padding:0;margin:14px 0 0;counter-reset:p}
-ol.picked li{counter-increment:p;display:flex;align-items:center;gap:10px;
-  padding:8px 0;border-bottom:1px dotted var(--rule)}
+ol.picked li{counter-increment:p;display:flex;align-items:baseline;gap:11px;
+  padding:9px 0;border-bottom:1px solid var(--rule2)}
 ol.picked li::before{content:counter(p,decimal-leading-zero);
-  font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--dim);width:20px;flex:none}
-ol.picked .t{flex:1;font-size:14.5px}
-ol.picked .m{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--dim);flex:none}
+  font-family:var(--mono);font-size:11.5px;color:#a49a86;width:22px;flex:none}
+ol.picked .t{flex:1;font-size:15px}
+ol.picked .m{font-size:12.5px;color:var(--dim);flex:none}
+ol.picked .m .y{font-family:var(--mono)}
 ol.picked button{background:none;border:none;color:var(--red);cursor:pointer;
-  font-size:14px;flex:none;padding:0 2px}
-.slotline{display:flex;gap:4px;margin-top:14px}
-.slot{flex:1;height:3px;background:var(--rule);border-radius:2px}
-.slot.f{background:var(--amber)}
+  font-size:14px;flex:none;padding:0 2px;line-height:1}
+.slotline{display:flex;gap:4px;margin-top:15px}
+.slot{flex:1;height:4px;background:var(--rule2);border-radius:2px}
+.slot.f{background:var(--red)}
 
 /* ── 감정 배치 ── */
-.moodhead{display:grid;grid-template-columns:1.6fr repeat(5,1fr);gap:4px;
-  font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--dim);
-  text-align:center;padding-bottom:8px;border-bottom:1px solid var(--rule);line-height:1.35}
+.moodhead{display:grid;grid-template-columns:1.6fr repeat(5,1fr);gap:5px;
+  font-size:11px;color:var(--dim);text-align:center;line-height:1.35;
+  padding-bottom:9px;border-bottom:1px solid var(--ink)}
 .moodhead div:first-child{text-align:left}
-.moodrow{display:grid;grid-template-columns:1.6fr repeat(5,1fr);gap:4px;align-items:center;
-  padding:7px 0;border-bottom:1px dotted var(--rule)}
-.moodrow .tt{font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-  padding-right:6px}
-.dot{height:26px;border:1px solid var(--rule);border-radius:3px;cursor:pointer;
-  background:none;display:flex;align-items:center;justify-content:center}
-.dot:hover{border-color:var(--dim)}
-.dot.on{background:var(--amber);border-color:var(--amber)}
-.dot.on::after{content:"●";font-size:9px;color:#20180a}
-.dot.seed{border-color:var(--rule);background:#2a251c}
-.dot.seed::after{content:"·";color:var(--dim);font-size:15px;line-height:0}
+.moodrow{display:grid;grid-template-columns:1.6fr 5fr;gap:5px;align-items:center;
+  padding:7px 0;border-bottom:1px solid var(--rule2)}
+.moodrow .tt{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-right:6px}
+.moodrow .dots{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
+.moodrow .dots .cap{display:none}
+.dot{height:28px;border:1px solid var(--rule);border-radius:2px;cursor:pointer;
+  background:#fff;display:flex;align-items:center;justify-content:center;padding:0}
+.dot:hover{border-color:var(--ink)}
+.dot.on{background:var(--red);border-color:var(--red)}
+.dot.on::after{content:"";width:7px;height:7px;border-radius:50%;background:#fff}
+.dot.seed{background:var(--inset);border-color:var(--rule)}
+.dot.seed::after{content:"";width:4px;height:4px;border-radius:50%;background:#a49a86}
 
 /* ── 제출 ── */
-.actions{margin-top:26px;padding-top:20px;border-top:2px solid var(--rule)}
-button.go{background:var(--amber);color:#20180a;border:none;border-radius:3px;
-  padding:13px 26px;font-weight:900;cursor:pointer;font-size:15px;font-family:inherit;
-  letter-spacing:.02em}
-button.go:disabled{background:var(--rule);color:#6b6459;cursor:not-allowed}
-button.ghost{background:none;border:1px solid var(--rule);color:var(--dim);border-radius:3px;
-  padding:6px 13px;font-size:12.5px;cursor:pointer;font-family:"IBM Plex Mono",monospace}
-button.ghost:hover{border-color:var(--amber);color:var(--amber)}
-#status{font-size:13px;margin-top:12px;white-space:pre-wrap;line-height:1.6}
+.actions{margin-top:26px;padding-top:20px;border-top:2px solid var(--ink)}
+button.go{background:var(--ink);color:#fff;border:none;border-radius:2px;
+  padding:14px 28px;font-weight:900;cursor:pointer;font-size:15.5px;font-family:var(--sans)}
+button.go:hover:not(:disabled){background:var(--red)}
+button.go:disabled{background:var(--rule);color:#8b8271;cursor:not-allowed}
+button.ghost{background:none;border:1px solid var(--rule);color:var(--dim);border-radius:2px;
+  padding:5px 12px;font-size:12.5px;cursor:pointer;font-family:var(--sans)}
+button.ghost:hover{border-color:var(--red);color:var(--red)}
+.blocked{font-size:13px;color:var(--dim);margin-top:11px}
+#status{font-size:13.5px;margin-top:12px;white-space:pre-wrap;line-height:1.65}
 #status.err{color:var(--red)}
 #status.ok{color:var(--ok)}
-.blocked{font-size:12.5px;color:var(--dim);margin-top:9px;font-family:"IBM Plex Mono",monospace}
 
-/* ── 결과 ── */
-.card{border:1px solid var(--amber);border-radius:3px;background:var(--panel);
-  padding:22px;margin-top:20px}
-.card h3{font-family:"Noto Serif KR",serif;font-size:20px;font-weight:900;margin:0 0 4px}
-.card .decl{font-family:"Noto Serif KR",serif;font-style:italic;color:var(--amber);
-  font-size:14px;margin:0 0 16px}
-.stat{display:flex;gap:22px;flex-wrap:wrap;font-size:13px;margin-bottom:18px}
-.stat b{display:block;font-family:"IBM Plex Mono",monospace;font-size:19px;color:var(--amber);
+/* ── 결과 카드 = '스크린' (여기만 어둡다) ── */
+.card{background:var(--scr);color:var(--scr-ink);border-radius:2px;padding:26px 24px;margin-top:20px}
+.card h3{font-family:var(--serif);font-size:22px;font-weight:900;margin:0 0 6px;color:#fff}
+.card .decl{font-family:var(--serif);color:var(--scr-amber);font-size:15px;margin:0 0 18px}
+.stat{display:flex;gap:26px;flex-wrap:wrap;margin-bottom:18px}
+.stat b{display:block;font-family:var(--mono);font-size:21px;color:var(--scr-amber);
   font-weight:600;line-height:1.3}
-.stat span{color:var(--dim);font-size:11.5px}
-.ribbon{margin-top:6px}
-.ribbon .bar{position:relative;height:34px;border-bottom:1px solid var(--rule);margin-bottom:4px}
-.ribbon .tick{position:absolute;bottom:0;width:1px;height:6px;background:var(--rule)}
-.ribbon .pt{position:absolute;bottom:8px;width:7px;height:7px;border-radius:50%;
-  background:var(--amber);transform:translateX(-50%);opacity:.85}
-.ribbon .lab{position:relative;height:14px;
-  font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--dim)}
+.stat b u{font-family:var(--sans);font-size:14px;text-decoration:none;margin-left:1px}
+.stat span{color:var(--scr-dim);font-size:12px}
+.topdir{font-size:13.5px;color:var(--scr-dim);margin-bottom:16px}
+.topdir b{color:var(--scr-amber);font-weight:600}
+.ribbon .bar{position:relative;height:36px;border-bottom:1px solid #3a352b;margin-bottom:5px}
+.ribbon .tick{position:absolute;bottom:0;width:1px;height:6px;background:#3a352b}
+.ribbon .pt{position:absolute;bottom:9px;width:8px;height:8px;border-radius:50%;
+  background:var(--scr-amber);transform:translateX(-50%);opacity:.9}
+.ribbon .lab{position:relative;height:14px;font-family:var(--mono);font-size:10px;color:var(--scr-dim)}
 .ribbon .lab span{position:absolute;transform:translateX(-50%)}
+.card .tags{font-size:12.5px;color:var(--scr-dim);margin-top:12px}
 
-/* ── 멤버 목록 ── */
-.mlist{margin-top:12px}
-.mitem{padding:11px 0;border-bottom:1px dotted var(--rule);font-size:13.5px}
-.mitem:last-child{border-bottom:none}
-.mitem b{font-size:14.5px}
-.mitem .w{color:var(--dim);font-size:12.5px;margin-top:2px}
-.empty{color:var(--dim);font-size:13px;padding:14px 0}
-h4.sec{font-family:"Noto Serif KR",serif;font-size:17px;font-weight:900;
-  margin:38px 0 0;padding-top:22px;border-top:2px solid var(--rule);
+/* ── 명단 ── */
+h4.sec{font-family:var(--serif);font-size:18px;font-weight:900;
+  margin:40px 0 0;padding-top:22px;border-top:2px solid var(--ink);
   display:flex;justify-content:space-between;align-items:center}
+.mlist{margin-top:10px}
+.mitem{padding:12px 0;border-bottom:1px solid var(--rule2)}
+.mitem:last-child{border-bottom:none}
+.mitem b{font-size:15px}
+.mitem .q{color:var(--red);font-size:13px}
+.mitem .w{color:var(--dim);font-size:13px;margin-top:2px}
+.mitem .w .n{font-family:var(--mono)}
+.mitem .tg{color:#948b7c;font-size:12.5px;margin-top:1px}
+.empty{color:var(--dim);font-size:13.5px;padding:14px 0}
+
+/* ── 푸터 ── */
+.foot{margin-top:44px;padding-top:18px;border-top:1px solid var(--rule);
+  font-size:12px;color:#8b8271;line-height:1.7}
+.foot p{margin:0 0 3px}
+.foot a{color:var(--dim)}
+.foot .en{font-family:var(--mono);font-size:10.5px;color:#a49a86}
+
+/* ── 포스터 ── */
+.po{flex:none;display:block;object-fit:cover;background:var(--inset);
+  border:1px solid var(--rule);border-radius:2px}
+.po.ph{display:flex;align-items:center;justify-content:center;
+  color:#a89e8a;font-size:8.5px;letter-spacing:.06em;font-family:var(--mono)}
+.po-s{width:26px;height:39px}
+.po-m{width:38px;height:57px}
+.po-l{width:54px;height:81px}
+.ritem{align-items:center}
+.ritem .ri-t{flex:1;min-width:0}
+.ritem .ri-t .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ritem .src{font-size:10.5px;color:#a49a86;border:1px solid var(--rule2);
+  border-radius:99px;padding:1px 7px;flex:none;margin-left:6px}
+.ritem .src.dict{color:var(--red);border-color:var(--red)}
+ol.picked li{align-items:center}
+.moodrow .tt{display:flex;align-items:center;gap:8px}
+.strip{display:flex;flex-wrap:wrap;gap:5px;margin:2px 0 16px}
+.strip .po{border-color:#3a352b;background:#241f18}
+.mitem .strip{margin:6px 0 3px}
+.mitem .strip .po{border-color:var(--rule2);background:var(--inset)}
+.tmdb-note{font-size:12.5px;color:var(--dim);margin-top:9px;
+  border-left:2px solid var(--rule);padding-left:10px;line-height:1.6}
+.tmdb-note b{color:var(--red)}
+.searching{font-size:12px;color:#a49a86;padding:8px 13px}
+
 @media(max-width:560px){
-  h1{font-size:29px} h1 .ed{font-size:17px}
-  .moodhead,.moodrow{grid-template-columns:1.25fr repeat(5,1fr)}
-  .moodhead{font-size:9px}
+  body{font-size:15px}
+  h1{font-size:30px} h1 .ed{font-size:16.5px}
+  .wrap{padding:0 16px 80px}
+  /* 좁은 화면에서는 제목을 잘라내지 않고 위로 올린다 */
+  .moodhead{grid-template-columns:repeat(5,1fr);font-size:9.5px}
+  .moodhead div:first-child{display:none}
+  .moodrow{display:block;padding:11px 0}
+  .moodrow .tt{font-size:14.5px;white-space:normal;overflow:visible;
+    padding:0 0 7px;font-weight:700}
   .shead .sum{display:none}
+  .stat{gap:18px}
 }
 </style>
 </head>
@@ -204,7 +260,8 @@ h4.sec{font-family:"Noto Serif KR",serif;font-size:17px;font-weight:900;
 <div class="wrap">
 
 <header>
-  <div class="slug">Taste DNA Map · Cinema Edition · 사전 <span id="dictN">—</span>편 내장</div>
+  <div class="slug"><span class="lat">TASTE DNA MAP · CINEMA EDITION</span>
+    &nbsp;·&nbsp; 사전 <span class="mono" id="dictN">—</span>편 내장</div>
   <h1>취향 유전자 지도<span class="ed">영화판 — 애독자 카드</span></h1>
   <p class="lede">인생 영화 열 편을 올리면 포스터가 좌표 위에 놓입니다.
     세로는 얼마나 알려진 작품인가, 가로는 보고 난 뒤 마음이 어땠나.
@@ -309,6 +366,12 @@ h4.sec{font-family:"Noto Serif KR",serif;font-size:17px;font-weight:900;
 <h4 class="sec">클럽 명단 <button class="ghost" id="reload">새로고침</button></h4>
 <div class="mlist" id="mlist"><div class="empty">불러오는 중…</div></div>
 
+<footer class="foot">
+  <p>영화 정보와 포스터는 <a href="https://www.themoviedb.org" target="_blank" rel="noopener">TMDB</a>에서 가져왔습니다.
+    이 서비스는 TMDB의 승인을 받거나 인증된 것이 아닙니다.</p>
+  <p class="en">This product uses the TMDB API but is not endorsed or certified by TMDB.</p>
+</footer>
+
 </div>
 
 <script>
@@ -321,12 +384,64 @@ const ZONE = ["마음이 데워짐","조금 따뜻함","그 사이","조금 아�
 const MAXG = 3, MAXM = 2, GOAL = 10, MIN = 5;
 
 let DICT = [], BY = {};
-const draft = { tags: [], works: [], name: "", decl: "" };  // works: {t, mood, seeded}
+let POSTERS = {};        // 제목 → 포스터 주소
+let TMDB_ON = null;      // null=확인 전, true/false
+const draft = { tags: [], works: [], name: "", decl: "" };  // works: {t, mood, seeded, tmdb}
 let step = 1;
 
 const $ = s => document.querySelector(s);
 const norm = s => String(s||"").toLowerCase().replace(/\s/g,"");
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ───────── 포스터 ───────── */
+function poster(title, cls){
+  const u = POSTERS[title];
+  if(u) return `<img class="po ${cls}" src="${esc(u)}" alt="" loading="lazy">`;
+  return `<span class="po ph ${cls}" data-pt="${esc(title)}">no<br>art</span>`;
+}
+// 포스터가 뒤늦게 도착하면, 화면을 통째로 다시 그리지 않고 빈 칸만 갈아 끼운다
+function patchPosters(){
+  document.querySelectorAll('.po.ph[data-pt]').forEach(el=>{
+    const u = POSTERS[el.dataset.pt];
+    if(!u) return;
+    const img = document.createElement('img');
+    img.className = el.className.replace(' ph','');
+    img.src = u; img.loading = 'lazy'; img.alt = '';
+    el.replaceWith(img);
+  });
+}
+// 포스터를 아직 모르는 제목들을 한꺼번에 물어본다
+let posterQueue = [], posterTimer;
+function needPoster(title, year){
+  if(!title || POSTERS[title] !== undefined) return;
+  if(TMDB_ON === false) return;
+  if(posterQueue.some(x=>x.t===title)) return;
+  posterQueue.push({t:title, y:year||''});
+  clearTimeout(posterTimer);
+  posterTimer = setTimeout(flushPosters, 250);
+}
+async function flushPosters(){
+  const batch = posterQueue.splice(0, 12);
+  if(!batch.length) return;
+  try{
+    const r = await fetch('/api/tmdb', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({titles: batch})
+    });
+    const j = await r.json();
+    if(j.ok){ Object.assign(POSTERS, j.posters||{}); TMDB_ON = true; patchPosters(); }
+    else if(j.reason==='no_key'){ TMDB_ON = false; posterQueue = []; showTmdbNote(); }
+  }catch{ /* 포스터는 없어도 그만 */ }
+  if(posterQueue.length) setTimeout(flushPosters, 200);
+}
+function showTmdbNote(){
+  if($('#tmdbNote')) return;
+  const el = document.createElement('div');
+  el.id = 'tmdbNote'; el.className = 'tmdb-note';
+  el.innerHTML = '지금은 <b>내장 사전 338편</b> 안에서만 검색됩니다. '
+    + 'Vercel에 <b>TMDB_KEY</b>를 넣으면 전 세계 영화 검색과 포스터가 켜집니다. (README 참고)';
+  $('#q').parentNode.insertBefore(el, $('#results').nextSibling);
+}
 
 /* ───────── 초기 로드 ───────── */
 fetch('/movie_dict.json').then(r=>r.json()).then(d=>{
@@ -335,6 +450,11 @@ fetch('/movie_dict.json').then(r=>r.json()).then(d=>{
   $('#dictN').textContent = d.n;
   reroll();
 }).catch(()=>{ $('#dictN').textContent = '로드 실패'; });
+
+fetch('/api/tmdb?diag=1').then(r=>r.json()).then(j=>{
+  TMDB_ON = !!j.열쇠_꽂힘;
+  if(!TMDB_ON) showTmdbNote();
+}).catch(()=>{});
 
 /* ───────── 단계 이동 ───────── */
 function go(n){ step = n; render();
@@ -371,7 +491,7 @@ function render(){
     r.classList.toggle('done', ok && n!==step);
     r.querySelector('.st').textContent = ok ? '완료' : (n===step ? '진행 중' : '대기');
   });
-  $('#briefPct').textContent = `${done} / 4 완료 · 약 5분`;
+  $('#briefPct').innerHTML = `<em>${done}/4</em> 완료 · 약 5분`;
 
   // 요약
   const g = draft.tags.filter(t=>GENRES.includes(t));
@@ -419,38 +539,85 @@ document.addEventListener('click', e=>{
   render();
 });
 
-/* ── 검색 ── */
-let sTimer;
+/* ── 검색 : 내장 사전 + TMDB 를 합쳐서 보여준다 ── */
+let sTimer, sSeq = 0;
 $('#q').addEventListener('input', e=>{
   clearTimeout(sTimer);
   const raw = e.target.value.trim(), q = norm(raw);
   const box = $('#results');
   if(!q){ box.className=''; box.innerHTML=''; return; }
-  sTimer = setTimeout(()=>{
-    const hits = DICT.filter(r=>norm(r[0]).includes(q)||norm(r[1]).includes(q)).slice(0,14);
-    const has = t => draft.works.some(w=>w.t===t);
-    let html = hits.map(r=>
-      `<div class="ritem${has(r[0])?' dup':''}" data-t="${esc(r[0])}">
-         <span>${esc(r[0])}</span>
-         <span class="meta">${esc(r[4])} · ${r[3]}</span></div>`).join('');
-    if(!hits.length){
+  sTimer = setTimeout(()=>doSearch(raw, q, ++sSeq), 180);
+});
+
+function rowHTML(o){
+  // o: {t, meta, src, dict}
+  const dup = draft.works.some(w=>w.t===o.t);
+  return `<div class="ritem${dup?' dup':''}" data-t="${esc(o.t)}"${o.tmdb?` data-id="${o.tmdb}"`:''}${o.poster?` data-p="${esc(o.poster)}"`:''}>
+    ${poster(o.t,'po-m')}
+    <span class="ri-t"><span class="nm">${esc(o.t)}</span>
+      <span class="meta">${o.meta}</span></span>
+    <span class="src${o.dict?' dict':''}">${o.dict?'사전':'TMDB'}</span></div>`;
+}
+
+async function doSearch(raw, q, seq){
+  const box = $('#results');
+  // 1) 내장 사전 — 즉시
+  const local = DICT.filter(r=>norm(r[0]).includes(q)||norm(r[1]).includes(q)).slice(0,10)
+    .map(r=>({ t:r[0], dict:true, meta:`${esc(r[4])} · <span class="y">${r[3]}</span>` , year:r[3] }));
+  local.forEach(o=>needPoster(o.t, o.year));
+
+  const draw = (rows, loading) => {
+    if(seq !== sSeq) return;
+    let html = rows.map(rowHTML).join('');
+    if(loading) html += `<div class="searching">TMDB에서 더 찾는 중…</div>`;
+    if(!rows.length && !loading){
       html = `<div class="ritem" data-new="${esc(raw)}">
-        <span>“${esc(raw)}” 직접 추가</span><span class="meta">사전에 없음</span></div>`;
+        <span class="ri-t"><span class="nm">“${esc(raw)}” 직접 추가</span>
+        <span class="meta">어디에도 없는 작품</span></span></div>`;
     }
     box.innerHTML = html; box.className='show';
-  }, 120);
-});
+  };
+  draw(local, TMDB_ON !== false);
+  if(TMDB_ON === false) return;
+
+  // 2) TMDB — 뒤이어 도착
+  try{
+    const r = await fetch('/api/tmdb?q=' + encodeURIComponent(raw));
+    const j = await r.json();
+    if(seq !== sSeq) return;
+    if(!j.ok){ if(j.reason==='no_key'){ TMDB_ON=false; showTmdbNote(); } draw(local,false); return; }
+    TMDB_ON = true;
+
+    const seen = new Set(local.map(o=>norm(o.t)));
+    const wide = [];
+    (j.results||[]).forEach(m=>{
+      if(m.poster) POSTERS[m.title] = m.poster;
+      // 사전에 이미 있는 작품이면 포스터만 채우고 목록에는 중복 표시하지 않는다
+      const dictHit = DICT.find(r=>norm(r[0])===norm(m.title)||norm(r[1])===norm(m.orig));
+      if(dictHit){ if(m.poster) POSTERS[dictHit[0]] = m.poster; return; }
+      if(seen.has(norm(m.title))) return;
+      seen.add(norm(m.title));
+      wide.push({ t:m.title, tmdb:m.tmdb, poster:m.poster, year:m.year,
+        meta:`${m.orig && m.orig!==m.title ? esc(m.orig)+' · ' : ''}<span class="y">${esc(m.year)}</span>` });
+    });
+    draw(local.concat(wide.slice(0, 12)), false);
+  }catch{ draw(local, false); }
+}
+
 $('#results').addEventListener('click', e=>{
   const it = e.target.closest('.ritem'); if(!it || it.classList.contains('dup')) return;
-  add(it.dataset.t || it.dataset.new, !it.dataset.t);
+  if(it.dataset.p) POSTERS[it.dataset.t] = it.dataset.p;
+  add(it.dataset.t || it.dataset.new, !it.dataset.t && !it.dataset.id, it.dataset.id);
   $('#q').value=''; $('#results').className=''; $('#results').innerHTML='';
 });
 
-function add(title, isNew){
+function add(title, isNew, tmdbId){
   if(!title || draft.works.length>=GOAL) return;
   if(draft.works.some(w=>w.t===title)) return;
   const r = BY[title];
-  draft.works.push({ t:title, mood: r ? r[6] : 3, seeded:true, custom: !!isNew });
+  draft.works.push({ t:title, mood: r ? r[6] : 3, seeded:true,
+    custom: !!isNew, tmdb: tmdbId ? +tmdbId : null });
+  needPoster(title, r ? r[3] : '');
   render();
 }
 
@@ -477,9 +644,9 @@ function renderPicked(){
     `<div class="slot${i<draft.works.length?' f':''}"></div>`).join('');
   $('#picked').innerHTML = draft.works.map(w=>{
     const r = BY[w.t];
-    return `<li><span class="t">${esc(w.t)}</span>
-      <span class="m">${r? esc(r[4])+' · '+r[3] : '직접 입력'}</span>
-      <button data-del="${esc(w.t)}">✕</button></li>`;
+    return `<li>${poster(w.t,'po-s')}<span class="t">${esc(w.t)}</span>
+      <span class="m">${r? esc(r[4])+' · <span class="y">'+r[3]+'</span>' : (w.tmdb?'TMDB':'직접 입력')}</span>
+      <button data-del="${esc(w.t)}" title="빼기">✕</button></li>`;
   }).join('');
 }
 $('#picked').addEventListener('click', e=>{
@@ -492,13 +659,13 @@ $('#picked').addEventListener('click', e=>{
 function renderMood(){
   if(!draft.works.length){ $('#moodRows').innerHTML='<div class="empty">먼저 2단계에서 영화를 고르세요.</div>';
     $('#moodNote').textContent=''; return; }
-  $('#moodRows').innerHTML = draft.works.map(w=>
-    `<div class="moodrow"><div class="tt">${esc(w.t)}</div>` +
+  $('#moodRows').innerHTML = draft.works.map((w,ri)=>
+    `<div class="moodrow"><div class="tt">${poster(w.t,'po-s')}<span>${esc(w.t)}</span></div><div class="dots">` +
     [1,2,3,4,5].map(v=>{
       const sel = w.mood===v;
       const cls = sel ? (w.seeded?'dot seed':'dot on') : 'dot';
-      return `<button class="${cls}" data-mt="${esc(w.t)}" data-mv="${v}" title="${ZONE[v-1]}"></button>`;
-    }).join('') + `</div>`).join('');
+      return `<button class="${cls}" data-mt="${esc(w.t)}" data-mv="${v}" aria-label="${ZONE[v-1]}" title="${ZONE[v-1]}"></button>`;
+    }).join('') + `</div></div>`).join('');
   const moved = draft.works.filter(w=>!w.seeded).length;
   $('#moodNote').textContent = `${draft.works.length}편 중 ${moved}편을 직접 배치했습니다. 안 옮겨도 제출됩니다.`;
 }
@@ -521,12 +688,13 @@ $('#submitBtn').onclick = async ()=>{
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
         name: draft.name.trim(),
-        works: draft.works.map(w=>({t:w.t, mood:w.mood})),
+        works: draft.works.map(w=>({t:w.t, mood:w.mood, tmdb:w.tmdb, poster:POSTERS[w.t]||''})),
         tags: draft.tags, decl: draft.decl.trim()
       })
     });
     const j = await r.json().catch(()=>({error:'서버 응답을 읽지 못했습니다'}));
     if(!r.ok) throw new Error(j.error || ('HTTP '+r.status));
+    Object.assign(POSTERS, j.posters||{});
     st.className='ok'; st.textContent='제출 완료 — 아래에 카드가 나왔습니다.';
     showCard();
     renderMembers(j.members || []);
@@ -556,21 +724,19 @@ function showCard(){
   <div class="card">
     <h3>${esc(draft.name)}</h3>
     ${draft.decl ? `<p class="decl">“${esc(draft.decl)}”</p>` : ''}
+    <div class="strip">${draft.works.map(w=>poster(w.t,'po-l')).join('')}</div>
     <div class="stat">
       <div><b>${draft.works.length}</b><span>등록한 영화</span></div>
       <div><b>${med||'—'}</b><span>취향 중앙값</span></div>
-      <div><b>${span}년</b><span>연대 폭</span></div>
+      <div><b>${span}<u>년</u></b><span>연대 폭</span></div>
       <div><b>${deep}</b><span>수면 아래 작품</span></div>
     </div>
-    ${topDir ? `<div style="font-size:13.5px;color:var(--dim);margin-bottom:14px">
-      가장 많이 고른 감독 — <span style="color:var(--amber)">${esc(topDir[0])} ${topDir[1]}편</span></div>` : ''}
+    ${topDir ? `<div class="topdir">가장 많이 고른 감독 — <b>${esc(topDir[0])} ${topDir[1]}편</b></div>` : ''}
     <div class="ribbon">
       <div class="bar">${ticks}${pts}</div>
       <div class="lab">${labs}</div>
     </div>
-    <div style="font-size:12.5px;color:var(--dim);margin-top:10px">
-      ${draft.tags.join(' · ')}
-    </div>
+    <div class="tags">${esc(draft.tags.join(' · '))}</div>
   </div>`;
 }
 
@@ -581,6 +747,7 @@ async function loadMembers(){
     const r = await fetch('/api/club');
     const j = await r.json();
     if(!r.ok) throw new Error(j.error || ('HTTP '+r.status));
+    Object.assign(POSTERS, j.posters||{});
     renderMembers(j.members || []);
   }catch(e){
     box.innerHTML = `<div class="empty" style="color:var(--red)">불러오기 실패: ${esc(e.message)}</div>`;
@@ -592,9 +759,10 @@ function renderMembers(ms){
   box.innerHTML = ms.slice().reverse().map(m=>{
     const ws = (m.works||[]).map(w=> typeof w==='string' ? w : w.t);
     return `<div class="mitem"><b>${esc(m.name||m.id)}</b>
-      ${m.decl?` <span style="color:var(--amber);font-size:12.5px">“${esc(m.decl)}”</span>`:''}
-      <div class="w">${ws.length}편 — ${esc(ws.slice(0,4).join(' / '))}${ws.length>4?' …':''}</div>
-      ${(m.tags&&m.tags.length)?`<div class="w" style="color:#6b6459">${esc(m.tags.join(' · '))}</div>`:''}
+      ${m.decl?` <span class="q">“${esc(m.decl)}”</span>`:''}
+      <div class="strip">${ws.map(t=>poster(t,'po-m')).join('')}</div>
+      <div class="w"><span class="n">${ws.length}</span>편 — ${esc(ws.slice(0,4).join(' / '))}${ws.length>4?' …':''}</div>
+      ${(m.tags&&m.tags.length)?`<div class="tg">${esc(m.tags.join(' · '))}</div>`:''}
     </div>`;
   }).join('');
 }
