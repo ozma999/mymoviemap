@@ -6,352 +6,426 @@
 <title>취향 유전자 지도 — 영화판 · 애독자 카드</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@400;700;900&family=Noto+Serif+KR:wght@400;600;900&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@400;700;900&family=Noto+Serif+KR:wght@400;600;900&family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  /* 지면 — 따뜻한 종이 (만화판과 같은 계열, 톤만 다름) */
-  --paper:#e9e4d8;
-  --panel:#f7f4ec;
-  --inset:#efeadd;
-  --rule:#cbc3b1;
-  --rule2:#ded6c5;
-  --ink:#1e1a16;
-  --dim:#6d6558;
-  --red:#b3382c;        /* 시네마 레드 — 주 강조 */
-  --gold:#8a6512;       /* 밝은 지면에서 읽히는 금색 */
+  --paper:#f2eee3; --panel:#fbf8f0; --inset:#ece6d8;
+  --ink:#141210; --dim:#7a7266; --rule:#cdc5b4; --rule2:#e0d9c9;
+  --verm:#e8452c;            /* 주 강조 */
+  --gold:#a8791f;            /* 밝은 지면용 골드 */
+  --dark:#17140f;            /* 입장권 */
+  --dgold:#e8c07a;           /* 어두운 면 위 골드 */
+  --dink:#f0eadd; --ddim:#9a9080;
   --ok:#4a7c3f;
-  /* 결과 카드 = '스크린'. 여기만 어둡게 */
-  --scr:#17140f;
-  --scr-ink:#f2ece0;
-  --scr-dim:#9a917f;
-  --scr-amber:#e6b552;
-  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
-  --sans:"Gothic A1","Malgun Gothic","맑은 고딕",-apple-system,BlinkMacSystemFont,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --sans:"Gothic A1","Malgun Gothic","맑은 고딕",-apple-system,sans-serif;
   --serif:"Noto Serif KR","Nanum Myeongjo",Georgia,serif;
 }
-*{box-sizing:border-box}
-html,body{margin:0;padding:0}
-body{
-  background:var(--paper);color:var(--ink);
-  font-family:var(--sans);font-size:15.5px;line-height:1.72;
-  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
-}
-/* 종이 결 */
-body::before{
-  content:"";position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.05;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-.wrap{max-width:700px;margin:0 auto;padding:0 20px 100px;position:relative;z-index:2}
-/* 숫자·로마자 전용 — 한글에는 절대 쓰지 않는다 */
+*{box-sizing:border-box} html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);
+  font-size:15.5px;line-height:1.72;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E")}
+.wrap{max-width:760px;margin:0 auto;padding:0 20px 100px;position:relative;z-index:2}
 .mono{font-family:var(--mono);font-feature-settings:"tnum" 1}
 
-/* ── 제호 ── */
-header{padding:44px 0 22px;border-bottom:2px solid var(--ink)}
-.slug{font-size:11px;color:var(--dim);margin-bottom:16px}
-.slug .lat{font-family:var(--mono);letter-spacing:.18em;color:var(--red);font-weight:600}
-h1{font-family:var(--serif);font-weight:900;font-size:39px;line-height:1.16;
-  margin:0 0 10px;letter-spacing:-.02em}
-h1 .ed{display:block;font-size:19px;color:var(--red);margin-top:8px;letter-spacing:0;font-weight:600}
-.lede{font-family:var(--serif);font-size:15.5px;line-height:1.92;margin:18px 0 0;max-width:610px}
-.byline{font-size:12.5px;color:var(--dim);margin-top:14px}
+/* ── 제호 : 색면 ── */
+.hero{background:var(--verm);color:#fdf6ee;margin:0 -20px;padding:36px 20px 26px;
+  position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-64px;top:-66px;width:214px;height:214px;
+  border:24px solid rgba(255,255,255,.13);border-radius:50%}
+.hero::before{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;
+  background:linear-gradient(90deg,var(--dgold),rgba(232,192,122,.15))}
+.hero .kick{font-family:var(--mono);font-size:10.5px;letter-spacing:.26em;
+  opacity:.9;margin-bottom:13px;position:relative;z-index:2}
+.hero h1{font-family:var(--serif);font-weight:900;font-size:54px;line-height:1;margin:0;
+  letter-spacing:-.035em;position:relative;z-index:2}
+.hero h1 span{display:block;font-size:21px;font-weight:600;margin-top:11px;letter-spacing:0;
+  opacity:.94}
+.hero .meta{font-family:var(--mono);font-size:11px;margin-top:18px;opacity:.82;
+  letter-spacing:.04em;position:relative;z-index:2}
 
-/* ── 미션 브리핑 ── */
-.brief{border:1px solid var(--rule);background:var(--panel);border-radius:2px;
-  padding:20px 22px;margin:28px 0}
-.brief-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px;
-  border-bottom:1px solid var(--ink);padding-bottom:11px;margin-bottom:4px}
-.brief-h b{font-family:var(--serif);font-size:17px;font-weight:900}
-.brief-h span{font-size:12px;color:var(--dim);flex:none}
-.brief-h span em{font-family:var(--mono);font-style:normal;color:var(--red);font-weight:600}
-.mrow{display:flex;gap:13px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--rule2)}
-.mrow:last-child{border-bottom:none}
-.mrow .n{font-family:var(--mono);font-size:12px;width:22px;flex:none;color:#a49a86;padding-top:3px}
-.mrow .tx{flex:1}
-.mrow .tt{font-weight:700;font-size:15px}
+/* ── 탭 ── */
+.tabs{display:flex;gap:0;border-bottom:3px solid var(--ink);margin-top:0}
+.tabs button{flex:1;background:none;border:none;padding:14px 8px;cursor:pointer;
+  font-family:var(--serif);font-weight:900;font-size:17px;color:var(--dim);
+  border-bottom:3px solid transparent;margin-bottom:-3px}
+.tabs button.on{color:var(--ink);border-bottom-color:var(--verm)}
+.tabs button .n{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--gold);
+  display:block;letter-spacing:.1em}
+.view{display:none} .view.on{display:block}
+
+.lede{font-family:var(--serif);font-size:16.5px;line-height:1.95;margin:28px 0 0;max-width:620px}
+
+/* ── 브리핑 : 큰 아웃라인 숫자 ── */
+.brief{margin:34px 0 0;border-top:3px solid var(--ink)}
+.bhead{display:flex;justify-content:space-between;align-items:baseline;padding:12px 0 6px}
+.bhead b{font-family:var(--serif);font-size:17px;font-weight:900}
+.bhead span{font-size:12.5px;color:var(--dim)}
+.bhead span em{font-family:var(--mono);font-style:normal;color:var(--verm);font-weight:700}
+.mrow{display:flex;gap:20px;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--rule)}
+.mrow .no{font-family:var(--serif);font-weight:900;font-size:48px;line-height:.78;
+  color:transparent;-webkit-text-stroke:2px #bcb3a1;width:68px;flex:none;padding-top:2px}
+.mrow.now .no{-webkit-text-stroke-color:var(--verm)}
+.mrow.done .no{-webkit-text-stroke-color:var(--gold)}
+.mrow .tx{flex:1;min-width:0}
+.mrow .tt{font-weight:900;font-size:16px}
+.mrow.now .tt{color:var(--verm)}
+.mrow.done .tt{color:var(--dim);font-weight:700}
 .mrow .dd{font-size:13px;color:var(--dim);margin-top:1px;line-height:1.6}
-.mrow .st{font-size:12px;color:#9a9182;flex:none;padding-top:3px}
-.mrow.now .n{color:var(--red)}
-.mrow.now .tt{color:var(--red)}
-.mrow.now .st{color:var(--red);font-weight:700}
-.mrow.done .st{color:var(--ok)}
-.mrow.done .tt{color:var(--dim);font-weight:400}
+.mrow .st{font-size:11.5px;color:#9a9182;flex:none;padding-top:6px;font-weight:700}
+.mrow.now .st{color:var(--verm)} .mrow.done .st{color:var(--gold)}
 
-/* ── 단계 섹션 ── */
-section.step{border:1px solid var(--rule);border-radius:2px;margin-bottom:13px;
-  background:var(--panel)}
-section.step.now{border:2px solid var(--ink)}
-.shead{display:flex;align-items:center;gap:12px;padding:15px 19px}
-section.step.now .shead{padding:14px 18px}
-.shead .sn{font-family:var(--mono);font-size:11.5px;width:23px;height:23px;flex:none;
-  border:1px solid var(--rule);border-radius:50%;color:#9a9182;
-  display:flex;align-items:center;justify-content:center}
-section.step.now .shead .sn{background:var(--ink);border-color:var(--ink);color:var(--panel);font-weight:600}
-.shead h2{font-family:var(--serif);font-size:18px;font-weight:900;margin:0;flex:1;letter-spacing:-.01em}
-.shead .sum{font-size:12.5px;color:var(--dim);flex:none;max-width:44%;text-align:right;
+/* ── 단계 패널 ── */
+section.step{border:2px solid var(--rule);margin-bottom:12px;background:var(--panel)}
+section.step.now{border:3px solid var(--ink)}
+.shead{display:flex;align-items:center;gap:12px;padding:14px 18px}
+.shead .sn{font-family:var(--mono);font-size:12px;width:25px;height:25px;flex:none;
+  border:2px solid var(--rule);color:#9a9182;display:flex;align-items:center;
+  justify-content:center;font-weight:700}
+section.step.now .shead .sn{background:var(--verm);border-color:var(--verm);color:#fff}
+.shead h2{font-family:var(--serif);font-size:19px;font-weight:900;margin:0;flex:1}
+.shead .sum{font-size:12.5px;color:var(--dim);flex:none;max-width:40%;text-align:right;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.shead button.edit{background:none;border:1px solid var(--rule);color:var(--dim);
-  border-radius:2px;padding:4px 11px;font-size:12.5px;cursor:pointer;flex:none;font-family:var(--sans)}
-.shead button.edit:hover{border-color:var(--ink);color:var(--ink)}
-.sbody{padding:16px 19px 20px;border-top:1px solid var(--rule2)}
+.shead button.edit{background:none;border:2px solid var(--ink);color:var(--ink);
+  padding:4px 12px;font-size:12.5px;cursor:pointer;flex:none;font-family:var(--sans);font-weight:700}
+.shead button.edit:hover{background:var(--ink);color:var(--paper)}
+.sbody{padding:16px 18px 20px;border-top:2px solid var(--rule2)}
 section.step:not(.open) .sbody{display:none}
 .why{font-size:13.5px;color:var(--dim);margin:0 0 15px;line-height:1.7;
-  border-left:2px solid var(--red);padding-left:12px}
+  border-left:3px solid var(--verm);padding-left:12px}
 
-/* ── 태그 칩 ── */
+/* ── 칩 ── */
 .chips{display:flex;flex-wrap:wrap;gap:7px;margin:8px 0 4px}
-.chip{border:1px solid var(--rule);background:#fff;color:var(--ink);border-radius:99px;
-  padding:6px 14px;font-size:13.5px;cursor:pointer;font-family:var(--sans);transition:.12s}
+.chip{border:2px solid var(--rule);background:#fff;color:var(--ink);
+  padding:6px 13px;font-size:13.5px;cursor:pointer;font-family:var(--sans);font-weight:700}
 .chip:hover{border-color:var(--ink)}
-.chip.on{background:var(--red);border-color:var(--red);color:#fff;font-weight:700}
-.chip:disabled{opacity:.36;cursor:not-allowed;background:transparent}
-.grouphead{font-size:12.5px;color:var(--dim);margin:17px 0 2px;
-  display:flex;justify-content:space-between;align-items:baseline}
-.grouphead .cnt{font-family:var(--mono);font-size:12px;color:var(--red);font-weight:600}
+.chip.on{background:var(--verm);border-color:var(--verm);color:#fff}
+.chip:disabled{opacity:.34;cursor:not-allowed;background:transparent;font-weight:400}
+.grouphead{font-size:12.5px;color:var(--dim);margin:17px 0 2px;display:flex;
+  justify-content:space-between;align-items:baseline;font-weight:700}
+.grouphead .cnt{font-family:var(--mono);font-size:12px;color:var(--verm);font-weight:700}
 
-/* ── 검색 ── */
-input[type=text]{width:100%;padding:11px 13px;border-radius:2px;border:1px solid var(--rule);
+#moods{display:grid;grid-template-columns:repeat(auto-fit,minmax(252px,1fr));gap:9px 18px;margin:8px 0 4px}
+.pair{display:flex;align-items:center;gap:7px}
+.pair .vs{color:#b4aa97;font-size:13px;flex:none}
+.pair .chip{flex:1;text-align:center;padding:7px 6px}
+
+/* ── 입력 ── */
+input[type=text],textarea{width:100%;padding:11px 13px;border:2px solid var(--ink);
   background:#fff;color:var(--ink);font-size:15px;font-family:var(--sans)}
-input[type=text]:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 2px rgba(30,26,22,.08)}
-input[type=text]::placeholder{color:#a49a86}
-#results{margin-top:6px;max-height:236px;overflow-y:auto;border:1px solid var(--rule);
-  border-radius:2px;display:none;background:#fff}
+input[type=text]:focus,textarea:focus{outline:none;box-shadow:3px 3px 0 var(--verm)}
+input::placeholder,textarea::placeholder{color:#a89e8a}
+#results{margin-top:6px;max-height:250px;overflow-y:auto;border:2px solid var(--ink);
+  border-top:none;display:none;background:#fff}
 #results.show{display:block}
-.ritem{padding:9px 13px;cursor:pointer;display:flex;justify-content:space-between;
-  gap:10px;border-bottom:1px solid var(--rule2);font-size:14.5px;align-items:baseline}
+.ritem{padding:8px 12px;cursor:pointer;display:flex;gap:11px;align-items:center;
+  border-bottom:1px solid var(--rule2);font-size:14.5px}
 .ritem:last-child{border-bottom:none}
 .ritem:hover{background:var(--inset)}
-.ritem .meta{font-size:12.5px;color:var(--dim);flex:none}
-.ritem .meta .y{font-family:var(--mono)}
+.ritem .ri-t{flex:1;min-width:0}
+.ritem .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}
+.ritem .meta{font-size:12.5px;color:var(--dim)} .ritem .y{font-family:var(--mono)}
 .ritem.dup{opacity:.4;cursor:not-allowed}
+.ritem .src{font-size:10px;border:1px solid var(--rule);padding:1px 6px;flex:none;
+  font-family:var(--mono);color:#a49a86}
+.ritem .src.dict{color:var(--verm);border-color:var(--verm)}
 .hint{font-size:13px;color:var(--dim);margin-top:11px}
 .sugg{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
 .sugg button{background:#fff;border:1px solid var(--rule);color:var(--dim);
-  border-radius:2px;padding:5px 11px;font-size:13px;cursor:pointer;font-family:var(--sans)}
-.sugg button:hover{color:var(--red);border-color:var(--red)}
-
-/* ── 고른 목록 ── */
-ol.picked{list-style:none;padding:0;margin:14px 0 0;counter-reset:p}
-ol.picked li{counter-increment:p;display:flex;align-items:baseline;gap:11px;
-  padding:9px 0;border-bottom:1px solid var(--rule2)}
-ol.picked li::before{content:counter(p,decimal-leading-zero);
-  font-family:var(--mono);font-size:11.5px;color:#a49a86;width:22px;flex:none}
-ol.picked .t{flex:1;font-size:15px}
-ol.picked .m{font-size:12.5px;color:var(--dim);flex:none}
-ol.picked .m .y{font-family:var(--mono)}
-ol.picked button{background:none;border:none;color:var(--red);cursor:pointer;
-  font-size:14px;flex:none;padding:0 2px;line-height:1}
-.slotline{display:flex;gap:4px;margin-top:15px}
-.slot{flex:1;height:4px;background:var(--rule2);border-radius:2px}
-.slot.f{background:var(--red)}
-
-/* ── 감정 배치 ── */
-.moodhead{display:grid;grid-template-columns:1.6fr repeat(5,1fr);gap:5px;
-  font-size:11px;color:var(--dim);text-align:center;line-height:1.35;
-  padding-bottom:9px;border-bottom:1px solid var(--ink)}
-.moodhead div:first-child{text-align:left}
-.moodrow{display:grid;grid-template-columns:1.6fr 5fr;gap:5px;align-items:center;
-  padding:7px 0;border-bottom:1px solid var(--rule2)}
-.moodrow .tt{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-right:6px}
-.moodrow .dots{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
-.moodrow .dots .cap{display:none}
-.dot{height:28px;border:1px solid var(--rule);border-radius:2px;cursor:pointer;
-  background:#fff;display:flex;align-items:center;justify-content:center;padding:0}
-.dot:hover{border-color:var(--ink)}
-.dot.on{background:var(--red);border-color:var(--red)}
-.dot.on::after{content:"";width:7px;height:7px;border-radius:50%;background:#fff}
-.dot.seed{background:var(--inset);border-color:var(--rule)}
-.dot.seed::after{content:"";width:4px;height:4px;border-radius:50%;background:#a49a86}
-
-/* ── 제출 ── */
-.actions{margin-top:26px;padding-top:20px;border-top:2px solid var(--ink)}
-button.go{background:var(--ink);color:#fff;border:none;border-radius:2px;
-  padding:14px 28px;font-weight:900;cursor:pointer;font-size:15.5px;font-family:var(--sans)}
-button.go:hover:not(:disabled){background:var(--red)}
-button.go:disabled{background:var(--rule);color:#8b8271;cursor:not-allowed}
-button.ghost{background:none;border:1px solid var(--rule);color:var(--dim);border-radius:2px;
-  padding:5px 12px;font-size:12.5px;cursor:pointer;font-family:var(--sans)}
-button.ghost:hover{border-color:var(--red);color:var(--red)}
-.blocked{font-size:13px;color:var(--dim);margin-top:11px}
-#status{font-size:13.5px;margin-top:12px;white-space:pre-wrap;line-height:1.65}
-#status.err{color:var(--red)}
-#status.ok{color:var(--ok)}
-
-/* ── 결과 카드 = '스크린' (여기만 어둡다) ── */
-.card{background:var(--scr);color:var(--scr-ink);border-radius:2px;padding:26px 24px;margin-top:20px}
-.card h3{font-family:var(--serif);font-size:22px;font-weight:900;margin:0 0 6px;color:#fff}
-.card .decl{font-family:var(--serif);color:var(--scr-amber);font-size:15px;margin:0 0 18px}
-.stat{display:flex;gap:26px;flex-wrap:wrap;margin-bottom:18px}
-.stat b{display:block;font-family:var(--mono);font-size:21px;color:var(--scr-amber);
-  font-weight:600;line-height:1.3}
-.stat b u{font-family:var(--sans);font-size:14px;text-decoration:none;margin-left:1px}
-.stat span{color:var(--scr-dim);font-size:12px}
-.topdir{font-size:13.5px;color:var(--scr-dim);margin-bottom:16px}
-.topdir b{color:var(--scr-amber);font-weight:600}
-.ribbon .bar{position:relative;height:36px;border-bottom:1px solid #3a352b;margin-bottom:5px}
-.ribbon .tick{position:absolute;bottom:0;width:1px;height:6px;background:#3a352b}
-.ribbon .pt{position:absolute;bottom:9px;width:8px;height:8px;border-radius:50%;
-  background:var(--scr-amber);transform:translateX(-50%);opacity:.9}
-.ribbon .lab{position:relative;height:14px;font-family:var(--mono);font-size:10px;color:var(--scr-dim)}
-.ribbon .lab span{position:absolute;transform:translateX(-50%)}
-.card .tags{font-size:12.5px;color:var(--scr-dim);margin-top:12px}
-
-/* ── 명단 ── */
-h4.sec{font-family:var(--serif);font-size:18px;font-weight:900;
-  margin:40px 0 0;padding-top:22px;border-top:2px solid var(--ink);
-  display:flex;justify-content:space-between;align-items:center}
-.mlist{margin-top:10px}
-.mitem{padding:12px 0;border-bottom:1px solid var(--rule2)}
-.mitem:last-child{border-bottom:none}
-.mitem b{font-size:15px}
-.mitem .q{color:var(--red);font-size:13px}
-.mitem .w{color:var(--dim);font-size:13px;margin-top:2px}
-.mitem .w .n{font-family:var(--mono)}
-.mitem .tg{color:#948b7c;font-size:12.5px;margin-top:1px}
-.empty{color:var(--dim);font-size:13.5px;padding:14px 0}
-
-/* ── 푸터 ── */
-.foot{margin-top:44px;padding-top:18px;border-top:1px solid var(--rule);
-  font-size:12px;color:#8b8271;line-height:1.7}
-.foot p{margin:0 0 3px}
-.foot a{color:var(--dim)}
-.foot .en{font-family:var(--mono);font-size:10.5px;color:#a49a86}
+  padding:5px 11px;font-size:13px;cursor:pointer;font-family:var(--sans)}
+.sugg button:hover{color:var(--verm);border-color:var(--verm)}
 
 /* ── 포스터 ── */
 .po{flex:none;display:block;object-fit:cover;background:var(--inset);
-  border:1px solid var(--rule);border-radius:2px}
-.po.ph{display:flex;align-items:center;justify-content:center;
-  color:#a89e8a;font-size:8.5px;letter-spacing:.06em;font-family:var(--mono)}
-.po-s{width:26px;height:39px}
-.po-m{width:38px;height:57px}
-.po-l{width:54px;height:81px}
-.ritem{align-items:center}
-.ritem .ri-t{flex:1;min-width:0}
-.ritem .ri-t .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.ritem .src{font-size:10.5px;color:#a49a86;border:1px solid var(--rule2);
-  border-radius:99px;padding:1px 7px;flex:none;margin-left:6px}
-.ritem .src.dict{color:var(--red);border-color:var(--red)}
-ol.picked li{align-items:center}
-.moodrow .tt{display:flex;align-items:center;gap:8px}
-.strip{display:flex;flex-wrap:wrap;gap:5px;margin:2px 0 16px}
-.strip .po{border-color:#3a352b;background:#241f18}
-.mitem .strip{margin:6px 0 3px}
-.mitem .strip .po{border-color:var(--rule2);background:var(--inset)}
-.tmdb-note{font-size:12.5px;color:var(--dim);margin-top:9px;
-  border-left:2px solid var(--rule);padding-left:10px;line-height:1.6}
-.tmdb-note b{color:var(--red)}
-.searching{font-size:12px;color:#a49a86;padding:8px 13px}
+  border:2px solid var(--ink)}
+.po.ph{display:flex;align-items:center;justify-content:center;color:#a89e8a;
+  font-size:8.5px;font-family:var(--mono);border-style:dashed;border-color:#bcb3a1;text-align:center}
+.po-s{width:28px;height:42px;border-width:1px}
+.po-m{width:40px;height:60px;border-width:1px}
+.po-l{width:58px;height:87px}
 
-@media(max-width:560px){
-  body{font-size:15px}
-  h1{font-size:30px} h1 .ed{font-size:16.5px}
-  .wrap{padding:0 16px 80px}
-  /* 좁은 화면에서는 제목을 잘라내지 않고 위로 올린다 */
+/* ── 고른 목록 ── */
+.slotline{display:flex;gap:4px;margin-top:15px}
+.slot{flex:1;height:5px;background:var(--rule2)} .slot.f{background:var(--verm)}
+ol.picked{list-style:none;padding:0;margin:14px 0 0;counter-reset:p}
+ol.picked li{counter-increment:p;display:flex;align-items:center;gap:11px;
+  padding:8px 0;border-bottom:1px solid var(--rule2)}
+ol.picked li::before{content:counter(p,decimal-leading-zero);font-family:var(--mono);
+  font-size:11.5px;color:#a89e8a;width:22px;flex:none;font-weight:700}
+ol.picked .t{flex:1;font-size:15px;font-weight:700}
+ol.picked .m{font-size:12.5px;color:var(--dim);flex:none} ol.picked .m .y{font-family:var(--mono)}
+ol.picked button{background:none;border:none;color:var(--verm);cursor:pointer;
+  font-size:15px;flex:none;padding:0 2px;line-height:1;font-weight:700}
+
+/* ── 감정 배치 ── */
+.moodhead{display:grid;grid-template-columns:1.6fr repeat(5,1fr);gap:5px;font-size:11px;
+  color:var(--dim);text-align:center;line-height:1.35;padding-bottom:9px;
+  border-bottom:2px solid var(--ink);font-weight:700}
+.moodhead div:first-child{text-align:left}
+.moodrow{display:grid;grid-template-columns:1.6fr 5fr;gap:5px;align-items:center;
+  padding:7px 0;border-bottom:1px solid var(--rule2)}
+.moodrow .tt{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  display:flex;align-items:center;gap:8px;padding-right:6px}
+.moodrow .dots{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
+.dot{height:28px;border:2px solid var(--rule);cursor:pointer;background:#fff;
+  display:flex;align-items:center;justify-content:center;padding:0}
+.dot:hover{border-color:var(--ink)}
+.dot.on{background:var(--verm);border-color:var(--verm)}
+.dot.on::after{content:"";width:7px;height:7px;border-radius:50%;background:#fff}
+.dot.seed{background:var(--inset);border-color:var(--rule)}
+.dot.seed::after{content:"";width:4px;height:4px;border-radius:50%;background:#a89e8a}
+
+/* ── 제출 ── */
+.actions{margin-top:26px;padding-top:20px;border-top:3px solid var(--ink)}
+button.go{background:var(--ink);color:var(--paper);border:none;padding:14px 30px;
+  font-weight:900;cursor:pointer;font-size:16px;font-family:var(--sans);
+  box-shadow:5px 5px 0 var(--verm)}
+button.go:hover:not(:disabled){background:var(--verm);box-shadow:5px 5px 0 var(--ink)}
+button.go:disabled{background:var(--rule);color:#8b8271;cursor:not-allowed;box-shadow:none}
+.blocked{font-size:13px;color:var(--dim);margin-top:13px}
+#status{font-size:13.5px;margin-top:12px;white-space:pre-wrap;line-height:1.65;font-weight:700}
+#status.err{color:var(--verm)} #status.ok{color:var(--ok)}
+
+/* ══ 입장권 (결과 카드 · 클럽 카드) ══ */
+.ticket{display:flex;background:var(--dark);color:var(--dink);margin-top:22px;
+  box-shadow:7px 7px 0 var(--verm);position:relative}
+.ticket .stub{background:var(--verm);color:#fff;padding:20px 11px;writing-mode:vertical-rl;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.26em;display:flex;
+  align-items:center;font-weight:700;flex:none;border-right:2px dashed rgba(255,255,255,.35)}
+.ticket .tbody{padding:24px;flex:1;min-width:0}
+.ticket .nm{font-family:var(--serif);font-size:29px;font-weight:900;margin:0;color:#fff}
+.ticket .q{font-family:var(--serif);color:var(--dgold);font-size:15.5px;margin:6px 0 18px}
+.ticket .grid{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px}
+.ticket .kpi{display:flex;gap:28px;flex-wrap:wrap;padding-top:16px;
+  border-top:1px solid rgba(232,192,122,.28)}
+.ticket .kpi b{display:block;font-family:var(--mono);font-size:27px;color:var(--dgold);
+  font-weight:700;line-height:1.15}
+.ticket .kpi b u{font-family:var(--sans);font-size:14px;text-decoration:none}
+.ticket .kpi span{font-size:11.5px;color:var(--ddim)}
+.ticket .tags{font-size:12.5px;color:var(--ddim);margin-top:14px}
+.ticket .topdir{font-size:13.5px;color:var(--ddim);margin-bottom:14px}
+.ticket .topdir b{color:var(--dgold);font-weight:700}
+.ribbon .bar{position:relative;height:34px;border-bottom:1px solid rgba(232,192,122,.28);
+  margin-bottom:5px}
+.ribbon .tick{position:absolute;bottom:0;width:1px;height:6px;background:rgba(232,192,122,.35)}
+.ribbon .pt{position:absolute;bottom:9px;width:8px;height:8px;border-radius:50%;
+  background:var(--dgold);transform:translateX(-50%);opacity:.9}
+.ribbon .lab{position:relative;height:14px;font-family:var(--mono);font-size:10px;color:var(--ddim)}
+.ribbon .lab span{position:absolute;transform:translateX(-50%)}
+
+.again{margin-top:22px;padding-top:20px;border-top:2px dashed var(--rule)}
+.again p{font-size:13px;color:var(--dim);margin:11px 0 0;line-height:1.7}
+
+/* ══ 클럽 보기 · 포스터에 메모 ══ */
+.clubintro{font-family:var(--serif);font-size:16px;line-height:1.9;margin:26px 0 6px}
+.whoami{border:2px solid var(--ink);background:var(--panel);padding:13px 16px;margin:16px 0 0;
+  display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:13.5px}
+.whoami b{font-weight:900}
+.whoami input{flex:1;min-width:150px;padding:8px 11px;font-size:14px}
+.whoami button{background:var(--ink);color:var(--paper);border:none;padding:9px 16px;
+  font-weight:700;cursor:pointer;font-family:var(--sans);font-size:13.5px}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));
+  gap:16px 11px;margin-bottom:22px}
+.pcell{position:relative;cursor:pointer;line-height:1.35}
+.pcell .po{width:100%;height:auto;aspect-ratio:2/3;border-width:2px}
+.pcell .po.ph{font-size:9.5px}
+.pcell .ptitle{display:block;font-size:12px;color:var(--ddim);margin-top:6px;
+  line-height:1.42;word-break:keep-all}
+.pcell:hover .ptitle{color:var(--dink)}
+.pcell.sel .ptitle{color:var(--dgold);font-weight:700}
+.pcell .badge{position:absolute;top:-7px;right:-7px;z-index:2;background:var(--dgold);color:#241c0c;
+  font-family:var(--mono);font-size:10px;font-weight:700;min-width:19px;height:19px;
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  border:2px solid var(--dark);padding:0 3px}
+.pcell.sel .po{outline:3px solid var(--dgold);outline-offset:1px}
+.pcell .pshot{position:relative;display:block;line-height:0}
+.pcell .dogs{position:absolute;left:0;right:0;bottom:0;height:5px;display:flex;gap:1px}
+.pcell .dogs i{flex:1;background:var(--dgold);opacity:.85}
+.memo{background:#211c14;border:1px solid rgba(232,192,122,.3);margin:-12px 0 20px;
+  padding:17px 18px}
+.memo .mh{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;margin-bottom:12px;
+  padding-bottom:11px;border-bottom:1px solid rgba(232,192,122,.22)}
+.memo .mh b{font-family:var(--serif);font-size:18px;font-weight:900;color:#fff}
+.memo .mh .who{font-size:12.5px;color:var(--ddim)}
+.memo .mh .back{margin-left:auto;background:none;border:1px solid rgba(232,192,122,.45);
+  color:var(--dgold);padding:4px 11px;font-size:12px;cursor:pointer;font-family:var(--sans)}
+.memo .mh .back:hover{background:var(--dgold);color:#241c0c}
+.stamps{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px}
+.stamps button{background:none;border:1px solid rgba(240,234,221,.28);color:var(--ddim);
+  padding:5px 13px;font-size:13px;cursor:pointer;font-family:var(--sans)}
+.stamps button:hover{border-color:var(--dgold);color:var(--dgold)}
+.stamps button.on{background:var(--dgold);border-color:var(--dgold);color:#241c0c;font-weight:700}
+.stamps button .c{font-family:var(--mono);font-size:11px;margin-left:5px;opacity:.75}
+.mlist2{margin-bottom:14px}
+.mitem2{padding:9px 0;border-bottom:1px dotted rgba(240,234,221,.16);font-size:14px;
+  display:flex;gap:10px;align-items:flex-start}
+.mitem2:last-child{border-bottom:none}
+.mitem2 .by{color:var(--dgold);font-weight:700;flex:none;font-size:13.5px}
+.mitem2 .tx{flex:1;min-width:0;color:var(--dink);line-height:1.65}
+.mitem2 .del{background:none;border:none;color:#8a5a52;cursor:pointer;font-size:12px;flex:none}
+.mempty{color:var(--ddim);font-size:13px;padding:6px 0 12px}
+.mform{display:flex;gap:8px;align-items:flex-end}
+.mform textarea{flex:1;background:#161209;border:1px solid rgba(232,192,122,.35);
+  color:var(--dink);resize:vertical;min-height:44px;font-size:14px;padding:9px 11px}
+.mform textarea:focus{box-shadow:none;border-color:var(--dgold)}
+.mform button{background:var(--dgold);color:#241c0c;border:none;padding:12px 18px;
+  font-weight:900;cursor:pointer;font-family:var(--sans);font-size:14px;flex:none}
+.mform button:disabled{background:#4a4236;color:#8b8271;cursor:not-allowed}
+
+/* ── 작품 뒷면 ── */
+.back-wrap{position:fixed;inset:0;background:rgba(20,18,16,.82);z-index:50;
+  display:none;overflow-y:auto;padding:24px 16px}
+.back-wrap.on{display:block}
+.back-box{max-width:640px;margin:20px auto;background:var(--panel);
+  border:3px solid var(--ink);box-shadow:9px 9px 0 var(--verm)}
+.back-hd{background:var(--verm);color:#fff;padding:18px 22px;display:flex;
+  align-items:flex-start;gap:14px}
+.back-hd h3{font-family:var(--serif);font-size:25px;font-weight:900;margin:0;flex:1}
+.back-hd .sub{font-size:12.5px;opacity:.9;margin-top:3px}
+.back-hd button{background:none;border:2px solid rgba(255,255,255,.6);color:#fff;
+  width:30px;height:30px;cursor:pointer;font-size:15px;flex:none;line-height:1}
+.back-bd{padding:22px}
+.back-bd .who{font-size:14px;margin-bottom:16px}
+.back-bd .who b{color:var(--verm)}
+.back-bd h4{font-size:13px;color:var(--dim);margin:18px 0 8px;font-weight:700;
+  border-top:2px solid var(--rule);padding-top:14px}
+.bnote{padding:10px 0;border-bottom:1px dotted var(--rule);font-size:14px}
+.bnote .hd{font-size:12px;color:var(--dim);margin-bottom:3px}
+.bnote .hd b{color:var(--ink)}
+
+/* ── 명단 헤더 ── */
+h4.sec{font-family:var(--serif);font-size:19px;font-weight:900;margin:36px 0 0;
+  padding-top:20px;border-top:3px solid var(--ink);display:flex;
+  justify-content:space-between;align-items:center}
+button.ghost{background:none;border:2px solid var(--rule);color:var(--dim);padding:5px 12px;
+  font-size:12.5px;cursor:pointer;font-family:var(--sans);font-weight:700}
+button.ghost:hover{border-color:var(--verm);color:var(--verm)}
+.empty{color:var(--dim);font-size:13.5px;padding:18px 0}
+.tmdb-note{font-size:12.5px;color:var(--dim);margin-top:9px;border-left:3px solid var(--gold);
+  padding-left:11px;line-height:1.6}
+.tmdb-note b{color:var(--gold)}
+.searching{font-size:12px;color:#a89e8a;padding:8px 12px}
+.foot{margin-top:44px;padding-top:18px;border-top:2px solid var(--rule);
+  font-size:12px;color:#8b8271;line-height:1.7}
+.foot p{margin:0 0 3px} .foot a{color:var(--dim)}
+.foot .en{font-family:var(--mono);font-size:10.5px;color:#a89e8a}
+
+@media(max-width:600px){
+  .hero h1{font-size:36px} .hero h1 span{font-size:17px}
+  .wrap{padding:0 15px 80px} .hero{margin:0 -15px;padding:28px 15px 22px}
+  .mrow .no{font-size:36px;width:52px;-webkit-text-stroke-width:1.5px}
+  .mrow{gap:14px}
+  .shead .sum{display:none}
   .moodhead{grid-template-columns:repeat(5,1fr);font-size:9.5px}
   .moodhead div:first-child{display:none}
   .moodrow{display:block;padding:11px 0}
-  .moodrow .tt{font-size:14.5px;white-space:normal;overflow:visible;
-    padding:0 0 7px;font-weight:700}
-  .shead .sum{display:none}
-  .stat{gap:18px}
+  .moodrow .tt{font-size:14.5px;white-space:normal;overflow:visible;padding:0 0 7px;font-weight:700}
+  .pgrid{grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:14px 8px}
+  .pcell .ptitle{font-size:11.5px}
+  .ticket .stub{padding:14px 8px;font-size:9.5px;letter-spacing:.2em}
+  .ticket .tbody{padding:18px} .ticket .nm{font-size:24px}
+  .ticket .kpi{gap:18px}
+  .tabs button{font-size:15px}
 }
 </style>
 </head>
 <body>
 <div class="wrap">
 
-<header>
-  <div class="slug"><span class="lat">TASTE DNA MAP · CINEMA EDITION</span>
-    &nbsp;·&nbsp; 사전 <span class="mono" id="dictN">—</span>편 내장</div>
-  <h1>취향 유전자 지도<span class="ed">영화판 — 애독자 카드</span></h1>
-  <p class="lede">인생 영화 열 편을 올리면 포스터가 좌표 위에 놓입니다.
-    세로는 얼마나 알려진 작품인가, 가로는 보고 난 뒤 마음이 어땠나.
-    수면 아래에 잠긴 표지가 이 클럽의 뒷골목입니다.</p>
-  <div class="byline">클럽 공용 서버에 저장됩니다 · 다른 멤버의 카드가 함께 보입니다</div>
+<header class="hero">
+  <div class="kick">TASTE DNA MAP · CINEMA EDITION</div>
+  <h1>취향<br>유전자 지도<span>영화판 — 애독자 카드</span></h1>
+  <div class="meta">사전 <span id="dictN">—</span>편 내장 · 클럽 공용 서버 · 제출까지 약 5분</div>
 </header>
 
-<!-- 미션 브리핑 -->
+<nav class="tabs">
+  <button data-v="submit" class="on"><span class="n">01</span>카드 내기</button>
+  <button data-v="club"><span class="n">02</span>클럽 보기</button>
+</nav>
+
+<!-- ═══════════ 카드 내기 ═══════════ -->
+<div class="view on" id="v-submit">
+
+<p class="lede">인생 영화 열 편을 올리면 포스터가 좌표 위에 놓입니다.
+  세로는 얼마나 알려진 작품인가, 가로는 보고 난 뒤 마음이 어땠나.
+  수면 아래에 잠긴 표지가 이 클럽의 뒷골목입니다.</p>
+
 <div class="brief">
-  <div class="brief-h"><b>제출까지 네 단계</b><span id="briefPct">0 / 4 완료 · 약 5분</span></div>
-  <div class="mrow" data-m="1">
-    <div class="n">01</div>
+  <div class="bhead"><b>제출까지 네 단계</b><span id="briefPct"></span></div>
+  <div class="mrow" data-m="1"><div class="no">01</div>
     <div class="tx"><div class="tt">취향 축 고르기</div>
       <div class="dd">장르 최대 3개 · 성향 최대 2개. 10초면 끝납니다.</div></div>
-    <div class="st">대기</div>
-  </div>
-  <div class="mrow" data-m="2">
-    <div class="n">02</div>
+    <div class="st">대기</div></div>
+  <div class="mrow" data-m="2"><div class="no">02</div>
     <div class="tx"><div class="tt">인생 영화 열 편</div>
-      <div class="dd">내장 사전에서 고르거나 직접 검색. 다섯 편부터 제출할 수 있습니다.</div></div>
-    <div class="st">대기</div>
-  </div>
-  <div class="mrow" data-m="3">
-    <div class="n">03</div>
+      <div class="dd">나를 만들어준 열 편입니다. 열 편으로 좁히기 어렵다면
+        본캐와 부캐로 나눠 내세요. 「현우」와 「현우_요리편」처럼요.</div></div>
+    <div class="st">대기</div></div>
+  <div class="mrow" data-m="3"><div class="no">03</div>
     <div class="tx"><div class="tt">보고 난 뒤의 마음</div>
       <div class="dd">이미 임시로 배치해 뒀습니다. 다르다고 느끼는 것만 고치세요.</div></div>
-    <div class="st">대기</div>
-  </div>
-  <div class="mrow" data-m="4">
-    <div class="n">04</div>
+    <div class="st">대기</div></div>
+  <div class="mrow" data-m="4"><div class="no">04</div>
     <div class="tx"><div class="tt">이름과 한 줄</div>
       <div class="dd">실명이 아니어도 됩니다.</div></div>
-    <div class="st">대기</div>
-  </div>
+    <div class="st">대기</div></div>
 </div>
 
-<!-- 1 -->
 <section class="step" id="s1">
   <div class="shead"><div class="sn">1</div><h2>취향 축 고르기</h2>
-    <div class="sum" id="sum1"></div><button class="edit" data-go="1">고치기</button></div>
+    <div class="sum" id="sum1"></div><button class="edit" data-go="1">다시 고르기</button></div>
   <div class="sbody">
     <p class="why">이 두 줄이 지도에서 당신을 어느 부족 옆에 놓을지를 정합니다.
       겹치는 영화가 한 편도 없는 사람과도 여기서 연결됩니다.</p>
     <div class="grouphead"><span>장르 — 최대 3개</span><span class="cnt" id="gc">0/3</span></div>
     <div class="chips" id="genres"></div>
-    <div class="grouphead"><span>성향 — 최대 2개</span><span class="cnt" id="mc">0/2</span></div>
-    <div class="chips" id="moods"></div>
+    <div class="grouphead"><span>성향 — 마주 보는 넷, 최대 4개</span><span class="cnt" id="mc">0/4</span></div>
+    <div id="moods"></div>
+    <p class="hint" style="margin-top:10px">한 쌍에서 하나씩 고르면 넷이 됩니다.
+      둘 다여도, 하나도 아니어도 괜찮습니다.</p>
   </div>
 </section>
 
-<!-- 2 -->
 <section class="step" id="s2">
   <div class="shead"><div class="sn">2</div><h2>인생 영화 열 편</h2>
-    <div class="sum" id="sum2"></div><button class="edit" data-go="2">고치기</button></div>
+    <div class="sum" id="sum2"></div><button class="edit" data-go="2">목록 열기</button></div>
   <div class="sbody">
     <p class="why">순서는 상관없습니다. 지금 떠오르는 것부터 넣으세요.
-      사전에 없는 작품은 제목을 그대로 적어 넣어도 됩니다.</p>
+      사전에 없는 작품은 제목을 그대로 적어 넣어도 되고, 다섯 편부터 제출할 수 있습니다.</p>
     <input type="text" id="q" placeholder="제목 검색 — 예: 기생충, 화양연화, Parasite">
     <div id="results"></div>
-    <div class="hint">사전에서 몇 편 골라볼까요 <button class="ghost" id="reroll" style="padding:2px 8px;margin-left:4px">다른 것 보기</button></div>
+    <div class="hint">사전에서 몇 편 골라볼까요
+      <button class="ghost" id="reroll" style="padding:2px 9px;margin-left:4px">다른 것 보기</button></div>
     <div class="sugg" id="sugg"></div>
     <div class="slotline" id="slots"></div>
     <ol class="picked" id="picked"></ol>
   </div>
 </section>
 
-<!-- 3 -->
 <section class="step" id="s3">
   <div class="shead"><div class="sn">3</div><h2>보고 난 뒤의 마음</h2>
-    <div class="sum" id="sum3"></div><button class="edit" data-go="3">고치기</button></div>
+    <div class="sum" id="sum3"></div><button class="edit" data-go="3">다시 배치</button></div>
   <div class="sbody">
     <p class="why">아직 아무도 옮기지 않아 임시 위치에 놓여 있습니다.
       점(·)이 임시, 채워진 칸이 당신이 직접 고른 자리입니다.</p>
-    <div class="moodhead">
-      <div>작품</div><div>마음이<br>데워짐</div><div>조금<br>따뜻함</div><div>그<br>사이</div>
-      <div>조금<br>아픔</div><div>마음이<br>부서짐</div>
-    </div>
+    <div class="moodhead"><div>작품</div><div>마음이<br>데워짐</div><div>조금<br>따뜻함</div>
+      <div>그<br>사이</div><div>조금<br>아픔</div><div>마음이<br>부서짐</div></div>
     <div id="moodRows"></div>
     <div class="hint" id="moodNote"></div>
   </div>
 </section>
 
-<!-- 4 -->
 <section class="step" id="s4">
   <div class="shead"><div class="sn">4</div><h2>이름과 한 줄</h2>
-    <div class="sum" id="sum4"></div><button class="edit" data-go="4">고치기</button></div>
+    <div class="sum" id="sum4"></div><button class="edit" data-go="4">고쳐 쓰기</button></div>
   <div class="sbody">
-    <p class="why">한 줄은 카드에 그대로 인쇄됩니다. 안 적어도 됩니다.</p>
+    <p class="why">한 줄은 입장권에 그대로 인쇄되고, 클럽 명단에서 이름 옆에 붙습니다. 안 적어도 됩니다.<br>
+      <b>이름이 곧 캐릭터입니다.</b> 「현우」가 본캐라면 「현우_요리편」은 부캐로 한 장이 따로 생기고,
+      같은 이름으로 다시 내면 먼저 낸 카드를 고쳐 씁니다.</p>
     <input type="text" id="name" placeholder="이름 (실명 아니어도 됩니다)" maxlength="20">
-    <input type="text" id="decl" placeholder="한 줄 — 예: 마음이 부서지라고 있는 것" maxlength="60" style="margin-top:9px">
+    <input type="text" id="decl" placeholder="예 : 마음은 부서지라고 있는 것"
+      maxlength="60" style="margin-top:9px">
   </div>
 </section>
 
@@ -360,416 +434,555 @@ ol.picked li{align-items:center}
   <div class="blocked" id="blocked"></div>
   <div id="status"></div>
 </div>
-
 <div id="result"></div>
+</div>
 
-<h4 class="sec">클럽 명단 <button class="ghost" id="reload">새로고침</button></h4>
-<div class="mlist" id="mlist"><div class="empty">불러오는 중…</div></div>
+<!-- ═══════════ 클럽 보기 ═══════════ -->
+<div class="view" id="v-club">
+  <p class="clubintro">다른 사람의 열 편을 보고, 마음이 가는 <b>포스터를 눌러 메모를 남기세요.</b>
+    메모는 카드 전체가 아니라 <b>한 편의 영화</b>에 붙습니다.</p>
+  <div class="whoami" id="whoami"></div>
+  <h4 class="sec">클럽 명단 <button class="ghost" id="reload">새로고침</button></h4>
+  <div id="clubList"><div class="empty">불러오는 중…</div></div>
+</div>
 
 <footer class="foot">
   <p>영화 정보와 포스터는 <a href="https://www.themoviedb.org" target="_blank" rel="noopener">TMDB</a>에서 가져왔습니다.
     이 서비스는 TMDB의 승인을 받거나 인증된 것이 아닙니다.</p>
   <p class="en">This product uses the TMDB API but is not endorsed or certified by TMDB.</p>
 </footer>
-
 </div>
 
+<div class="back-wrap" id="backWrap"><div class="back-box" id="backBox"></div></div>
+
 <script>
-/* ───────── 데이터 ───────── */
+/* ═════════ 데이터 ═════════ */
 const GENRES = ["느와르·범죄","사회고발·실화","스릴러·미스터리","SF","판타지·동화","호러·오컬트",
   "로맨스","코미디","액션·블록버스터","시대극·사극","전쟁","청춘·성장","가족·일상",
   "애니메이션","다큐멘터리","뮤지컬·음악","스포츠","예술·실험"];
-const MOODS = ["극장파","집관파","미장센파","서사파","감독 따라가는 편","재관람파"];
+const MOOD_PAIRS = [
+  ["극장파","집관파"],
+  ["미장센파","서사파"],
+  ["감독파","배우파"],
+  ["재관람파","초면파"],
+];
+const MOODS = MOOD_PAIRS.flat();
+const MOOD_DESC = {
+  "극장파":"큰 화면 아니면 본 것 같지 않다",
+  "집관파":"멈추고 되감아야 제대로 본 것이다",
+  "미장센파":"화면이 좋으면 이야기는 좀 져도 된다",
+  "서사파":"각본이 무너지면 나머지는 소용없다",
+  "감독파":"이름을 보고 고른다. 필모를 순서대로 판다",
+  "배우파":"얼굴을 보고 고른다. 그 사람이면 본다",
+  "재관람파":"좋으면 세 번 본다",
+  "초면파":"본 걸 또 보긴 아깝다. 늘 처음 보는 쪽",
+};
 const ZONE = ["마음이 데워짐","조금 따뜻함","그 사이","조금 아픔","마음이 부서짐"];
-const MAXG = 3, MAXM = 2, GOAL = 10, MIN = 5;
+const STAMPS = ["나도","이건 봐야겠다","의외다"];
+const MAXG = 3, MAXM = 4, GOAL = 10, MIN = 5;
+const MEK = 'movie_dna:me';
 
-let DICT = [], BY = {};
-let POSTERS = {};        // 제목 → 포스터 주소
-let TMDB_ON = null;      // null=확인 전, true/false
-const draft = { tags: [], works: [], name: "", decl: "" };  // works: {t, mood, seeded, tmdb}
+let DICT = [], BY = {}, POSTERS = {}, TMDB_ON = null;
+let MEMBERS = [], NOTES = [], STAMPDATA = {};
+let ME = '';
+let openMemoKey = null;          // "이름|영화"
+let memoDraft = '';              // 작성 중이던 메모 (다시 그려도 유지)
+const draft = { tags: [], works: [], name: "", decl: "" };
 let step = 1;
 
 const $ = s => document.querySelector(s);
 const norm = s => String(s||"").toLowerCase().replace(/\s/g,"");
-const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const esc = s => String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const key = (to,film) => to + '|' + film;
+try{ ME = localStorage.getItem(MEK) || ''; }catch{}
 
-/* ───────── 포스터 ───────── */
+/* ═════════ 포스터 ═════════ */
 function poster(title, cls){
   const u = POSTERS[title];
   if(u) return `<img class="po ${cls}" src="${esc(u)}" alt="" loading="lazy">`;
   return `<span class="po ph ${cls}" data-pt="${esc(title)}">no<br>art</span>`;
 }
-// 포스터가 뒤늦게 도착하면, 화면을 통째로 다시 그리지 않고 빈 칸만 갈아 끼운다
 function patchPosters(){
   document.querySelectorAll('.po.ph[data-pt]').forEach(el=>{
-    const u = POSTERS[el.dataset.pt];
-    if(!u) return;
+    const u = POSTERS[el.dataset.pt]; if(!u) return;
     const img = document.createElement('img');
-    img.className = el.className.replace(' ph','');
-    img.src = u; img.loading = 'lazy'; img.alt = '';
+    img.className = el.className.replace(' ph',''); img.src = u; img.loading='lazy'; img.alt='';
     el.replaceWith(img);
   });
 }
-// 포스터를 아직 모르는 제목들을 한꺼번에 물어본다
-let posterQueue = [], posterTimer;
-function needPoster(title, year){
-  if(!title || POSTERS[title] !== undefined) return;
-  if(TMDB_ON === false) return;
-  if(posterQueue.some(x=>x.t===title)) return;
-  posterQueue.push({t:title, y:year||''});
-  clearTimeout(posterTimer);
-  posterTimer = setTimeout(flushPosters, 250);
+let pQueue = [], pTimer;
+function needPoster(t,y){
+  if(!t || POSTERS[t]!==undefined || TMDB_ON===false) return;
+  if(pQueue.some(x=>x.t===t)) return;
+  pQueue.push({t, y:y||''});
+  clearTimeout(pTimer); pTimer = setTimeout(flushPosters, 250);
 }
 async function flushPosters(){
-  const batch = posterQueue.splice(0, 12);
-  if(!batch.length) return;
+  const batch = pQueue.splice(0,12); if(!batch.length) return;
   try{
-    const r = await fetch('/api/tmdb', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({titles: batch})
-    });
+    const r = await fetch('/api/tmdb',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({titles:batch})});
     const j = await r.json();
     if(j.ok){ Object.assign(POSTERS, j.posters||{}); TMDB_ON = true; patchPosters(); }
-    else if(j.reason==='no_key'){ TMDB_ON = false; posterQueue = []; showTmdbNote(); }
-  }catch{ /* 포스터는 없어도 그만 */ }
-  if(posterQueue.length) setTimeout(flushPosters, 200);
+    else if(j.reason==='no_key'){ TMDB_ON=false; pQueue=[]; showTmdbNote(); }
+  }catch{}
+  if(pQueue.length) setTimeout(flushPosters, 200);
 }
 function showTmdbNote(){
   if($('#tmdbNote')) return;
-  const el = document.createElement('div');
-  el.id = 'tmdbNote'; el.className = 'tmdb-note';
-  el.innerHTML = '지금은 <b>내장 사전 338편</b> 안에서만 검색됩니다. '
-    + 'Vercel에 <b>TMDB_KEY</b>를 넣으면 전 세계 영화 검색과 포스터가 켜집니다. (README 참고)';
+  const el = document.createElement('div'); el.id='tmdbNote'; el.className='tmdb-note';
+  el.innerHTML = '지금은 <b>내장 사전</b> 안에서만 검색됩니다. Vercel에 <b>TMDB_KEY</b>를 넣으면 '
+    + '전 세계 영화 검색과 포스터가 켜집니다. (README 참고)';
   $('#q').parentNode.insertBefore(el, $('#results').nextSibling);
 }
 
-/* ───────── 초기 로드 ───────── */
+/* ═════════ 초기 로드 ═════════ */
 fetch('/movie_dict.json').then(r=>r.json()).then(d=>{
-  DICT = d.rows;
-  DICT.forEach(r => BY[r[0]] = r);
-  $('#dictN').textContent = d.n;
-  reroll();
-}).catch(()=>{ $('#dictN').textContent = '로드 실패'; });
-
+  DICT = d.rows; DICT.forEach(r=>BY[r[0]]=r);
+  $('#dictN').textContent = d.n; reroll();
+}).catch(()=>{ $('#dictN').textContent='—'; });
 fetch('/api/tmdb?diag=1').then(r=>r.json()).then(j=>{
-  TMDB_ON = !!j.열쇠_꽂힘;
-  if(!TMDB_ON) showTmdbNote();
+  TMDB_ON = !!j['열쇠_꽂힘']; if(!TMDB_ON) showTmdbNote();
 }).catch(()=>{});
 
-/* ───────── 단계 이동 ───────── */
-function go(n){ step = n; render();
-  const el = document.getElementById('s'+n);
-  if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
-}
-document.querySelectorAll('.edit').forEach(b => b.onclick = () => go(+b.dataset.go));
+/* ═════════ 탭 ═════════ */
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b));
+  $('#v-submit').classList.toggle('on', b.dataset.v==='submit');
+  $('#v-club').classList.toggle('on', b.dataset.v==='club');
+  if(b.dataset.v==='club') loadClub();
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+
+/* ═════════ 단계 ═════════ */
+function go(n){ step=n; render();
+  const el=document.getElementById('s'+n); if(el) el.scrollIntoView({behavior:'smooth',block:'start'}); }
+document.querySelectorAll('.edit').forEach(b=>b.onclick=()=>go(+b.dataset.go));
 
 function okStep(n){
   const g = draft.tags.filter(t=>GENRES.includes(t)).length;
   const m = draft.tags.filter(t=>MOODS.includes(t)).length;
   if(n===1) return g>=1 && m>=1;
-  if(n===2) return draft.works.length >= MIN;
-  if(n===3) return draft.works.length >= MIN;
+  if(n===2||n===3) return draft.works.length>=MIN;
   if(n===4) return !!draft.name.trim();
   return false;
 }
-
-/* ───────── 렌더 ───────── */
 function render(){
-  // 섹션 열림/닫힘
   for(let i=1;i<=4;i++){
-    const s = document.getElementById('s'+i);
-    s.classList.toggle('open', i===step);
-    s.classList.toggle('now', i===step);
-    s.querySelector('.edit').style.display = (i===step) ? 'none' : '';
+    const s=document.getElementById('s'+i);
+    s.classList.toggle('open', i===step); s.classList.toggle('now', i===step);
+    s.querySelector('.edit').style.display = (i===step)?'none':'';
   }
-  // 브리핑 상태
-  let done = 0;
+  let done=0;
   document.querySelectorAll('.mrow').forEach(r=>{
-    const n = +r.dataset.m, ok = okStep(n);
-    if(ok) done++;
-    r.classList.toggle('now', n===step);
-    r.classList.toggle('done', ok && n!==step);
-    r.querySelector('.st').textContent = ok ? '완료' : (n===step ? '진행 중' : '대기');
+    const n=+r.dataset.m, ok=okStep(n); if(ok) done++;
+    r.classList.toggle('now', n===step); r.classList.toggle('done', ok && n!==step);
+    r.querySelector('.st').textContent = ok?'완료':(n===step?'진행 중':'대기');
   });
   $('#briefPct').innerHTML = `<em>${done}/4</em> 완료 · 약 5분`;
-
-  // 요약
-  const g = draft.tags.filter(t=>GENRES.includes(t));
-  const m = draft.tags.filter(t=>MOODS.includes(t));
-  $('#gc').textContent = `${g.length}/${MAXG}`;
-  $('#mc').textContent = `${m.length}/${MAXM}`;
+  const g=draft.tags.filter(t=>GENRES.includes(t)), m=draft.tags.filter(t=>MOODS.includes(t));
+  $('#gc').textContent = `${g.length}/${MAXG}`; $('#mc').textContent = `${m.length}/${MAXM}`;
   $('#sum1').textContent = draft.tags.join(' · ');
-  $('#sum2').textContent = draft.works.length ? `${draft.works.length}편` : '';
-  const moved = draft.works.filter(w=>!w.seeded).length;
-  $('#sum3').textContent = draft.works.length ? `${moved}편 직접 배치` : '';
-  $('#sum4').textContent = draft.name || '';
-
+  $('#sum2').textContent = draft.works.length?`${draft.works.length}편`:'';
+  $('#sum3').textContent = draft.works.length?`${draft.works.filter(w=>!w.seeded).length}편 직접 배치`:'';
+  $('#sum4').textContent = draft.name||'';
   renderChips(); renderPicked(); renderMood();
-
-  // 제출 가능?
-  const can = okStep(1) && okStep(2) && okStep(4);
+  const can = okStep(1)&&okStep(2)&&okStep(4);
   $('#submitBtn').disabled = !can;
-  const miss = [];
+  const miss=[];
   if(!okStep(1)) miss.push('장르 1개 이상 + 성향 1개 이상');
   if(!okStep(2)) miss.push(`영화 ${MIN}편 이상 (지금 ${draft.works.length}편)`);
   if(!okStep(4)) miss.push('이름');
-  $('#blocked').textContent = miss.length ? '남은 것 — ' + miss.join(' / ')
-    : (draft.works.length < GOAL ? `제출할 수 있습니다. 열 편을 채우면 더 정확해집니다 (지금 ${draft.works.length}편).` : '열 편 모두 채웠습니다.');
+  $('#blocked').textContent = miss.length ? '남은 것 — '+miss.join(' / ')
+    : (draft.works.length<GOAL ? `제출할 수 있습니다. 열 편을 채우면 더 정확해집니다 (지금 ${draft.works.length}편).`
+                                : '열 편 모두 채웠습니다.');
 }
-
 function renderChips(){
-  const g = draft.tags.filter(t=>GENRES.includes(t));
-  const m = draft.tags.filter(t=>MOODS.includes(t));
-  $('#genres').innerHTML = GENRES.map(t=>{
-    const on = draft.tags.includes(t);
-    const dis = !on && g.length>=MAXG;
+  const g=draft.tags.filter(t=>GENRES.includes(t)), m=draft.tags.filter(t=>MOODS.includes(t));
+  const mk=(arr,cur,max)=>arr.map(t=>{
+    const on=draft.tags.includes(t), dis=!on&&cur.length>=max;
     return `<button class="chip${on?' on':''}" data-t="${esc(t)}"${dis?' disabled':''}>${esc(t)}</button>`;
   }).join('');
-  $('#moods').innerHTML = MOODS.map(t=>{
-    const on = draft.tags.includes(t);
-    const dis = !on && m.length>=MAXM;
-    return `<button class="chip${on?' on':''}" data-t="${esc(t)}"${dis?' disabled':''}>${esc(t)}</button>`;
-  }).join('');
+  $('#genres').innerHTML = mk(GENRES,g,MAXG);
+  $('#moods').innerHTML = MOOD_PAIRS.map(pair=>`<div class="pair">`+
+    pair.map((t,i)=>{
+      const on=draft.tags.includes(t), dis=!on&&m.length>=MAXM;
+      return (i?'<span class="vs">↔</span>':'')+
+        `<button class="chip${on?' on':''}" data-t="${esc(t)}"${dis?' disabled':''}
+          title="${esc(MOOD_DESC[t]||'')}">${esc(t)}</button>`;
+    }).join('')+`</div>`).join('');
 }
 document.addEventListener('click', e=>{
-  const c = e.target.closest('.chip'); if(!c || c.disabled) return;
-  const t = c.dataset.t;
-  const i = draft.tags.indexOf(t);
+  const c=e.target.closest('.chip'); if(!c||c.disabled) return;
+  const t=c.dataset.t, i=draft.tags.indexOf(t);
   if(i>=0) draft.tags.splice(i,1); else draft.tags.push(t);
   render();
 });
 
-/* ── 검색 : 내장 사전 + TMDB 를 합쳐서 보여준다 ── */
-let sTimer, sSeq = 0;
+/* ═════════ 검색 ═════════ */
+let sTimer, sSeq=0;
 $('#q').addEventListener('input', e=>{
   clearTimeout(sTimer);
-  const raw = e.target.value.trim(), q = norm(raw);
-  const box = $('#results');
+  const raw=e.target.value.trim(), q=norm(raw), box=$('#results');
   if(!q){ box.className=''; box.innerHTML=''; return; }
-  sTimer = setTimeout(()=>doSearch(raw, q, ++sSeq), 180);
+  sTimer=setTimeout(()=>doSearch(raw,q,++sSeq),180);
 });
-
 function rowHTML(o){
-  // o: {t, meta, src, dict}
   const dup = draft.works.some(w=>w.t===o.t);
   return `<div class="ritem${dup?' dup':''}" data-t="${esc(o.t)}"${o.tmdb?` data-id="${o.tmdb}"`:''}${o.poster?` data-p="${esc(o.poster)}"`:''}>
     ${poster(o.t,'po-m')}
-    <span class="ri-t"><span class="nm">${esc(o.t)}</span>
-      <span class="meta">${o.meta}</span></span>
+    <span class="ri-t"><span class="nm">${esc(o.t)}</span><span class="meta">${o.meta}</span></span>
     <span class="src${o.dict?' dict':''}">${o.dict?'사전':'TMDB'}</span></div>`;
 }
-
-async function doSearch(raw, q, seq){
-  const box = $('#results');
-  // 1) 내장 사전 — 즉시
+async function doSearch(raw,q,seq){
+  const box=$('#results');
   const local = DICT.filter(r=>norm(r[0]).includes(q)||norm(r[1]).includes(q)).slice(0,10)
-    .map(r=>({ t:r[0], dict:true, meta:`${esc(r[4])} · <span class="y">${r[3]}</span>` , year:r[3] }));
-  local.forEach(o=>needPoster(o.t, o.year));
-
-  const draw = (rows, loading) => {
-    if(seq !== sSeq) return;
+    .map(r=>({t:r[0],dict:true,year:r[3],meta:`${esc(r[4])} · <span class="y">${r[3]}</span>`}));
+  local.forEach(o=>needPoster(o.t,o.year));
+  const draw=(rows,loading)=>{
+    if(seq!==sSeq) return;
     let html = rows.map(rowHTML).join('');
     if(loading) html += `<div class="searching">TMDB에서 더 찾는 중…</div>`;
-    if(!rows.length && !loading){
-      html = `<div class="ritem" data-new="${esc(raw)}">
-        <span class="ri-t"><span class="nm">“${esc(raw)}” 직접 추가</span>
+    if(!rows.length && !loading)
+      html = `<div class="ritem" data-new="${esc(raw)}"><span class="ri-t">
+        <span class="nm">“${esc(raw)}” 직접 추가</span>
         <span class="meta">어디에도 없는 작품</span></span></div>`;
-    }
-    box.innerHTML = html; box.className='show';
+    box.innerHTML=html; box.className='show';
   };
-  draw(local, TMDB_ON !== false);
-  if(TMDB_ON === false) return;
-
-  // 2) TMDB — 뒤이어 도착
+  draw(local, TMDB_ON!==false);
+  if(TMDB_ON===false) return;
   try{
-    const r = await fetch('/api/tmdb?q=' + encodeURIComponent(raw));
-    const j = await r.json();
-    if(seq !== sSeq) return;
-    if(!j.ok){ if(j.reason==='no_key'){ TMDB_ON=false; showTmdbNote(); } draw(local,false); return; }
-    TMDB_ON = true;
-
-    const seen = new Set(local.map(o=>norm(o.t)));
-    const wide = [];
+    const j = await (await fetch('/api/tmdb?q='+encodeURIComponent(raw))).json();
+    if(seq!==sSeq) return;
+    if(!j.ok){ if(j.reason==='no_key'){TMDB_ON=false;showTmdbNote();} draw(local,false); return; }
+    TMDB_ON=true;
+    const seen=new Set(local.map(o=>norm(o.t))), wide=[];
     (j.results||[]).forEach(m=>{
-      if(m.poster) POSTERS[m.title] = m.poster;
-      // 사전에 이미 있는 작품이면 포스터만 채우고 목록에는 중복 표시하지 않는다
-      const dictHit = DICT.find(r=>norm(r[0])===norm(m.title)||norm(r[1])===norm(m.orig));
-      if(dictHit){ if(m.poster) POSTERS[dictHit[0]] = m.poster; return; }
-      if(seen.has(norm(m.title))) return;
-      seen.add(norm(m.title));
-      wide.push({ t:m.title, tmdb:m.tmdb, poster:m.poster, year:m.year,
-        meta:`${m.orig && m.orig!==m.title ? esc(m.orig)+' · ' : ''}<span class="y">${esc(m.year)}</span>` });
+      if(m.poster) POSTERS[m.title]=m.poster;
+      const hit = DICT.find(r=>norm(r[0])===norm(m.title)||norm(r[1])===norm(m.orig));
+      if(hit){ if(m.poster) POSTERS[hit[0]]=m.poster; return; }
+      if(seen.has(norm(m.title))) return; seen.add(norm(m.title));
+      wide.push({t:m.title,tmdb:m.tmdb,poster:m.poster,year:m.year,
+        meta:`${m.orig&&m.orig!==m.title?esc(m.orig)+' · ':''}<span class="y">${esc(m.year)}</span>`});
     });
-    draw(local.concat(wide.slice(0, 12)), false);
-  }catch{ draw(local, false); }
+    draw(local.concat(wide.slice(0,12)),false); patchPosters();
+  }catch{ draw(local,false); }
 }
-
 $('#results').addEventListener('click', e=>{
-  const it = e.target.closest('.ritem'); if(!it || it.classList.contains('dup')) return;
-  if(it.dataset.p) POSTERS[it.dataset.t] = it.dataset.p;
-  add(it.dataset.t || it.dataset.new, !it.dataset.t && !it.dataset.id, it.dataset.id);
+  const it=e.target.closest('.ritem'); if(!it||it.classList.contains('dup')) return;
+  if(it.dataset.p) POSTERS[it.dataset.t]=it.dataset.p;
+  add(it.dataset.t||it.dataset.new, !it.dataset.t&&!it.dataset.id, it.dataset.id);
   $('#q').value=''; $('#results').className=''; $('#results').innerHTML='';
 });
-
-function add(title, isNew, tmdbId){
-  if(!title || draft.works.length>=GOAL) return;
+function add(title,isNew,tmdbId){
+  if(!title||draft.works.length>=GOAL) return;
   if(draft.works.some(w=>w.t===title)) return;
-  const r = BY[title];
-  draft.works.push({ t:title, mood: r ? r[6] : 3, seeded:true,
-    custom: !!isNew, tmdb: tmdbId ? +tmdbId : null });
-  needPoster(title, r ? r[3] : '');
-  render();
+  const r=BY[title];
+  draft.works.push({t:title,mood:r?r[6]:3,seeded:true,custom:!!isNew,tmdb:tmdbId?+tmdbId:null});
+  needPoster(title, r?r[3]:''); render();
 }
-
-/* ── 추천 ── */
 function reroll(){
   if(!DICT.length) return;
-  const pool = DICT.filter(r=>r[5]<=4);
-  const pick = [];
-  while(pick.length<8 && pool.length){
-    const r = pool.splice(Math.floor(Math.random()*pool.length),1)[0];
+  const pool=DICT.filter(r=>r[5]<=4), pick=[];
+  while(pick.length<8&&pool.length){
+    const r=pool.splice(Math.floor(Math.random()*pool.length),1)[0];
     if(!draft.works.some(w=>w.t===r[0])) pick.push(r);
   }
   $('#sugg').innerHTML = pick.map(r=>`<button data-add="${esc(r[0])}">${esc(r[0])}</button>`).join('');
 }
 $('#reroll').onclick = reroll;
 $('#sugg').addEventListener('click', e=>{
-  const b = e.target.closest('button[data-add]'); if(!b) return;
-  add(b.dataset.add); reroll();
+  const b=e.target.closest('button[data-add]'); if(!b) return; add(b.dataset.add); reroll();
 });
-
-/* ── 고른 목록 ── */
 function renderPicked(){
   $('#slots').innerHTML = Array.from({length:GOAL},(_,i)=>
     `<div class="slot${i<draft.works.length?' f':''}"></div>`).join('');
   $('#picked').innerHTML = draft.works.map(w=>{
-    const r = BY[w.t];
+    const r=BY[w.t];
     return `<li>${poster(w.t,'po-s')}<span class="t">${esc(w.t)}</span>
-      <span class="m">${r? esc(r[4])+' · <span class="y">'+r[3]+'</span>' : (w.tmdb?'TMDB':'직접 입력')}</span>
+      <span class="m">${r?esc(r[4])+' · <span class="y">'+r[3]+'</span>':(w.tmdb?'TMDB':'직접 입력')}</span>
       <button data-del="${esc(w.t)}" title="빼기">✕</button></li>`;
   }).join('');
 }
 $('#picked').addEventListener('click', e=>{
-  const b = e.target.closest('button[data-del]'); if(!b) return;
-  draft.works = draft.works.filter(w=>w.t!==b.dataset.del);
-  render();
+  const b=e.target.closest('button[data-del]'); if(!b) return;
+  draft.works=draft.works.filter(w=>w.t!==b.dataset.del); render();
 });
-
-/* ── 감정 배치 ── */
 function renderMood(){
   if(!draft.works.length){ $('#moodRows').innerHTML='<div class="empty">먼저 2단계에서 영화를 고르세요.</div>';
     $('#moodNote').textContent=''; return; }
-  $('#moodRows').innerHTML = draft.works.map((w,ri)=>
-    `<div class="moodrow"><div class="tt">${poster(w.t,'po-s')}<span>${esc(w.t)}</span></div><div class="dots">` +
+  $('#moodRows').innerHTML = draft.works.map(w=>
+    `<div class="moodrow"><div class="tt">${poster(w.t,'po-s')}<span>${esc(w.t)}</span></div><div class="dots">`+
     [1,2,3,4,5].map(v=>{
-      const sel = w.mood===v;
-      const cls = sel ? (w.seeded?'dot seed':'dot on') : 'dot';
-      return `<button class="${cls}" data-mt="${esc(w.t)}" data-mv="${v}" aria-label="${ZONE[v-1]}" title="${ZONE[v-1]}"></button>`;
-    }).join('') + `</div></div>`).join('');
-  const moved = draft.works.filter(w=>!w.seeded).length;
-  $('#moodNote').textContent = `${draft.works.length}편 중 ${moved}편을 직접 배치했습니다. 안 옮겨도 제출됩니다.`;
+      const sel=w.mood===v, cls=sel?(w.seeded?'dot seed':'dot on'):'dot';
+      return `<button class="${cls}" data-mt="${esc(w.t)}" data-mv="${v}" title="${ZONE[v-1]}"></button>`;
+    }).join('')+`</div></div>`).join('');
+  $('#moodNote').textContent =
+    `${draft.works.length}편 중 ${draft.works.filter(w=>!w.seeded).length}편을 직접 배치했습니다. 안 옮겨도 제출됩니다.`;
 }
 $('#moodRows').addEventListener('click', e=>{
-  const b = e.target.closest('button[data-mt]'); if(!b) return;
-  const w = draft.works.find(x=>x.t===b.dataset.mt); if(!w) return;
-  w.mood = +b.dataset.mv; w.seeded = false;
-  render();
+  const b=e.target.closest('button[data-mt]'); if(!b) return;
+  const w=draft.works.find(x=>x.t===b.dataset.mt); if(!w) return;
+  w.mood=+b.dataset.mv; w.seeded=false; render();
 });
+$('#name').addEventListener('input', e=>{ draft.name=e.target.value; render(); });
+$('#decl').addEventListener('input', e=>{ draft.decl=e.target.value; });
 
-/* ── 이름 ── */
-$('#name').addEventListener('input', e=>{ draft.name = e.target.value; render(); });
-$('#decl').addEventListener('input', e=>{ draft.decl = e.target.value; });
-
-/* ───────── 제출 ───────── */
+/* ═════════ 제출 ═════════ */
 $('#submitBtn').onclick = async ()=>{
-  const st = $('#status'); st.className=''; st.textContent='제출 중…';
+  const st=$('#status'); st.className=''; st.textContent='제출 중…';
   try{
-    const r = await fetch('/api/club',{
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
-        name: draft.name.trim(),
-        works: draft.works.map(w=>({t:w.t, mood:w.mood, tmdb:w.tmdb, poster:POSTERS[w.t]||''})),
-        tags: draft.tags, decl: draft.decl.trim()
-      })
-    });
-    const j = await r.json().catch(()=>({error:'서버 응답을 읽지 못했습니다'}));
-    if(!r.ok) throw new Error(j.error || ('HTTP '+r.status));
+    const r=await fetch('/api/club',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name:draft.name.trim(),
+        works:draft.works.map(w=>({t:w.t,mood:w.mood,tmdb:w.tmdb,poster:POSTERS[w.t]||''})),
+        tags:draft.tags, decl:draft.decl.trim()})});
+    const j=await r.json().catch(()=>({error:'서버 응답을 읽지 못했습니다'}));
+    if(!r.ok) throw new Error(j.error||('HTTP '+r.status));
     Object.assign(POSTERS, j.posters||{});
-    st.className='ok'; st.textContent='제출 완료 — 아래에 카드가 나왔습니다.';
-    showCard();
-    renderMembers(j.members || []);
-    $('#result').scrollIntoView({behavior:'smooth', block:'start'});
-  }catch(e){
-    st.className='err';
-    st.textContent = '실패: ' + e.message;
-  }
+    ME = draft.name.trim(); try{ localStorage.setItem(MEK, ME); }catch{}
+    st.className='ok'; st.textContent='제출 완료 — 아래에 입장권이 나왔습니다. 이제 「클럽 보기」에서 다른 사람 카드에 메모를 남겨보세요.';
+    showCard(); $('#result').scrollIntoView({behavior:'smooth',block:'start'});
+  }catch(e){ st.className='err'; st.textContent='실패: '+e.message; }
 };
 
-/* ── 결과 카드 (연대 리본 포함) ── */
+function ribbon(years, dark){
+  const A=1940,B=2030,pos=y=>((y-A)/(B-A)*100).toFixed(1), MARK=[1950,1970,1990,2010,2025];
+  return `<div class="ribbon"><div class="bar">
+    ${MARK.map(y=>`<div class="tick" style="left:${pos(y)}%"></div>`).join('')}
+    ${years.map(y=>`<div class="pt" style="left:${pos(y)}%"></div>`).join('')}</div>
+    <div class="lab">${MARK.map(y=>`<span style="left:${pos(y)}%">${y}</span>`).join('')}</div></div>`;
+}
+function stats(works){
+  const years = works.map(w=>BY[w.t]&&BY[w.t][3]).filter(Boolean).sort((a,b)=>a-b);
+  const med = years.length?years[Math.floor(years.length/2)]:null;
+  const span = years.length?years[years.length-1]-years[0]:0;
+  const dirs={}; works.forEach(w=>{const r=BY[w.t]; if(r) dirs[r[4]]=(dirs[r[4]]||0)+1;});
+  const top = Object.entries(dirs).sort((a,b)=>b[1]-a[1]).filter(d=>d[1]>1)[0];
+  const deep = works.filter(w=>BY[w.t]&&BY[w.t][5]>=5).length;
+  return {years,med,span,top,deep};
+}
 function showCard(){
-  const years = draft.works.map(w=>BY[w.t] && BY[w.t][3]).filter(Boolean).sort((a,b)=>a-b);
-  const med = years.length ? years[Math.floor(years.length/2)] : null;
-  const span = years.length ? years[years.length-1]-years[0] : 0;
-  const dirs = {};
-  draft.works.forEach(w=>{ const r=BY[w.t]; if(r) dirs[r[4]]=(dirs[r[4]]||0)+1; });
-  const topDir = Object.entries(dirs).sort((a,b)=>b[1]-a[1]).filter(d=>d[1]>1)[0];
-  const deep = draft.works.filter(w=>BY[w.t] && BY[w.t][5]>=5).length;
-  const A=1940, B=2030, pos = y => ((y-A)/(B-A)*100).toFixed(1);
-  const MARK = [1950,1970,1990,2010,2025];
-  const pts = years.map(y=>`<div class="pt" style="left:${pos(y)}%"></div>`).join('');
-  const ticks = MARK.map(y=>`<div class="tick" style="left:${pos(y)}%"></div>`).join('');
-  const labs = MARK.map(y=>`<span style="left:${pos(y)}%">${y}</span>`).join('');
-
-  $('#result').innerHTML = `
-  <div class="card">
-    <h3>${esc(draft.name)}</h3>
-    ${draft.decl ? `<p class="decl">“${esc(draft.decl)}”</p>` : ''}
-    <div class="strip">${draft.works.map(w=>poster(w.t,'po-l')).join('')}</div>
-    <div class="stat">
-      <div><b>${draft.works.length}</b><span>등록한 영화</span></div>
-      <div><b>${med||'—'}</b><span>취향 중앙값</span></div>
-      <div><b>${span}<u>년</u></b><span>연대 폭</span></div>
-      <div><b>${deep}</b><span>수면 아래 작품</span></div>
-    </div>
-    ${topDir ? `<div class="topdir">가장 많이 고른 감독 — <b>${esc(topDir[0])} ${topDir[1]}편</b></div>` : ''}
-    <div class="ribbon">
-      <div class="bar">${ticks}${pts}</div>
-      <div class="lab">${labs}</div>
-    </div>
-    <div class="tags">${esc(draft.tags.join(' · '))}</div>
+  const s = stats(draft.works);
+  $('#result').innerHTML = `<div class="ticket"><div class="stub">ADMIT ONE · ${draft.works.length} FILMS</div>
+    <div class="tbody">
+      <p class="nm">${esc(draft.name)}</p>
+      ${draft.decl?`<p class="q">“${esc(draft.decl)}”</p>`:''}
+      <div class="grid">${draft.works.map(w=>poster(w.t,'po-l')).join('')}</div>
+      ${s.top?`<div class="topdir">가장 많이 고른 감독 — <b>${esc(s.top[0])} ${s.top[1]}편</b></div>`:''}
+      ${ribbon(s.years)}
+      <div class="kpi">
+        <div><b>${draft.works.length}</b><span>등록한 영화</span></div>
+        <div><b>${s.med||'—'}</b><span>취향 중앙값</span></div>
+        <div><b>${s.span}<u>년</u></b><span>연대 폭</span></div>
+        <div><b>${s.deep}</b><span>수면 아래 작품</span></div>
+      </div>
+      <div class="tags">${esc(draft.tags.join(' · '))}</div>
+    </div></div>
+  <div class="again">
+    <button class="go" id="againBtn">부캐로 한 장 더</button>
+    <p>방금 낸 「${esc(draft.name)}」가 본캐라면, 이제 부캐 차례입니다.
+      「${esc(draft.name)}_○○편」처럼 뒤를 채우면 따로 한 장이 됩니다 —
+      시대별로, 장르별로, 혹은 그때그때의 나로.</p>
   </div>`;
+  patchPosters();
+  $('#againBtn').onclick = startAgain;
 }
 
-/* ── 명단 ── */
-async function loadMembers(){
-  const box = $('#mlist'); box.innerHTML = '<div class="empty">불러오는 중…</div>';
-  try{
-    const r = await fetch('/api/club');
-    const j = await r.json();
-    if(!r.ok) throw new Error(j.error || ('HTTP '+r.status));
-    Object.assign(POSTERS, j.posters||{});
-    renderMembers(j.members || []);
-  }catch(e){
-    box.innerHTML = `<div class="empty" style="color:var(--red)">불러오기 실패: ${esc(e.message)}</div>`;
+/* 같은 사람이 다른 캐릭터로 한 장 더 낼 때 */
+function startAgain(){
+  const base = draft.name.trim();
+  draft.works = []; draft.tags = []; draft.decl = '';
+  draft.name = base ? base + '_' : '';
+  $('#name').value = draft.name; $('#decl').value = '';
+  $('#status').textContent = ''; $('#status').className = '';
+  $('#result').innerHTML = '';
+  step = 1; render(); reroll();
+  document.querySelector('.brief').scrollIntoView({behavior:'smooth', block:'start'});
+  setTimeout(()=>{ const n=$('#name'); if(n){ n.focus(); n.setSelectionRange(n.value.length,n.value.length); } }, 400);
+}
+
+/* ═════════ 클럽 보기 ═════════ */
+function renderWho(){
+  const el=$('#whoami');
+  if(ME){ el.innerHTML = `<span>메모를 남길 이름 — <b>${esc(ME)}</b></span>
+    <button id="whoChange" style="margin-left:auto;background:none;border:2px solid var(--rule);color:var(--dim)">바꾸기</button>`;
+    $('#whoChange').onclick = ()=>{ ME=''; renderWho(); };
+  } else {
+    el.innerHTML = `<span>메모를 남기려면 이름이 필요합니다</span>
+      <input type="text" id="whoIn" maxlength="20" placeholder="이름" value="">
+      <button id="whoSet">확인</button>`;
+    $('#whoSet').onclick = ()=>{
+      const v=$('#whoIn').value.trim(); if(!v) return;
+      ME=v; try{localStorage.setItem(MEK,ME);}catch{}; renderWho(); renderClub();
+    };
+    $('#whoIn').addEventListener('keydown',e=>{ if(e.key==='Enter') $('#whoSet').click(); });
   }
 }
-function renderMembers(ms){
-  const box = $('#mlist');
-  if(!ms.length){ box.innerHTML='<div class="empty">아직 아무도 카드를 내지 않았습니다. 첫 번째가 되어 보세요.</div>'; return; }
-  box.innerHTML = ms.slice().reverse().map(m=>{
-    const ws = (m.works||[]).map(w=> typeof w==='string' ? w : w.t);
-    return `<div class="mitem"><b>${esc(m.name||m.id)}</b>
-      ${m.decl?` <span class="q">“${esc(m.decl)}”</span>`:''}
-      <div class="strip">${ws.map(t=>poster(t,'po-m')).join('')}</div>
-      <div class="w"><span class="n">${ws.length}</span>편 — ${esc(ws.slice(0,4).join(' / '))}${ws.length>4?' …':''}</div>
-      ${(m.tags&&m.tags.length)?`<div class="tg">${esc(m.tags.join(' · '))}</div>`:''}
-    </div>`;
-  }).join('');
+async function loadClub(){
+  renderWho();
+  const box=$('#clubList'); box.innerHTML='<div class="empty">불러오는 중…</div>';
+  try{
+    const [c,n] = await Promise.all([
+      fetch('/api/club').then(r=>r.json()),
+      fetch('/api/notes').then(r=>r.json()).catch(()=>({notes:[],stamps:{}})),
+    ]);
+    if(c.error) throw new Error(c.error);
+    MEMBERS = c.members||[]; Object.assign(POSTERS, c.posters||{});
+    NOTES = n.notes||[]; STAMPDATA = n.stamps||{};
+    renderClub();
+  }catch(e){
+    box.innerHTML = `<div class="empty" style="color:var(--verm)">불러오기 실패: ${esc(e.message)}</div>`;
+  }
 }
-$('#reload').onclick = loadMembers;
+$('#reload').onclick = loadClub;
+
+function noteCount(to,film){ return NOTES.filter(x=>x.to===to&&x.film===film).length; }
+function stampCount(to,film){
+  const c=STAMPDATA[key(to,film)]||{};
+  return STAMPS.reduce((s,k)=>s+((c[k]||[]).length),0);
+}
+function renderClub(){
+  const box=$('#clubList');
+  if(!MEMBERS.length){ box.innerHTML='<div class="empty">아직 아무도 카드를 내지 않았습니다. 첫 번째가 되어 보세요.</div>'; return; }
+  box.innerHTML = MEMBERS.slice().reverse().map(m=>{
+    const ws=(m.works||[]).map(w=>typeof w==='string'?{t:w,mood:3}:w);
+    const s=stats(ws);
+    const grid = ws.map(w=>{
+      const nc=noteCount(m.id,w.t), sc=stampCount(m.id,w.t);
+      const sel = openMemoKey===key(m.id,w.t);
+      return `<span class="pcell${sel?' sel':''}" data-to="${esc(m.id)}" data-film="${esc(w.t)}">
+        <span class="pshot">${poster(w.t,'po-l')}
+          ${nc?`<span class="badge">${nc}</span>`:''}
+          ${sc?`<span class="dogs">${'<i></i>'.repeat(Math.min(sc,5))}</span>`:''}</span>
+        <span class="ptitle">${esc(w.t)}</span></span>`;
+    }).join('');
+    const memoHtml = (openMemoKey && openMemoKey.startsWith(m.id+'|'))
+      ? memoPanel(m.id, openMemoKey.slice(m.id.length+1)) : '';
+    return `<div class="ticket"><div class="stub">ADMIT ONE · ${ws.length} FILMS</div>
+      <div class="tbody">
+        <p class="nm">${esc(m.name||m.id)}</p>
+        ${m.decl?`<p class="q">“${esc(m.decl)}”</p>`:''}
+        <div class="pgrid">${grid}</div>
+        ${memoHtml}
+        ${s.top?`<div class="topdir">가장 많이 고른 감독 — <b>${esc(s.top[0])} ${s.top[1]}편</b></div>`:''}
+        ${ribbon(s.years)}
+        <div class="kpi">
+          <div><b>${ws.length}</b><span>등록한 영화</span></div>
+          <div><b>${s.med||'—'}</b><span>취향 중앙값</span></div>
+          <div><b>${s.span}<u>년</u></b><span>연대 폭</span></div>
+          <div><b>${s.deep}</b><span>수면 아래 작품</span></div>
+        </div>
+        ${(m.tags&&m.tags.length)?`<div class="tags">${esc(m.tags.join(' · '))}</div>`:''}
+      </div></div>`;
+  }).join('');
+  patchPosters();
+  const ta = document.getElementById('memoIn');
+  if(ta){
+    ta.oninput = () => { memoDraft = ta.value; };
+    if(memoDraft){ ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); }
+  }
+}
+function memoPanel(to, film){
+  const cell = STAMPDATA[key(to,film)]||{};
+  const mine = NOTES.filter(x=>x.to===to&&x.film===film).sort((a,b)=>a.ts-b.ts);
+  const r = BY[film];
+  return `<div class="memo">
+    <div class="mh"><b>${esc(film)}</b>
+      <span class="who">${r?esc(r[4])+' · '+r[3]+' · ':''}${esc(to)}의 카드</span>
+      <button class="back" data-back="${esc(film)}">작품 뒷면 →</button></div>
+    <div class="stamps">${STAMPS.map(k=>{
+      const list=cell[k]||[], on=ME&&list.includes(ME);
+      return `<button class="${on?'on':''}" data-stamp="${esc(k)}" data-to="${esc(to)}" data-film="${esc(film)}"
+        title="${list.length?esc(list.join(', ')):'아직 없음'}">${esc(k)}${list.length?`<span class="c">${list.length}</span>`:''}</button>`;
+    }).join('')}</div>
+    <div class="mlist2">${mine.length ? mine.map(n=>
+      `<div class="mitem2"><span class="by">${esc(n.by)}</span><span class="tx">${esc(n.text)}</span>
+        ${n.by===ME?`<button class="del" data-delnote="${esc(n.id)}">지우기</button>`:''}</div>`).join('')
+      : '<div class="mempty">아직 이 영화에 붙은 메모가 없습니다. 첫 번째로 남겨보세요.</div>'}</div>
+    <div class="mform">
+      <textarea id="memoIn" maxlength="300" placeholder="${ME?'이 영화에 대해 한마디…':'위에서 이름을 먼저 알려주세요'}"${ME?'':' disabled'}>${esc(memoDraft)}</textarea>
+      <button id="memoPost" data-to="${esc(to)}" data-film="${esc(film)}"${ME?'':' disabled'}>붙이기</button>
+    </div></div>`;
+}
+$('#clubList').addEventListener('click', async e=>{
+  const cell = e.target.closest('.pcell');
+  if(cell){
+    const k = key(cell.dataset.to, cell.dataset.film);
+    if(openMemoKey !== k) memoDraft = '';
+    openMemoKey = (openMemoKey===k) ? null : k;
+    renderClub();
+    if(openMemoKey){
+      const el=document.querySelector('.memo'); if(el) el.scrollIntoView({behavior:'smooth',block:'center'});
+    }
+    return;
+  }
+  const back = e.target.closest('[data-back]');
+  if(back){ openBackside(back.dataset.back); return; }
+  const st = e.target.closest('[data-stamp]');
+  if(st){
+    if(!ME){ $('#whoami').scrollIntoView({behavior:'smooth',block:'center'}); return; }
+    await post({type:'stamp', to:st.dataset.to, film:st.dataset.film, by:ME, kind:st.dataset.stamp});
+    return;
+  }
+  const dn = e.target.closest('[data-delnote]');
+  if(dn){ await post({type:'del', id:dn.dataset.delnote, by:ME}); return; }
+  if(e.target.id==='memoPost'){
+    const ta=$('#memoIn'), text=ta?ta.value.trim():'';
+    if(!text) return;
+    e.target.disabled=true;
+    memoDraft='';
+    await post({type:'note', to:e.target.dataset.to, film:e.target.dataset.film, by:ME, text});
+  }
+});
+async function post(body){
+  try{
+    const r=await fetch('/api/notes',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(body)});
+    const j=await r.json();
+    if(!r.ok){ alert(j.error||'실패했습니다'); return; }
+    NOTES=j.notes||[]; STAMPDATA=j.stamps||{}; renderClub();
+  }catch(e){ alert('실패: '+e.message); }
+}
+
+/* ── 작품 뒷면 ── */
+function openBackside(film){
+  const pickers = MEMBERS.filter(m=>(m.works||[]).some(w=>(typeof w==='string'?w:w.t)===film));
+  const ns = NOTES.filter(n=>n.film===film).sort((a,b)=>b.ts-a.ts);
+  const r = BY[film];
+  const allStamps = {};
+  Object.keys(STAMPDATA).forEach(k=>{
+    if(k.slice(k.indexOf('|')+1)!==film) return;
+    Object.entries(STAMPDATA[k]).forEach(([kind,list])=>{
+      allStamps[kind]=(allStamps[kind]||0)+list.length; });
+  });
+  $('#backBox').innerHTML = `
+    <div class="back-hd"><div style="flex:1">
+      <h3>${esc(film)}</h3>
+      <div class="sub">${r?esc(r[4])+' · '+r[3]+' · '+esc(r[7]):'사전에 없는 작품'}</div>
+    </div><button id="backClose">✕</button></div>
+    <div class="back-bd">
+      <div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:16px">
+        ${poster(film,'po-l')}
+        <div style="flex:1">
+          <div class="who">이 클럽에서 <b>${pickers.length}명</b>이 골랐습니다<br>
+            <span style="color:var(--dim);font-size:13px">${pickers.map(p=>esc(p.name||p.id)).join(' · ')||'—'}</span></div>
+          ${Object.keys(allStamps).length?`<div style="font-size:13px;color:var(--dim);margin-top:8px">
+            ${Object.entries(allStamps).map(([k,v])=>`${esc(k)} <b style="color:var(--gold)">${v}</b>`).join(' · ')}</div>`:''}
+        </div>
+      </div>
+      <h4>붙은 메모 ${ns.length}개</h4>
+      ${ns.length ? ns.map(n=>`<div class="bnote">
+          <div class="hd"><b>${esc(n.by)}</b> → ${esc(n.to)}의 카드에서</div>${esc(n.text)}</div>`).join('')
+        : '<div class="empty">아직 이 작품에 붙은 메모가 없습니다.</div>'}
+    </div>`;
+  $('#backWrap').classList.add('on');
+  $('#backClose').onclick = ()=>$('#backWrap').classList.remove('on');
+  patchPosters();
+}
+$('#backWrap').addEventListener('click', e=>{ if(e.target.id==='backWrap') $('#backWrap').classList.remove('on'); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') $('#backWrap').classList.remove('on'); });
 
 render();
-loadMembers();
 </script>
 </body>
 </html>

@@ -67,3 +67,5 @@ export function getStore() {
 
 export const K_MEMBERS = 'movie_dna:members';
 export const K_POSTERS = 'movie_dna:posters';
+export const K_NOTES   = 'movie_dna:notes';    // 메모
+export const K_STAMPS  = 'movie_dna:stamps';   // 도장
