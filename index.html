@@ -273,6 +273,73 @@ button.go:disabled{background:var(--rule);color:#8b8271;cursor:not-allowed;box-s
   font-weight:900;cursor:pointer;font-family:var(--sans);font-size:14px;flex:none}
 .mform button:disabled{background:#4a4236;color:#8b8271;cursor:not-allowed}
 
+/* ══ 취향 지도 ══ */
+.mapwrap{border:3px solid var(--ink);background:var(--panel);margin-top:22px;padding:6px}
+.mapsvg{display:block;width:100%;height:auto}
+.mp-bg{fill:#fff;stroke:var(--rule2);stroke-width:1}
+.mp-ax{stroke:var(--rule);stroke-width:1;stroke-dasharray:3 4}
+.mp-lb{font-family:var(--mono);font-size:11px;fill:var(--dim)}
+.mp-w{fill:var(--ink);opacity:.16;cursor:pointer}
+.mp-w:hover{opacity:.5;fill:var(--verm)}
+.mp-m circle{fill:var(--verm);stroke:#fff;stroke-width:2;cursor:pointer}
+.mp-m text{font-family:var(--sans);font-size:12.5px;font-weight:900;fill:var(--ink);cursor:pointer}
+.mp-m.me circle{fill:var(--gold)}
+.mp-m.me text{fill:var(--gold)}
+.mp-m.hi circle{r:10;fill:var(--ink)}
+.mp-m.hi text{fill:var(--ink);font-size:14px}
+h4.sec2{font-family:var(--serif);font-size:18px;font-weight:900;margin:34px 0 10px;
+  padding-top:18px;border-top:3px solid var(--ink)}
+.twin{border:2px solid var(--rule);background:var(--panel);padding:14px 16px;margin-bottom:9px}
+.twin.first{border:3px solid var(--ink)}
+.twin .hd{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}
+.twin .hd .rk{font-family:var(--mono);font-size:11.5px;color:#a89e8a;font-weight:700}
+.twin .hd b{font-family:var(--serif);font-size:18px;font-weight:900}
+.twin .hd .tagl{font-size:11.5px;color:var(--gold);border:1px solid var(--gold);padding:1px 7px}
+.twin .hd .pct{margin-left:auto;font-family:var(--mono);font-size:19px;font-weight:700;color:var(--verm)}
+.twin .why{font-size:14px;color:var(--dim);margin-top:7px;line-height:1.7}
+.twin .why b{color:var(--ink)}
+.twin .strip{display:flex;gap:5px;flex-wrap:wrap;margin-top:10px}
+.twin .strip .po{border-color:var(--rule)}
+.twin.far{font-size:13.5px;color:var(--dim);border-style:dashed;display:flex;align-items:baseline;gap:8px}
+.twin.far b{color:var(--ink)}
+.twin.far .pct{margin-left:auto;font-family:var(--mono);color:var(--dim);font-size:15px}
+
+/* ══ 블라인드 ══ */
+.bl-hud{display:flex;justify-content:space-between;align-items:center;gap:12px;
+  border-top:3px solid var(--ink);border-bottom:1px solid var(--rule);
+  padding:12px 0;margin:22px 0 0;flex-wrap:wrap}
+.bl-hud .rd{font-family:var(--serif);font-size:19px;font-weight:900}
+.bl-hud .rd em{font-style:normal;font-family:var(--mono);color:var(--verm)}
+.bl-hud .sc{font-size:13px;color:var(--dim)}
+.bl-hud .sc b{font-family:var(--mono);font-size:19px;color:var(--gold);font-weight:700}
+.bl-q{font-family:var(--serif);font-size:19px;font-weight:900;margin:22px 0 12px}
+.bl-choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:9px}
+.bl-choices button{background:#fff;border:2px solid var(--ink);color:var(--ink);
+  padding:13px 10px;font-size:15px;font-weight:700;cursor:pointer;font-family:var(--sans)}
+.bl-choices button:hover:not(:disabled){background:var(--ink);color:var(--paper)}
+.bl-choices button:disabled{cursor:default}
+.bl-choices button.right{background:var(--gold);border-color:var(--gold);color:#241c0c}
+.bl-choices button.wrong{background:var(--verm);border-color:var(--verm);color:#fff}
+.bl-choices button.dim{opacity:.35}
+.bl-said{margin-top:16px;padding:14px 16px;border:2px solid var(--rule);background:var(--panel);
+  font-size:14.5px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.bl-said b{font-family:var(--serif);font-size:17px;font-weight:900}
+.bl-said .ok{color:var(--ok)} .bl-said .no{color:var(--verm)}
+.bl-said button{margin-left:auto}
+.bl-end{border:3px solid var(--ink);background:var(--panel);padding:26px;margin-top:22px}
+.bl-end h3{font-family:var(--serif);font-size:26px;font-weight:900;margin:0 0 4px}
+.bl-end .big{font-family:var(--mono);font-size:46px;color:var(--verm);font-weight:700;line-height:1.1}
+.bl-end .big u{font-family:var(--sans);font-size:19px;color:var(--dim);text-decoration:none}
+.bl-end .msg{font-size:14.5px;color:var(--dim);margin:8px 0 18px}
+.bl-rank{margin-top:22px;padding-top:16px;border-top:2px solid var(--rule)}
+.bl-rank h4{font-size:13.5px;color:var(--dim);margin:0 0 9px;font-weight:700}
+.bl-rank .row{display:flex;gap:10px;align-items:baseline;padding:7px 0;
+  border-bottom:1px dotted var(--rule);font-size:14px}
+.bl-rank .row .n{font-family:var(--mono);font-size:11.5px;color:#a89e8a;width:18px;flex:none}
+.bl-rank .row b{flex:1}
+.bl-rank .row .v{font-family:var(--mono);font-size:12.5px;color:var(--dim)}
+.bl-note{font-size:12.5px;color:var(--dim);margin-top:12px}
+
 /* ── 작품 뒷면 ── */
 .back-wrap{position:fixed;inset:0;background:rgba(20,18,16,.82);z-index:50;
   display:none;overflow-y:auto;padding:24px 16px}
@@ -342,6 +409,8 @@ button.ghost:hover{border-color:var(--verm);color:var(--verm)}
 <nav class="tabs">
   <button data-v="submit" class="on"><span class="n">01</span>카드 내기</button>
   <button data-v="club"><span class="n">02</span>클럽 보기</button>
+  <button data-v="blind"><span class="n">03</span>블라인드</button>
+  <button data-v="map"><span class="n">04</span>취향 지도</button>
 </nav>
 
 <!-- ═══════════ 카드 내기 ═══════════ -->
@@ -444,6 +513,20 @@ button.ghost:hover{border-color:var(--verm);color:var(--verm)}
   <div class="whoami" id="whoami"></div>
   <h4 class="sec">클럽 명단 <button class="ghost" id="reload">새로고침</button></h4>
   <div id="clubList"><div class="empty">불러오는 중…</div></div>
+</div>
+
+<!-- ═══════════ 블라인드 ═══════════ -->
+<div class="view" id="v-blind">
+  <p class="clubintro">이름을 가린 열 편을 보고 <b>누구의 카드인지</b> 맞혀 보세요.
+    포스터와 통계만 보입니다. 이름·한 줄·태그는 가려져 있습니다.</p>
+  <div id="blindBox"><div class="empty">불러오는 중…</div></div>
+</div>
+
+<!-- ═══════════ 취향 지도 ═══════════ -->
+<div class="view" id="v-map">
+  <p class="clubintro">세로는 <b>얼마나 알려진 작품인가</b>, 가로는 <b>보고 난 뒤 마음이 어땠나</b>.
+    같은 영화를 고르지 않아도 감독·연대·성향으로 이어집니다.</p>
+  <div id="mapBox"><div class="empty">불러오는 중…</div></div>
 </div>
 
 <footer class="foot">
@@ -550,7 +633,11 @@ document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b));
   $('#v-submit').classList.toggle('on', b.dataset.v==='submit');
   $('#v-club').classList.toggle('on', b.dataset.v==='club');
+  $('#v-blind').classList.toggle('on', b.dataset.v==='blind');
+  $('#v-map').classList.toggle('on', b.dataset.v==='map');
   if(b.dataset.v==='club') loadClub();
+  if(b.dataset.v==='blind') loadBlind();
+  if(b.dataset.v==='map') loadMap();
   window.scrollTo({top:0,behavior:'smooth'});
 });
 
@@ -725,7 +812,12 @@ $('#moodRows').addEventListener('click', e=>{
   const w=draft.works.find(x=>x.t===b.dataset.mt); if(!w) return;
   w.mood=+b.dataset.mv; w.seeded=false; render();
 });
-$('#name').addEventListener('input', e=>{ draft.name=e.target.value; render(); });
+const cleanName = v => String(v||'').replace(/\|/g,'').replace(/\s+/g,' ');
+$('#name').addEventListener('input', e=>{
+  const v = cleanName(e.target.value);
+  if(v !== e.target.value) e.target.value = v;      // 파이프는 키 구분자라 못 씁니다
+  draft.name = v; render();
+});
 $('#decl').addEventListener('input', e=>{ draft.decl=e.target.value; });
 
 /* ═════════ 제출 ═════════ */
@@ -797,8 +889,8 @@ function startAgain(){
   $('#status').textContent = ''; $('#status').className = '';
   $('#result').innerHTML = '';
   step = 1; render(); reroll();
+  // 이름은 미리 채워 두되, 4단계가 접혀 있으므로 그 줄의 요약(sum4)에 「현우_」가 보입니다.
   document.querySelector('.brief').scrollIntoView({behavior:'smooth', block:'start'});
-  setTimeout(()=>{ const n=$('#name'); if(n){ n.focus(); n.setSelectionRange(n.value.length,n.value.length); } }, 400);
 }
 
 /* ═════════ 클럽 보기 ═════════ */
@@ -812,7 +904,7 @@ function renderWho(){
       <input type="text" id="whoIn" maxlength="20" placeholder="이름" value="">
       <button id="whoSet">확인</button>`;
     $('#whoSet').onclick = ()=>{
-      const v=$('#whoIn').value.trim(); if(!v) return;
+      const v=cleanName($('#whoIn').value).trim(); if(!v) return;
       ME=v; try{localStorage.setItem(MEK,ME);}catch{}; renderWho(); renderClub();
     };
     $('#whoIn').addEventListener('keydown',e=>{ if(e.key==='Enter') $('#whoSet').click(); });
@@ -943,6 +1035,408 @@ async function post(body){
     NOTES=j.notes||[]; STAMPDATA=j.stamps||{}; renderClub();
   }catch(e){ alert('실패: '+e.message); }
 }
+
+/* ═════════ 블라인드 ═════════ */
+const ROUNDS = 10, CHOICES = 5;
+let BL = null, BLREC = {scores:{}, cards:{}};
+
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0; [a[i],a[j]]=[a[j],a[i]];} return a; }
+
+async function loadBlind(){
+  const box=$('#blindBox'); box.innerHTML='<div class="empty">불러오는 중…</div>';
+  try{
+    const [c,r] = await Promise.all([
+      fetch('/api/club').then(x=>x.json()),
+      fetch('/api/blind').then(x=>x.json()).catch(()=>({scores:{},cards:{}})),
+    ]);
+    if(c.error) throw new Error(c.error);
+    MEMBERS = c.members||[]; Object.assign(POSTERS, c.posters||{});
+    BLREC = {scores:r.scores||{}, cards:r.cards||{}};
+    BL = null; renderBlind();
+  }catch(e){
+    box.innerHTML = '<div class="empty" style="color:var(--verm)">불러오기 실패: '+esc(e.message)+'</div>';
+  }
+}
+
+function startBlind(){
+  const pool = MEMBERS.filter(m=>(m.works||[]).length>=3);
+  const mine = pool.filter(m=>m.id!==ME);
+  const src = mine.length>=3 ? mine : pool;          // 내 카드는 되도록 뺀다
+  if(src.length<3){ BL=null; renderBlind(); return; }
+
+  // 인원이 적어도 10문제를 채웁니다. 같은 카드가 연달아 나오지 않게만 섞습니다.
+  const n = ROUNDS;
+  const bag = [];
+  while(bag.length < n){
+    const next = shuffle(src);
+    if(bag.length && next[0].id === bag[bag.length-1].id && next.length>1){
+      [next[0], next[1]] = [next[1], next[0]];
+    }
+    bag.push(...next);
+  }
+  const rounds = bag.slice(0,n).map(owner=>{
+    const others = MEMBERS.filter(m=>m.id!==owner.id).map(m=>m.id);
+    const decoys = shuffle(others).slice(0, Math.min(CHOICES-1, others.length));
+    return { owner: owner.id, choices: shuffle(decoys.concat(owner.id)) };
+  });
+  BL = { rounds, i:0, score:0, picked:null, results:[], done:false };
+  renderBlind();
+}
+
+function pickBlind(name){
+  if(!BL || BL.picked) return;
+  const r = BL.rounds[BL.i];
+  BL.picked = name;
+  const correct = name === r.owner;
+  if(correct) BL.score++;
+  BL.results.push({owner:r.owner, correct});
+  renderBlind();
+}
+function nextBlind(){
+  if(!BL) return;
+  if(BL.i+1 >= BL.rounds.length){ BL.done = true; saveBlind(); }
+  else { BL.i++; BL.picked = null; }
+  renderBlind();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+async function saveBlind(){
+  try{
+    const r = await fetch('/api/blind',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({by:ME, score:BL.score, total:BL.rounds.length, results:BL.results})});
+    const j = await r.json();
+    if(j.ok){ BLREC = {scores:j.scores||{}, cards:j.cards||{}}; renderBlind(); }
+  }catch{}
+}
+
+function hiddenCard(m){
+  const ws=(m.works||[]).map(w=>typeof w==='string'?{t:w,mood:3}:w);
+  const st=stats(ws);
+  return '<div class="ticket"><div class="stub">ADMIT ONE · '+ws.length+' FILMS</div>'
+    + '<div class="tbody"><p class="nm" style="color:var(--ddim)">?????</p>'
+    + '<div class="pgrid" style="pointer-events:none">'
+    + ws.map(w=>'<span class="pcell"><span class="pshot">'+poster(w.t,'po-l')+'</span>'
+        + '<span class="ptitle">'+esc(w.t)+'</span></span>').join('')
+    + '</div>' + ribbon(st.years)
+    + '<div class="kpi">'
+    + '<div><b>'+ws.length+'</b><span>등록한 영화</span></div>'
+    + '<div><b>'+(st.med||'—')+'</b><span>취향 중앙값</span></div>'
+    + '<div><b>'+st.span+'<u>년</u></b><span>연대 폭</span></div>'
+    + '<div><b>'+st.deep+'</b><span>수면 아래 작품</span></div>'
+    + '</div></div></div>';
+}
+
+function hardestRank(){
+  const rows = Object.entries(BLREC.cards)
+    .map(([n,v])=>({n, right:(v&&v.right)||0, wrong:(v&&v.wrong)||0}))
+    .map(x=>({...x, tot:x.right+x.wrong}))
+    .filter(x=>x.tot>=2)
+    .sort((a,b)=> (b.wrong/b.tot)-(a.wrong/a.tot) || b.tot-a.tot).slice(0,5);
+  if(!rows.length) return '';
+  return '<div class="bl-rank"><h4>정체를 가장 잘 숨긴 사람</h4>'
+    + rows.map((x,i)=>'<div class="row"><span class="n">'+String(i+1).padStart(2,'0')+'</span>'
+      + '<b>'+esc(x.n)+'</b><span class="v">'+x.tot+'번 중 '+x.wrong+'번 못 맞힘</span></div>').join('')
+    + '</div>';
+}
+
+function renderBlind(){
+  const box=$('#blindBox');
+  const playable = MEMBERS.filter(m=>(m.works||[]).length>=3);
+
+  if(!BL){
+    if(playable.length<3){
+      box.innerHTML = '<div class="empty">카드가 <b>3장 이상</b> 모이면 시작할 수 있습니다. 지금은 '
+        + playable.length + '장입니다.</div>';
+      return;
+    }
+    const my = ME ? BLREC.scores[ME] : null;
+    box.innerHTML = '<div class="bl-end"><h3>이 카드는 누구의 것일까</h3>'
+      + '<p class="msg">' + Math.min(ROUNDS, Math.max(3, playable.length)) + '문제입니다. '
+      + (ME ? esc(ME)+'님의 기록으로 남습니다.' : '「클럽 보기」에서 이름을 알려주면 기록이 남습니다.')
+      + (my ? '<br>지금까지 최고 <b style="color:var(--verm)">'+my.best+'</b>문제 · '+my.plays+'번 도전' : '')
+      + '</p><button class="go" id="blStart">시작하기</button></div>' + hardestRank();
+    return;
+  }
+
+  if(BL.done){
+    const my = ME ? BLREC.scores[ME] : null;
+    const n = BL.rounds.length;
+    const msg = BL.score>=8 ? '감별사입니다. 이 클럽 사람들을 꿰고 있군요.'
+              : BL.score>=n*0.6 ? '괜찮습니다. 절반 넘게 알아봤습니다.'
+              : BL.score>=n*0.3 ? '아직 서로를 더 봐야겠습니다.'
+              : '오늘 처음 만난 사이 같군요.';
+    box.innerHTML = '<div class="bl-end"><h3>결과</h3>'
+      + '<div class="big">'+BL.score+'<u> / '+n+'</u></div>'
+      + '<p class="msg">'+msg+(my?' 최고 기록 '+my.best+'문제.':'')
+      + (BL.score<8 ? '<br>감별사 배지까지 '+(8-BL.score)+'문제 남았습니다.' : '')
+      + '</p><button class="go" id="blStart">다시 하기</button>'
+      + '<p class="bl-note">'+(ME?'기록이 저장됐습니다.':'이름을 알려주지 않아 기록은 남지 않았습니다. 카드별 난이도에는 반영됩니다.')+'</p>'
+      + '</div>' + hardestRank();
+    return;
+  }
+
+  const r = BL.rounds[BL.i];
+  const owner = MEMBERS.find(m=>m.id===r.owner);
+  if(!owner){ nextBlind(); return; }
+  const answered = !!BL.picked;
+  const correct = BL.picked === r.owner;
+
+  box.innerHTML = '<div class="bl-hud">'
+    + '<div class="rd">라운드 <em>'+(BL.i+1)+'</em> / '+BL.rounds.length+'</div>'
+    + '<div class="sc">맞힌 문제 <b>'+BL.score+'</b></div></div>'
+    + hiddenCard(owner)
+    + '<p class="bl-q">누구의 카드일까요?</p><div class="bl-choices">'
+    + r.choices.map(c=>{
+        let cls='';
+        if(answered){
+          if(c===r.owner) cls='right';
+          else if(c===BL.picked) cls='wrong';
+          else cls='dim';
+        }
+        return '<button class="'+cls+'" data-pick="'+esc(c)+'"'+(answered?' disabled':'')+'>'+esc(c)+'</button>';
+      }).join('')
+    + '</div>'
+    + (answered ? '<div class="bl-said">'
+        + (correct ? '<b class="ok">맞혔습니다</b>'
+                   : '<b class="no">아니었습니다</b> <span>'+esc(r.owner)+'의 카드였습니다.</span>')
+        + '<button class="go" id="blNext">'+(BL.i+1>=BL.rounds.length?'결과 보기':'다음 →')+'</button></div>'
+      : '');
+  patchPosters();
+}
+$('#blindBox').addEventListener('click', e=>{
+  const pick=e.target.closest('button[data-pick]');
+  if(pick && !pick.disabled){ pickBlind(pick.dataset.pick); return; }
+  if(e.target.id==='blStart'){ startBlind(); return; }
+  if(e.target.id==='blNext'){ nextBlind(); return; }
+});
+
+/* ═════════ 유사도 엔진 ═════════
+   같은 영화를 고르지 않아도 연결되도록, 카드를 다섯 층으로 분해해서 비교합니다.
+   작품 / 감독 / 장르 / 성향 / 메타(국가·연대)
+   인원이 적을수록 작품 겹침이 드물기 때문에 나머지 층의 비중을 키웁니다.        */
+const LAYERS = ['work','dir','genre','tag','meta'];
+const LNAME = {work:'같은 작품', dir:'같은 감독', genre:'같은 장르', tag:'같은 성향', meta:'같은 연대·나라'};
+
+function worksOf(m){ return (m.works||[]).map(w => typeof w==='string' ? {t:w,mood:3} : w); }
+
+function traitsOf(m){
+  const T = {work:new Set(), dir:new Set(), genre:new Set(), tag:new Set(), meta:new Set()};
+  const byDir = {};
+  worksOf(m).forEach(w=>{
+    const r = BY[w.t];
+    T.work.add(w.t);
+    const d = w.dir || (r ? r[4] : '');
+    if(d) String(d).split(',').forEach(x=>{ x=x.trim(); if(x){ T.dir.add(x); (byDir[x]=byDir[x]||[]).push(w.t); } });
+    if(r) T.genre.add(r[7]);
+    const y = w.year || (r ? r[3] : null);
+    const c = r ? r[2] : '';
+    if(y){ const dec = Math.floor(y/10)*10 + 's'; T.meta.add(dec); if(c) T.meta.add(c+'·'+dec); }
+    if(c) T.meta.add(c);
+  });
+  (m.tags||[]).forEach(t=>T.tag.add(t));
+  T._byDir = byDir;
+  return T;
+}
+
+function idfOf(all, L){
+  const c={}; all.forEach(T=>T[L].forEach(k=>c[k]=(c[k]||0)+1));
+  const N = all.length||1, w={};
+  for(const k in c) w[k] = Math.log((N+1)/c[k]);
+  return w;
+}
+function cosIDF(A,B,w){
+  let dot=0, na=0, nb=0;
+  A.forEach(k=>{ const x=w[k]||1; na+=x*x; if(B.has(k)) dot+=x*x; });
+  B.forEach(k=>{ const x=w[k]||1; nb+=x*x; });
+  return dot / ((Math.sqrt(na)||1e-9) * (Math.sqrt(nb)||1e-9));
+}
+function weightsFor(n){
+  const t = Math.min(1, n/40);          // 인원이 늘수록 작품 비중이 커집니다
+  return { work:.20+.24*t, dir:.24-.04*t, genre:.16-.04*t, tag:.14-.04*t, meta:.26-.12*t };
+}
+
+let SIM = null;   // {T:{id:traits}, W, pair(a,b)}
+function buildSim(){
+  const T = {}; MEMBERS.forEach(m=>T[m.id]=traitsOf(m));
+  const all = Object.values(T);
+  const IDF = {}; LAYERS.forEach(L=>IDF[L]=idfOf(all,L));
+  const W = weightsFor(MEMBERS.length);
+  SIM = {
+    T, W, IDF,
+    pair(a,b){
+      const A=T[a], B=T[b]; if(!A||!B) return {s:0,parts:{}};
+      const parts={}; let s=0;
+      LAYERS.forEach(L=>{ parts[L]=cosIDF(A[L],B[L],IDF[L]); s += W[L]*parts[L]; });
+      return {s, parts};
+    },
+  };
+}
+
+/* 받침에 따라 조사를 고릅니다 (박찬욱'을' / 봉준호'를') */
+function josa(w, withBatchim, without){
+  const t = String(w||''); if(!t) return without;
+  const c = t.charCodeAt(t.length-1);
+  if(c < 0xAC00 || c > 0xD7A3) return without;      // 한글이 아니면 기본형
+  return ((c - 0xAC00) % 28) ? withBatchim : without;
+}
+
+/* 왜 비슷한지 한 문장으로 */
+function whyText(aId,bId){
+  const A=SIM.T[aId], B=SIM.T[bId];
+  const sh = L => [...A[L]].filter(k=>B[L].has(k));
+  const works = sh('work'), dirs = sh('dir'), metas = sh('meta'), gens = sh('genre'), tags = sh('tag');
+  const out = [];
+
+  if(works.length >= 2){
+    const shown = works.slice(0,3), extra = works.length>3 ? ' 외 '+(works.length-3)+'편' : '';
+    // 조사는 마지막에 실제로 읽히는 말(제목 또는 "N편")에 맞춥니다
+    const tail = extra ? '편' : shown[shown.length-1];
+    out.push(`「${shown.join('」 「')}」${extra}${josa(tail,'을','를')} 함께 골랐습니다.`);
+  }
+  else if(works.length === 1) out.push(`함께 고른 건 「${works[0]}」 한 편입니다.`);
+
+  // 같은 감독을 '다른 작품으로' 좋아하는 경우가 가장 재미있는 근거
+  const crossed = dirs.map(d=>{
+    const ta=(A._byDir[d]||[]), tb=(B._byDir[d]||[]);
+    const diff = ta.filter(x=>!tb.includes(x)).length && tb.filter(x=>!ta.includes(x)).length;
+    return {d, ta, tb, n:Math.min(ta.length,tb.length), diff};
+  }).sort((x,y)=> (y.diff-x.diff) || (y.n-x.n));
+
+  if(crossed.length){
+    const c = crossed[0];
+    const eul = josa(c.d,'을','를'), i_ga = josa(c.d,'이','가');
+    if(c.diff) out.push(`<b>${esc(c.d)}</b>${eul} 각각 다른 작품으로 좋아하고 계십니다 — ${esc(c.ta[0])} / ${esc(c.tb[0])}.`);
+    else if(c.n>=2) out.push(`두 분 다 <b>${esc(c.d)}</b>${eul} ${c.n}편씩 골랐습니다.`);
+    else out.push(`<b>${esc(c.d)}</b>${i_ga} 겹칩니다.`);
+  }
+
+  if(!works.length && !dirs.length){
+    const m2 = metas.filter(x=>x.includes('·'));
+    if(m2.length) out.push(`겹치는 영화도 감독도 없지만, 두 분 다 <b>${esc(m2[0].replace('·',' '))}</b> 쪽에 있습니다.`);
+    else if(gens.length) out.push(`<b>${esc(gens.slice(0,2).join(' · '))}</b>에 함께 몰려 있습니다.`);
+    else if(tags.length) out.push(`성향이 같습니다 — ${esc(tags.join(' · '))}.`);
+    else out.push('겹치는 곳이 거의 없습니다. 정반대 취향일 수 있습니다.');
+  }
+  return out.slice(0,2).join(' ');
+}
+
+/* ═════════ 좌표 ═════════ */
+function workXY(t){
+  const r = BY[t];
+  const seedX = r ? r[8] : 0, y = r ? r[9] : 0;
+  const ms = [];
+  MEMBERS.forEach(m=>worksOf(m).forEach(w=>{ if(w.t===t) ms.push(w.mood); }));
+  const k = 2;   // 사전값을 이만큼 붙들어 둡니다. 사람이 쌓이면 밀려납니다
+  const x = ms.length
+    ? (seedX*k + ms.reduce((s,v)=>s+(v-3)/2, 0)) / (k + ms.length)
+    : seedX;
+  return { x: Math.max(-1, Math.min(1, x)), y };
+}
+function memberXY(m){
+  const ws = worksOf(m); if(!ws.length) return {x:0,y:0};
+  let sx=0, sy=0;
+  ws.forEach(w=>{ const p=workXY(w.t); sx+=p.x; sy+=p.y; });
+  return { x: sx/ws.length, y: sy/ws.length };
+}
+
+/* ═════════ 지도 화면 ═════════ */
+async function loadMap(){
+  const box=$('#mapBox'); box.innerHTML='<div class="empty">불러오는 중…</div>';
+  try{
+    const c = await fetch('/api/club').then(r=>r.json());
+    if(c.error) throw new Error(c.error);
+    MEMBERS = c.members||[]; Object.assign(POSTERS, c.posters||{});
+    buildSim(); renderMap();
+  }catch(e){
+    box.innerHTML = '<div class="empty" style="color:var(--verm)">불러오기 실패: '+esc(e.message)+'</div>';
+  }
+}
+
+function renderMap(){
+  const box=$('#mapBox');
+  if(MEMBERS.length < 2){
+    box.innerHTML = '<div class="empty">카드가 <b>2장 이상</b> 모이면 지도가 그려집니다. 지금은 '
+      + MEMBERS.length + '장입니다.</div>';
+    return;
+  }
+  const W=620, H=500, PAD=54;
+  const px = x => PAD + (x+1)/2 * (W-PAD*2);
+  const py = y => PAD + (1-y)/2 * (H-PAD*2);
+
+  // 작품 점
+  const seen = new Set(); const dots=[];
+  MEMBERS.forEach(m=>worksOf(m).forEach(w=>{
+    if(seen.has(w.t)) return; seen.add(w.t);
+    const p=workXY(w.t);
+    const n=MEMBERS.filter(x=>worksOf(x).some(y=>y.t===w.t)).length;
+    dots.push({t:w.t, ...p, n});
+  }));
+
+  const mem = MEMBERS.map(m=>({ id:m.id, ...memberXY(m), n:worksOf(m).length }));
+
+  const svg = `<svg viewBox="0 0 ${W} ${H}" class="mapsvg" role="img" aria-label="취향 지도">
+    <rect x="${PAD}" y="${PAD}" width="${W-PAD*2}" height="${H-PAD*2}" class="mp-bg"/>
+    <line x1="${px(0)}" y1="${PAD}" x2="${px(0)}" y2="${H-PAD}" class="mp-ax"/>
+    <line x1="${PAD}" y1="${py(0)}" x2="${W-PAD}" y2="${py(0)}" class="mp-ax"/>
+    <text x="${PAD-8}" y="${PAD+4}" class="mp-lb" text-anchor="end">대중</text>
+    <text x="${PAD-8}" y="${H-PAD}" class="mp-lb" text-anchor="end">니치</text>
+    <text x="${PAD}" y="${H-PAD+22}" class="mp-lb">마음이 데워짐</text>
+    <text x="${W-PAD}" y="${H-PAD+22}" class="mp-lb" text-anchor="end">마음이 부서짐</text>
+    ${dots.map(d=>`<circle cx="${px(d.x).toFixed(1)}" cy="${py(d.y).toFixed(1)}"
+        r="${(2.6+Math.min(d.n,5)*0.7).toFixed(1)}" class="mp-w" data-t="${esc(d.t)}">
+        <title>${esc(d.t)} · ${d.n}명</title></circle>`).join('')}
+    ${mem.map(m=>`<g class="mp-m${m.id===ME?' me':''}" data-m="${esc(m.id)}">
+        <circle cx="${px(m.x).toFixed(1)}" cy="${py(m.y).toFixed(1)}" r="7"/>
+        <text x="${px(m.x).toFixed(1)}" y="${(py(m.y)-12).toFixed(1)}" text-anchor="middle">${esc(m.id)}</text>
+        <title>${esc(m.id)} · ${m.n}편</title></g>`).join('')}
+  </svg>`;
+
+  // 쌍둥이
+  let twins = '';
+  if(ME && SIM.T[ME]){
+    const list = MEMBERS.filter(m=>m.id!==ME)
+      .map(m=>({m, ...SIM.pair(ME, m.id)})).sort((a,b)=>b.s-a.s);
+    twins = `<h4 class="sec2">${esc(ME)}님의 취향 쌍둥이</h4>` + list.slice(0,5).map((x,i)=>twinRow(x,i,ME)).join('')
+      + (list.length>1 ? `<div class="twin far">가장 먼 사람 — <b>${esc(list[list.length-1].m.id)}</b>
+          <span class="pct">${Math.round(list[list.length-1].s*100)}%</span></div>` : '');
+  } else {
+    twins = `<div class="bl-note" style="margin-top:16px">「클럽 보기」에서 이름을 알려주면
+      내 취향 쌍둥이가 나옵니다.</div>`;
+  }
+
+  // 클럽에서 가장 가까운 쌍
+  const pairs=[];
+  for(let i=0;i<MEMBERS.length;i++) for(let j=i+1;j<MEMBERS.length;j++){
+    pairs.push({a:MEMBERS[i].id, b:MEMBERS[j].id, ...SIM.pair(MEMBERS[i].id, MEMBERS[j].id)});
+  }
+  pairs.sort((x,y)=>y.s-x.s);
+  const top = pairs.slice(0,3).map(p=>`<div class="twin">
+      <div class="hd"><b>${esc(p.a)} × ${esc(p.b)}</b><span class="pct">${Math.round(p.s*100)}%</span></div>
+      <div class="why">${whyText(p.a,p.b)}</div></div>`).join('');
+
+  box.innerHTML = `<div class="mapwrap">${svg}</div>
+    <p class="bl-note">점 하나가 영화 한 편입니다. 여러 명이 고를수록 커집니다.
+      이름이 붙은 큰 점은 그 사람이 고른 열 편의 한가운데입니다.</p>
+    ${twins}
+    <h4 class="sec2">클럽에서 가장 가까운 두 사람</h4>${top}`;
+}
+
+function twinRow(x,i,meId){
+  const shared = [...SIM.T[meId].work].filter(t=>SIM.T[x.m.id].work.has(t));
+  const strip = shared.slice(0,6).map(t=>poster(t,'po-m')).join('');
+  const best = LAYERS.map(L=>({L, v:x.parts[L]*SIM.W[L]})).sort((a,b)=>b.v-a.v)[0];
+  return `<div class="twin${i===0?' first':''}">
+    <div class="hd"><span class="rk">${String(i+1).padStart(2,'0')}</span>
+      <b>${esc(x.m.id)}</b>
+      <span class="tagl">${LNAME[best.L]}</span>
+      <span class="pct">${Math.round(x.s*100)}%</span></div>
+    <div class="why">${whyText(meId, x.m.id)}</div>
+    ${strip?`<div class="strip">${strip}</div>`:''}
+  </div>`;
+}
+$('#mapBox').addEventListener('click', e=>{
+  const g=e.target.closest('.mp-m'); if(!g) return;
+  document.querySelectorAll('.mp-m').forEach(x=>x.classList.toggle('hi', x===g));
+});
 
 /* ── 작품 뒷면 ── */
 function openBackside(film){

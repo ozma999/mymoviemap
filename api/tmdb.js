@@ -111,6 +111,7 @@ export default async function handler(req, res) {
       return res.status(200).json({
         ok: true,
         director: dirs.join(', '),
+        year: (d.release_date || '').slice(0, 4),
         runtime: d.runtime || null,
         country: (d.origin_country || [])[0] || (d.production_countries?.[0]?.iso_3166_1) || '',
         genres: (d.genres || []).map((g) => g.name),
