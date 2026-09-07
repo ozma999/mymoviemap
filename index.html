@@ -143,13 +143,29 @@ input::placeholder,textarea::placeholder{color:#a89e8a}
   border-bottom:1px solid var(--rule2);font-size:14.5px}
 .ritem:last-child{border-bottom:none}
 .ritem:hover{background:var(--inset)}
-.ritem .ri-t{flex:1;min-width:0}
-.ritem .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}
-.ritem .meta{font-size:12.5px;color:var(--dim)} .ritem .y{font-family:var(--mono)}
-.ritem.dup{opacity:.4;cursor:not-allowed}
+/* 제목과 감독·연도는 줄을 나눕니다. 붙여 놓으면 「사도이준익」처럼 읽힙니다. */
+.ritem .ri-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.ritem .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700;line-height:1.3}
+.ritem .meta{font-size:12.5px;color:var(--dim);line-height:1.3;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ritem .y{font-family:var(--mono)}
+/* 이미 고른 줄 — 눌리지는 않지만 '왜'가 읽혀야 하므로 너무 흐리게 두지 않습니다. */
+.ritem.dup{opacity:.62;cursor:pointer;background:var(--inset)}
+.ritem.dup:hover{opacity:.85}
+.ritem.full{opacity:.5;cursor:not-allowed}
 .ritem .src{font-size:10px;border:1px solid var(--rule);padding:1px 6px;flex:none;
-  font-family:var(--mono);color:#a49a86}
-.ritem .src.dict{color:var(--verm);border-color:var(--verm)}
+  font-family:var(--sans);color:#a49a86;white-space:nowrap}
+.ritem .src.dict{color:var(--verm);border-color:var(--verm);font-family:var(--mono)}
+.ritem .src.has{color:var(--gold);border-color:var(--gold);font-weight:700}
+.ritem .src.no{color:#a49a86;border-style:dashed}
+.qsay{max-height:0;overflow:hidden;font-size:13px;color:var(--gold);
+  transition:max-height .18s ease,padding .18s ease}
+.qsay.on{max-height:44px;padding:7px 0 1px}
+.picked li.flash{animation:pflash 1.6s ease}
+@keyframes pflash{
+  0%,55%{background:rgba(168,121,31,.22);box-shadow:inset 3px 0 0 var(--gold)}
+  100%{background:transparent;box-shadow:inset 3px 0 0 transparent}
+}
 .hint{font-size:13px;color:var(--dim);margin-top:11px}
 .sugg{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
 .sugg button{background:#fff;border:1px solid var(--rule);color:var(--dim);
@@ -568,6 +584,7 @@ button.ghost:hover{border-color:var(--verm);color:var(--verm)}
     <p class="why">순서는 상관없습니다. 지금 떠오르는 것부터 넣으세요.
       사전에 없는 작품은 제목을 그대로 적어 넣어도 되고, 다섯 편부터 제출할 수 있습니다.</p>
     <input type="text" id="q" placeholder="제목 검색 — 예: 기생충, 화양연화, Parasite">
+    <div class="qsay" id="qsay"></div>
     <div id="results"></div>
     <div class="hint">사전에서 몇 편 골라볼까요
       <button class="ghost" id="reroll" style="padding:2px 9px;margin-left:4px">다른 것 보기</button></div>
@@ -705,10 +722,12 @@ function patchPosters(){
   });
 }
 let pQueue = [], pTimer;
-function needPoster(t,y){
+function needPoster(t,y,o){
   if(!t || POSTERS[t]!==undefined || TMDB_ON===false) return;
   if(pQueue.some(x=>x.t===t)) return;
-  pQueue.push({t, y:y||''});
+  // 한글 제목만으로 찾으면 엉뚱한 영화가 걸립니다. 원제와 연도를 같이 넘깁니다.
+  const r = BY[t];
+  pQueue.push({ t, y: y || (r?r[3]:'') || '', o: o || (r?r[1]:'') || '' });
   clearTimeout(pTimer); pTimer = setTimeout(flushPosters, 250);
 }
 async function flushPosters(){
@@ -915,10 +934,34 @@ $('#q').addEventListener('input', e=>{
 });
 function rowHTML(o){
   const dup = draft.works.some(w=>w.t===o.t);
-  return `<div class="ritem${dup?' dup':''}" data-t="${esc(o.t)}"${o.tmdb?` data-id="${o.tmdb}"`:''}${o.year?` data-y="${esc(o.year)}"`:''}${o.poster?` data-p="${esc(o.poster)}"`:''}>
+  const full = !dup && draft.works.length>=GOAL;
+  // 눌러도 안 되는 줄에는 '왜 안 되는지'를 반드시 적습니다.
+  const badge = dup ? '이미 고름' : full ? '자리 참' : (o.dict?'사전':'TMDB');
+  return `<div class="ritem${dup?' dup':''}${full?' full':''}" data-t="${esc(o.t)}"${o.tmdb?` data-id="${o.tmdb}"`:''}${o.year?` data-y="${esc(o.year)}"`:''}${o.poster?` data-p="${esc(o.poster)}"`:''}>
     ${poster(o.t,'po-m')}
     <span class="ri-t"><span class="nm">${esc(o.t)}</span><span class="meta">${o.meta}</span></span>
-    <span class="src${o.dict?' dict':''}">${o.dict?'사전':'TMDB'}</span></div>`;
+    <span class="src${o.dict&&!dup&&!full?' dict':''}${dup?' has':''}${full?' no':''}">${badge}</span></div>`;
+}
+/* 검색창 바로 아래 한 줄 안내. 잠시 뒤 사라집니다. */
+let sayT = null;
+function say(msg){
+  const el = $('#qsay'); if(!el) return;
+  el.textContent = msg; el.className = 'qsay on';
+  clearTimeout(sayT); sayT = setTimeout(()=>{ el.className = 'qsay'; }, 4000);
+}
+/* 이미 고른 작품을 다시 누르면, 목록 어디에 있는지 짚어 줍니다. */
+function pointAt(title){
+  const li = document.querySelector(`#picked li[data-p="${CSS.escape(title)}"]`);
+  if(!li) return;
+  const s2 = document.getElementById('s2');
+  if(s2 && !s2.classList.contains('open')){ step = 2; render(); }
+  requestAnimationFrame(()=>{
+    const el = document.querySelector(`#picked li[data-p="${CSS.escape(title)}"]`);
+    if(!el) return;
+    el.scrollIntoView({behavior:'smooth', block:'center'});
+    el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
+    setTimeout(()=>el.classList.remove('flash'), 1600);
+  });
 }
 async function doSearch(raw,q,seq){
   const box=$('#results');
@@ -945,8 +988,13 @@ async function doSearch(raw,q,seq){
     const seen=new Set(local.map(o=>norm(o.t))), wide=[];
     (j.results||[]).forEach(m=>{
       if(m.poster) POSTERS[m.title]=m.poster;
+      // 제목이 같아도 연도가 다르면 다른 영화입니다. 사전 작품의 포스터를 함부로 바꾸지 않습니다.
       const hit = DICT.find(r=>norm(r[0])===norm(m.title)||norm(r[1])===norm(m.orig));
-      if(hit){ if(m.poster) POSTERS[hit[0]]=m.poster; return; }
+      if(hit){
+        const sameFilm = !m.year || !hit[3] || Math.abs(+m.year - +hit[3]) <= 1;
+        if(m.poster && sameFilm && POSTERS[hit[0]]===undefined) POSTERS[hit[0]]=m.poster;
+        return;
+      }
       if(seen.has(norm(m.title))) return; seen.add(norm(m.title));
       wide.push({t:m.title,tmdb:m.tmdb,poster:m.poster,year:m.year,
         meta:`${m.orig&&m.orig!==m.title?esc(m.orig)+' · ':''}<span class="y">${esc(m.year)}</span>`});
@@ -955,14 +1003,27 @@ async function doSearch(raw,q,seq){
   }catch{ draw(local,false); }
 }
 $('#results').addEventListener('click', e=>{
-  const it=e.target.closest('.ritem'); if(!it||it.classList.contains('dup')) return;
+  const it=e.target.closest('.ritem'); if(!it) return;
+  // 이미 고른 작품 — 아무 일도 안 일어나면 고장으로 보입니다. 어디 있는지 짚어 줍니다.
+  if(it.classList.contains('dup')){
+    const t = it.dataset.t;
+    $('#q').value=''; $('#results').className=''; $('#results').innerHTML='';
+    say(`「${t}」${josa(t,'은','는')} 이미 아래 목록에 있습니다.`);
+    pointAt(t); return;
+  }
   if(it.dataset.p) POSTERS[it.dataset.t]=it.dataset.p;
   add(it.dataset.t||it.dataset.new, !it.dataset.t&&!it.dataset.id, it.dataset.id, it.dataset.y);
   $('#q').value=''; $('#results').className=''; $('#results').innerHTML='';
 });
 function add(title,isNew,tmdbId,year){
-  if(!title||draft.works.length>=GOAL) return;
-  if(draft.works.some(w=>w.t===title)) return;
+  if(!title) return;
+  // 조용히 실패하지 않습니다. 안 들어가면 이유를 말해 줍니다.
+  if(draft.works.some(w=>w.t===title)){
+    say(`「${title}」${josa(title,'은','는')} 이미 아래 목록에 있습니다.`); pointAt(title); return;
+  }
+  if(draft.works.length>=GOAL){
+    say(`열 편이 다 찼습니다. 아래 목록에서 한 편을 ✕로 뺀 뒤에 넣어 주세요.`); pointAt(draft.works[0].t); return;
+  }
   const r=BY[title];
   const w={t:title,mood:r?r[6]:3,seeded:true,custom:!!isNew,tmdb:tmdbId?+tmdbId:null,
            dir:r?r[4]:'', year:r?r[3]:(+year||null)};
@@ -1001,7 +1062,7 @@ function renderPicked(){
     `<div class="slot${i<draft.works.length?' f':''}"></div>`).join('');
   $('#picked').innerHTML = draft.works.map(w=>{
     const r=BY[w.t];
-    return `<li>${poster(w.t,'po-s')}<span class="t">${esc(w.t)}</span>
+    return `<li data-p="${esc(w.t)}">${poster(w.t,'po-s')}<span class="t">${esc(w.t)}</span>
       <span class="m">${r?esc(r[4])+' · <span class="y">'+r[3]+'</span>':(w.tmdb?'TMDB':'직접 입력')}</span>
       <button data-del="${esc(w.t)}" title="빼기">✕</button></li>`;
   }).join('');

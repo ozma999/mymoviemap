@@ -40,19 +40,83 @@ const shape = (m) => ({
   pop: m.vote_count || 0,
 });
 
+/* ── 포스터 찾기 ───────────────────────────────────────────────
+   「사도」처럼 짧고 흔한 한글 제목은 검색 첫 줄이 엉뚱한 영화일 때가 많습니다.
+   그래서 (1) 원제로도 찾아보고 (2) 찾은 결과가 정말 그 영화인지 점수로 검증한 뒤
+   확신이 없으면 차라리 포스터를 안 답니다. 틀린 포스터가 빈 자리보다 나쁩니다.
+   ────────────────────────────────────────────────────────────── */
+function score(m, t, o, y) {
+  const cand = [m.title, m.original_title].filter(Boolean).map(norm);
+  const want = [t, o].filter(Boolean).map(norm);
+  let s = 0;
+
+  if (want.some((w) => cand.includes(w))) s += 100;                       // 제목이 정확히 같다
+  else if (want.some((w) => cand.some((c) => c.includes(w) || w.includes(c)))) s += 35;
+
+  const my = +(m.release_date || '').slice(0, 4) || 0;
+  if (y && my) {
+    const gap = Math.abs(my - +y);
+    if (gap === 0) s += 60; else if (gap <= 1) s += 40; else if (gap <= 3) s += 5; else s -= 70;
+  }
+  s += Math.min(12, Math.log10((m.vote_count || 0) + 1) * 4);            // 동점일 때만 갈리도록 작게
+  return s;
+}
+
+async function findPoster(t, o, y) {
+  const queries = [];
+  if (o && norm(o) !== norm(t)) queries.push(o);   // 원제가 훨씬 잘 걸립니다
+  queries.push(t);
+
+  const seen = new Map();
+  for (const q of queries) {
+    for (const params of (y ? [{ primary_release_year: y }, {}] : [{}])) {
+      let d;
+      try { d = await tmdb('/search/movie', { query: q, include_adult: false, ...params }); }
+      catch { continue; }
+      for (const m of (d.results || []).slice(0, 10)) if (!seen.has(m.id)) seen.set(m.id, m);
+      if ([...seen.values()].some((m) => score(m, t, o, y) >= 140)) break;   // 확실한 게 나왔으면 그만
+    }
+  }
+  if (!seen.size) return '';
+
+  const best = [...seen.values()]
+    .map((m) => ({ m, s: score(m, t, o, y) }))
+    .sort((a, b) => b.s - a.s)[0];
+
+  // 제목이 맞거나(100+) 연도까지 맞아야 답니다. 애매하면 빈 포스터.
+  if (best.s < 100) return '';
+  return IMG(best.m.poster_path);
+}
+
 /* 포스터 캐시 — 한 번 찾은 포스터는 저장해 두고 다시 안 물어봅니다. */
 async function cacheGet() {
   const s = getStore();
   if (!s) return {};
   try { return (await s.get(K_POSTERS, {})) || {}; } catch { return {}; }
 }
-async function cacheMerge(add) {
+// keepExisting=true 면 이미 있는 제목은 건드리지 않습니다.
+// 검색 결과가 사전에 있는 같은 제목의 '다른 영화'를 덮어쓰는 사고를 막습니다.
+async function cacheMerge(add, keepExisting) {
   const s = getStore();
   if (!s || !Object.keys(add).length) return;
   try {
     const cur = (await s.get(K_POSTERS, {})) || {};
-    await s.set(K_POSTERS, { ...cur, ...add });
+    const next = keepExisting ? { ...add, ...cur } : { ...cur, ...add };
+    await s.set(K_POSTERS, next);
   } catch { /* 캐시는 실패해도 무시 */ }
+}
+// 잘못 박힌 포스터를 지웁니다. 지우면 다음 방문 때 새 방식으로 다시 찾습니다.
+async function cacheDrop(titles) {
+  const s = getStore();
+  if (!s) return 0;
+  try {
+    const cur = (await s.get(K_POSTERS, {})) || {};
+    if (!titles) { await s.set(K_POSTERS, {}); return Object.keys(cur).length; }
+    let n = 0;
+    titles.forEach((t) => { if (cur[t] !== undefined) { delete cur[t]; n++; } });
+    await s.set(K_POSTERS, cur);
+    return n;
+  } catch { return 0; }
 }
 
 export default async function handler(req, res) {
@@ -65,6 +129,22 @@ export default async function handler(req, res) {
     });
   }
 
+  /* ── 잘못 박힌 포스터 지우기 ──
+     /api/tmdb?repair=1        → 저장된 포스터를 전부 비웁니다 (다음 방문 때 다시 찾습니다)
+     /api/tmdb?repair=사도,올드보이 → 그 작품만 비웁니다
+     지워도 카드·메모·기록은 그대로입니다. 포스터는 언제든 다시 만들 수 있는 값입니다. */
+  if (req.method === 'GET' && req.query?.repair) {
+    const v = String(req.query.repair);
+    const only = (v === '1' || v === 'all') ? null
+      : v.split(',').map((x) => x.trim()).filter(Boolean);
+    const n = await cacheDrop(only);
+    return res.status(200).json({
+      ok: true, 지운_포스터_수: n,
+      대상: only ? only : '전체',
+      안내: '이제 사이트를 새로고침하면 포스터를 처음부터 다시 찾습니다. 카드와 메모는 그대로입니다.',
+    });
+  }
+
   if (!KEY) return res.status(200).json(NOKEY);
 
   try {
@@ -73,7 +153,8 @@ export default async function handler(req, res) {
       const titles = (req.body?.titles || []).slice(0, 12);
       if (!titles.length) return res.status(200).json({ ok: true, posters: {} });
 
-      const cache = await cacheGet();
+      const force = !!req.body?.force;
+      const cache = force ? {} : await cacheGet();
       const out = {}, fresh = {};
 
       for (const it of titles) {
@@ -81,19 +162,7 @@ export default async function handler(req, res) {
         if (!t) continue;
         if (cache[t] !== undefined) { out[t] = cache[t]; continue; }
         try {
-          const d = await tmdb('/search/movie', {
-            query: t, include_adult: false,
-            ...(it.y ? { primary_release_year: it.y } : {}),
-          });
-          let hit = (d.results || [])[0];
-          // 연도를 걸고 못 찾으면 연도 없이 한 번 더
-          if (!hit && it.y) {
-            const d2 = await tmdb('/search/movie', { query: t, include_adult: false });
-            hit = (d2.results || []).find(
-              (m) => Math.abs(+(m.release_date || '0').slice(0, 4) - +it.y) <= 1
-            ) || (d2.results || [])[0];
-          }
-          const url = hit ? IMG(hit.poster_path) : '';
+          const url = await findPoster(t, it.o, it.y);
           out[t] = url; fresh[t] = url;                 // 못 찾은 것도 '' 로 캐시 (재조회 방지)
         } catch { out[t] = ''; }
       }
@@ -134,10 +203,12 @@ export default async function handler(req, res) {
       .slice(0, 14)
       .map(shape);
 
-    // 검색으로 알아낸 포스터도 캐시에 넣어 둔다
+    // 검색으로 알아낸 포스터도 캐시에 넣어 둔다.
+    // 단, 이미 있는 제목은 덮어쓰지 않습니다 — 같은 제목의 다른 영화가
+    // 사전 작품의 포스터를 밀어내는 사고를 막습니다.
     const fresh = {};
     results.forEach((r) => { if (r.poster) fresh[r.title] = r.poster; });
-    cacheMerge(fresh);
+    cacheMerge(fresh, true);
 
     return res.status(200).json({ ok: true, results });
   } catch (e) {
