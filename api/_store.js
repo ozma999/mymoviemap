@@ -108,6 +108,27 @@ export const K_STAMPS    = 'movie_dna:stamps';      // (구버전) 통짜 객체
 export const K_BLIND     = 'movie_dna:blind_h';     // 해시: 블라인드 기록
 //   s|이름 → { best, plays }        그 사람의 최고 점수
 //   c|이름 → { right, wrong }       그 사람 카드를 남들이 얼마나 맞혔나
+export const K_DUEL      = 'movie_dna:duel_h';      // 해시: 양자택일 집계
+//   f|제목        → { win, loss }
+//   p|A@@B        → { [제목]: 표수 }  그 대결의 클럽 성적
+export const K_SUG_L     = 'movie_dna:sug_l';       // 리스트: 들어온 추천 (덧붙이기만)
+export const K_SUG_X     = 'movie_dna:sug_x';       // 내려간 추천 id
+export const K_SUG_A     = 'movie_dna:sug_a';       // 해시: 이름 → 채택한 열한 번째
+
+/* 추천도 메모와 같은 방식 — 리스트에 덧붙이고, 내린 건 표시로 걸러냅니다. */
+export async function loadSug(store) {
+  const [list, gone, adopted] = await Promise.all([
+    store.lrange(K_SUG_L),
+    store.smembers(K_SUG_X),
+    store.hgetall(K_SUG_A),
+  ]);
+  const dead = new Set(gone || []);
+  return {
+    pending: (list || []).filter((x) => x && x.id && !dead.has(x.id))
+                          .sort((a, b) => (a.ts || 0) - (b.ts || 0)),
+    adopted: adopted || {},
+  };
+}
 
 /* 구버전 배열에 남아 있는 카드를 해시로 옮겨 옵니다(한 번만, 자동).
    덮어쓰지 않고 '해시에 없는 것만' 채워 넣으므로 안전합니다. */
