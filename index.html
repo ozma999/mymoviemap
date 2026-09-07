@@ -58,20 +58,20 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;opa
 .lede{font-family:var(--serif);font-size:16.5px;line-height:1.95;margin:28px 0 0;max-width:620px}
 
 .mine{border:2px solid var(--rule);background:var(--panel);padding:16px 18px;margin-top:24px}
-.mine.on{border:3px solid var(--gold);display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:14px}
+.mine.on{border:3px solid var(--gold);display:flex;align-items:center;gap:4px 12px;flex-wrap:wrap}
+.mine.on .who{font-family:var(--serif);font-size:16px;font-weight:900}
 .mine.on b{color:var(--gold)}
+.mine.on .sub{font-size:12.5px;color:var(--dim)}
 .mine.on button{margin-left:auto}
 .mine .hd{font-family:var(--serif);font-size:17px;font-weight:900;margin-bottom:5px}
 .mine .note{font-size:12.5px;color:var(--dim);margin:0 0 11px;line-height:1.65}
-.mine .chips{margin:0}
-.mine .chip{font-size:13px;padding:5px 12px}
-.mine-cf{margin-top:14px;padding-top:13px;border-top:2px solid var(--rule2);
-  display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13.5px}
-.mine-cf input{flex:1;min-width:130px;padding:8px 11px;font-size:14px}
-.mine-cf button{background:var(--ink);color:var(--paper);border:none;padding:9px 15px;
-  font-weight:700;cursor:pointer;font-family:var(--sans);font-size:13.5px}
-.mine-cf .ghost{background:none;border:2px solid var(--rule);color:var(--dim)}
-.mine-cf .note{width:100%;margin:2px 0 0}
+.mine .chips{margin:0;display:flex;flex-wrap:wrap;gap:6px}
+/* 이름 칩 — 생김새는 태그 칩과 비슷하지만 역할이 달라 클래스를 나눕니다. */
+.mine .namechip{font-size:13px;padding:5px 12px;display:inline-flex;align-items:baseline;gap:6px;
+  background:#fff;border:1px solid var(--rule);color:var(--ink);cursor:pointer;font-family:var(--sans)}
+.mine .namechip:hover{border-color:var(--verm);color:var(--verm)}
+.mine .namechip i{font-style:normal;font-size:11px;color:var(--dim);font-family:var(--mono)}
+.mine .namechip:hover i{color:var(--verm);opacity:.8}
 .editmine{background:none;border:1px solid var(--dgold);color:var(--dgold);
   font-size:11.5px;padding:3px 10px;cursor:pointer;font-family:var(--sans);
   margin-left:10px;vertical-align:middle;font-weight:700}
@@ -564,7 +564,7 @@ button.ghost:hover{border-color:var(--verm);color:var(--verm)}
 
 <section class="step" id="s1">
   <div class="shead"><div class="sn">1</div><h2>취향 축 고르기</h2>
-    <div class="sum" id="sum1"></div><button class="edit" data-go="1">다시 고르기</button></div>
+    <div class="sum" id="sum1"></div><button class="edit" data-go="1">정하기</button></div>
   <div class="sbody">
     <p class="why">이 두 줄이 지도에서 당신을 어느 부족 옆에 놓을지를 정합니다.
       겹치는 영화가 한 편도 없는 사람과도 여기서 연결됩니다.</p>
@@ -579,7 +579,7 @@ button.ghost:hover{border-color:var(--verm);color:var(--verm)}
 
 <section class="step" id="s2">
   <div class="shead"><div class="sn">2</div><h2>인생 영화 열 편</h2>
-    <div class="sum" id="sum2"></div><button class="edit" data-go="2">목록 열기</button></div>
+    <div class="sum" id="sum2"></div><button class="edit" data-go="2">선정하기</button></div>
   <div class="sbody">
     <p class="why">순서는 상관없습니다. 지금 떠오르는 것부터 넣으세요.
       사전에 없는 작품은 제목을 그대로 적어 넣어도 되고, 다섯 편부터 제출할 수 있습니다.</p>
@@ -596,7 +596,7 @@ button.ghost:hover{border-color:var(--verm);color:var(--verm)}
 
 <section class="step" id="s3">
   <div class="shead"><div class="sn">3</div><h2>보고 난 뒤의 마음</h2>
-    <div class="sum" id="sum3"></div><button class="edit" data-go="3">다시 배치</button></div>
+    <div class="sum" id="sum3"></div><button class="edit" data-go="3">배치하기</button></div>
   <div class="sbody">
     <p class="why">아직 아무도 옮기지 않아 임시 위치에 놓여 있습니다.
       점(·)이 임시, 채워진 칸이 당신이 직접 고른 자리입니다.</p>
@@ -609,7 +609,7 @@ button.ghost:hover{border-color:var(--verm);color:var(--verm)}
 
 <section class="step" id="s4">
   <div class="shead"><div class="sn">4</div><h2>이름과 한 줄</h2>
-    <div class="sum" id="sum4"></div><button class="edit" data-go="4">고쳐 쓰기</button></div>
+    <div class="sum" id="sum4"></div><button class="edit" data-go="4">입력하기</button></div>
   <div class="sbody">
     <p class="why">한 줄은 입장권에 그대로 인쇄되고, 클럽 명단에서 이름 옆에 붙습니다. 안 적어도 됩니다.<br>
       <b>이름이 곧 캐릭터입니다.</b> 「현우」가 본캐라면 「현우_요리편」은 부캐로 한 장이 따로 생기고,
@@ -698,7 +698,6 @@ let ME = '';
 let openMemoKey = null;          // "이름|영화"
 let memoDraft = '';              // 작성 중이던 메모 (다시 그려도 유지)
 const draft = { tags: [], works: [], name: "", decl: "", loaded: null };
-let claimFor = null;    // 되찾기 확인 중인 이름
 let step = 1;
 
 const $ = s => document.querySelector(s);
@@ -708,9 +707,22 @@ const key = (to,film) => to + '|' + film;
 try{ ME = localStorage.getItem(MEK) || ''; }catch{}
 
 /* ═════════ 포스터 ═════════ */
+/* 제목 → {연도, TMDB 번호}. 클럽 카드에 담겨 온 정보를 포스터 찾기에 재사용합니다. */
+let WMETA = {};
+function indexWorks(){
+  (MEMBERS||[]).forEach(m=>(m.works||[]).forEach(w=>{
+    if(!w || typeof w === 'string') return;
+    const cur = WMETA[w.t] || (WMETA[w.t] = { y:null, id:null });
+    if(!cur.y  && w.year) cur.y  = w.year;
+    if(!cur.id && w.tmdb) cur.id = w.tmdb;
+  }));
+}
 function poster(title, cls){
   const u = POSTERS[title];
   if(u) return `<img class="po ${cls}" src="${esc(u)}" alt="" loading="lazy">`;
+  // 그리는 자리에서 바로 요청합니다. 화면마다 따로 챙기면 언젠가 한 군데를 빠뜨립니다.
+  const m = WMETA[title];
+  needPoster(title, m&&m.y, '', m&&m.id);
   return `<span class="po ph ${cls}" data-pt="${esc(title)}">no<br>art</span>`;
 }
 function patchPosters(){
@@ -722,12 +734,17 @@ function patchPosters(){
   });
 }
 let pQueue = [], pTimer;
-function needPoster(t,y,o){
-  if(!t || POSTERS[t]!==undefined || TMDB_ON===false) return;
+function needPoster(t,y,o,id){
+  if(!t || TMDB_ON===false) return;
+  // 이미 주소가 있으면 그만. 단, '못 찾음(빈칸)'으로 남아 있어도
+  // TMDB 번호를 새로 알게 됐다면 그 번호로 한 번 더 확인합니다.
+  const known = POSTERS[t];
+  if(known) return;
+  if(known === '' && !id) return;
   if(pQueue.some(x=>x.t===t)) return;
-  // 한글 제목만으로 찾으면 엉뚱한 영화가 걸립니다. 원제와 연도를 같이 넘깁니다.
+  // 한글 제목만으로 찾으면 엉뚱한 영화가 걸립니다. 원제·연도·번호를 같이 넘깁니다.
   const r = BY[t];
-  pQueue.push({ t, y: y || (r?r[3]:'') || '', o: o || (r?r[1]:'') || '' });
+  pQueue.push({ t, y: y || (r?r[3]:'') || '', o: o || (r?r[1]:'') || '', id: id || null });
   clearTimeout(pTimer); pTimer = setTimeout(flushPosters, 250);
 }
 async function flushPosters(){
@@ -772,44 +789,28 @@ function renderMine(){
   const box = $('#mine'); if(!box) return;
   if(draft.loaded){
     box.innerHTML = `<div class="mine on">
-      <b>${esc(draft.loaded)}</b>님의 카드를 불러왔습니다.
-      고쳐서 다시 내면 <b>먼저 낸 카드를 덮어씁니다.</b>
+      <span class="who"><b>${esc(draft.loaded)}</b>님의 카드를 고치는 중</span>
+      <span class="sub">다시 내면 먼저 낸 카드를 덮어씁니다. 내 카드가 아니라면 —</span>
       <button class="ghost" id="mineCancel">새 카드로 시작</button></div>`;
     $('#mineCancel').onclick = ()=>{ resetDraft(); };
     return;
   }
   if(!MEMBERS.length || draft.works.length || draft.name){ box.innerHTML=''; return; }
 
-  const chips = MEMBERS.map(m=>`<button class="chip" data-claim="${esc(m.id)}">${esc(m.id)}</button>`).join('');
-  const confirm = claimFor ? `<div class="mine-cf">
-      <span><b>${esc(claimFor)}</b>${josa(claimFor,'이','가')} 맞다면 이름을 한 번 더 적어 주세요.</span>
-      <input type="text" id="claimIn" maxlength="20" placeholder="이름 다시 입력">
-      <button id="claimGo">불러오기</button>
-      <button class="ghost" id="claimNo">취소</button>
-      <p class="note">남의 카드를 실수로 고치는 일을 막기 위한 확인입니다.</p>
-    </div>` : '';
+  // 이름을 한 번 더 받지 않고 바로 불러옵니다. 잘못 눌러도 「새 카드로 시작」으로 빠져나올 수 있고,
+  // 다시 내기 전에는 아무것도 덮어쓰지 않습니다.
+  const chips = MEMBERS.map(m=>{
+    const n = (m.works||[]).length;
+    return `<button class="namechip" data-claim="${esc(m.id)}">${esc(m.id)}<i>${n}편</i></button>`;
+  }).join('');
 
   box.innerHTML = `<div class="mine">
     <div class="hd">이미 낸 적이 있다면</div>
-    <p class="note">카드는 서버에 그대로 있습니다. 기기를 바꿨거나 브라우저 기록을 지웠으면
-      이 브라우저가 내 것인 줄 모를 수 있습니다. 아래에서 <b>내 이름</b>을 누르면 그대로 불러와 고칠 수 있습니다.</p>
-    <div class="chips">${chips}</div>
-    ${confirm}</div>`;
+    <p class="note">카드는 서버에 그대로 있습니다. 아래에서 <b>내 이름</b>을 누르면
+      골랐던 열 편과 적었던 내용을 그대로 불러옵니다. 고쳐서 다시 내면 됩니다.</p>
+    <div class="chips">${chips}</div></div>`;
 
-  box.querySelectorAll('[data-claim]').forEach(b=>b.onclick=()=>{
-    claimFor = b.dataset.claim; renderMine();
-    const el=$('#claimIn'); if(el) el.focus();
-  });
-  const go=$('#claimGo');
-  if(go){
-    go.onclick = ()=>{
-      const v = cleanName($('#claimIn').value).trim();
-      if(v !== claimFor){ alert('이름이 다릅니다. 그대로 한 번 더 적어 주세요.'); return; }
-      loadMyCard(claimFor);
-    };
-    $('#claimIn').addEventListener('keydown', e=>{ if(e.key==='Enter') go.click(); });
-    $('#claimNo').onclick = ()=>{ claimFor=null; renderMine(); };
-  }
+  box.querySelectorAll('[data-claim]').forEach(b=>b.onclick=()=>loadMyCard(b.dataset.claim));
 }
 
 function loadMyCard(id){
@@ -825,7 +826,6 @@ function loadMyCard(id){
   draft.name = m.name || m.id;
   draft.decl = m.decl || '';
   draft.loaded = id;
-  claimFor = null;
   ME = id; try{ localStorage.setItem(MEK, ME); }catch{}
   $('#name').value = draft.name; $('#decl').value = draft.decl;
   $('#status').className=''; $('#status').textContent='';
@@ -837,7 +837,6 @@ function loadMyCard(id){
 
 function resetDraft(){
   draft.tags=[]; draft.works=[]; draft.name=''; draft.decl=''; draft.loaded=null;
-  claimFor=null;
   $('#name').value=''; $('#decl').value='';
   $('#status').className=''; $('#status').textContent='';
   $('#result').innerHTML='';
@@ -918,8 +917,11 @@ function renderChips(){
     }).join('')+`</div>`).join('');
 }
 document.addEventListener('click', e=>{
-  const c=e.target.closest('.chip'); if(!c||c.disabled) return;
-  const t=c.dataset.t, i=draft.tags.indexOf(t);
+  // data-t 가 있는 태그 칩만 받습니다. 이름 칩처럼 생김새만 같은 버튼이
+  // 여기 걸리면 빈 태그가 카드에 섞여 들어갑니다.
+  const c=e.target.closest('.chip[data-t]'); if(!c||c.disabled) return;
+  const t=c.dataset.t; if(!t) return;
+  const i=draft.tags.indexOf(t);
   if(i>=0) draft.tags.splice(i,1); else draft.tags.push(t);
   render();
 });
@@ -1205,7 +1207,7 @@ async function loadClub(){
     if(c.error) throw new Error(c.error);
     MEMBERS = c.members||[]; Object.assign(POSTERS, c.posters||{});
     NOTES = n.notes||[]; STAMPDATA = n.stamps||{};
-    Object.values(SUG.adopted).forEach(a=>needPoster(a.film));
+    indexWorks();                 // 포스터 찾기에 쓸 연도·TMDB 번호를 먼저 모읍니다
     renderClub();
   }catch(e){
     box.innerHTML = `<div class="empty" style="color:var(--verm)">불러오기 실패: ${esc(e.message)}</div>`;

@@ -62,6 +62,14 @@ function score(m, t, o, y) {
   return s;
 }
 
+/* TMDB 번호를 아는 작품은 검색할 필요가 없습니다. 그 번호가 곧 정답입니다. */
+async function posterById(id) {
+  try {
+    const d = await tmdb('/movie/' + encodeURIComponent(id), {});
+    return IMG(d.poster_path);
+  } catch { return ''; }
+}
+
 async function findPoster(t, o, y) {
   const queries = [];
   if (o && norm(o) !== norm(t)) queries.push(o);   // 원제가 훨씬 잘 걸립니다
@@ -160,10 +168,16 @@ export default async function handler(req, res) {
       for (const it of titles) {
         const t = String(it.t || '').trim();
         if (!t) continue;
-        if (cache[t] !== undefined) { out[t] = cache[t]; continue; }
+        const hit = cache[t];
+        // 주소가 이미 있으면 그대로. 빈칸으로 남아 있어도 번호를 알면 한 번 더 확인합니다.
+        if (hit) { out[t] = hit; continue; }
+        if (hit === '' && !it.id) { out[t] = ''; continue; }
         try {
-          const url = await findPoster(t, it.o, it.y);
-          out[t] = url; fresh[t] = url;                 // 못 찾은 것도 '' 로 캐시 (재조회 방지)
+          const url = it.id ? (await posterById(it.id)) || (await findPoster(t, it.o, it.y))
+                            : await findPoster(t, it.o, it.y);
+          out[t] = url;
+          // 못 찾은 것도 '' 로 캐시해 재조회를 막되, 빈 결과를 덮어쓰지는 않습니다.
+          if (url || hit === undefined) fresh[t] = url;
         } catch { out[t] = ''; }
       }
       await cacheMerge(fresh);

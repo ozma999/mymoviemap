@@ -74,7 +74,11 @@ export default async function handler(req, res) {
           dir: w.dir ? String(w.dir).slice(0, 80) : '',    // 유사도 계산에 씁니다
           year: +w.year || null,
         })),
-        tags: Array.isArray(tags) ? tags : [],
+        // 빈 값·중복이 섞여 들어오면 여기서 걸러 냅니다.
+        tags: Array.isArray(tags)
+          ? [...new Set(tags.filter((x) => typeof x === 'string' && x.trim())
+                            .map((x) => x.trim().slice(0, 40)))].slice(0, 12)
+          : [],
         decl: String(decl || '').slice(0, 120),
         ts: Date.now(),
       };
