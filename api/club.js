@@ -6,6 +6,8 @@
 import { getStore, findConfig, loadMembers, cleanName,
          K_MEMBERS_H, K_MEMBERS, K_POSTERS, K_FAME } from './_store.js';
 
+export const VER = '2026-09-08-a';   // 배포된 게 어느 버전인지 확인용 (/api/club?diag=1)
+
 const NEED_STORAGE = {
   error:
     '저장소가 연결되지 않았습니다. Vercel 프로젝트 → Storage 탭에서 Redis를 연결한 뒤, ' +
@@ -19,6 +21,8 @@ export default async function handler(req, res) {
     const names = Object.keys(process.env)
       .filter((k) => /(REDIS|UPSTASH|KV_|STORAGE)/i.test(k)).sort();
     const out = {
+      버전: VER,
+      기능_수면아래_계산: true,          // 이 값이 안 보이면 예전 파일이 올라가 있는 것입니다
       연결됨: !!cfg,
       접속방식: cfg ? (cfg.mode === 'rest' ? 'REST (https)' : 'TCP (rediss)') : null,
       사용중인_변수: cfg ? cfg.via : null,
