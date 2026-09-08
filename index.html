@@ -243,13 +243,37 @@ button.go:disabled{background:var(--rule);color:#8b8271;cursor:not-allowed;box-s
 .ticket .tags{font-size:12.5px;color:var(--ddim);margin-top:14px}
 .ticket .topdir{font-size:13.5px;color:var(--ddim);margin-bottom:14px}
 .ticket .topdir b{color:var(--dgold);font-weight:700}
-.ribbon .bar{position:relative;height:34px;border-bottom:1px solid rgba(232,192,122,.28);
-  margin-bottom:5px}
-.ribbon .tick{position:absolute;bottom:0;width:1px;height:6px;background:rgba(232,192,122,.35)}
-.ribbon .pt{position:absolute;bottom:9px;width:8px;height:8px;border-radius:50%;
-  background:var(--dgold);transform:translateX(-50%);opacity:.9}
+/* ── 연도표 = 수면 ──────────────────────────────────────────────
+   가운데 가로선이 수면입니다. 널리 알려진 작품은 위에, 수면 아래 작품은 아래에. */
+.ribbon .bar{position:relative;height:44px;margin-bottom:5px}
+.ribbon .bar::after{content:'';position:absolute;left:0;right:0;top:22px;height:1px;
+  background:rgba(232,192,122,.30)}
+.ribbon .tick{position:absolute;top:22px;width:1px;height:5px;background:rgba(232,192,122,.35)}
+.ribbon .pt{position:absolute;top:22px;width:24px;height:24px;margin:-12px 0 0 -12px;
+  background:none;border:none;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.ribbon .pt::before{content:'';position:absolute;left:50%;margin-left:-4.5px;
+  width:9px;height:9px;border-radius:50%;box-sizing:border-box;transition:transform .12s ease}
+.ribbon .pt.up::before{top:1px;background:var(--dgold);opacity:.9}
+.ribbon .pt.deep::before{bottom:1px;background:rgba(232,192,122,.14);
+  border:1.5px solid var(--dgold);opacity:.95}
+/* 고른 점은 커지되 모양은 유지합니다 — 위는 채운 원, 아래는 빈 원 그대로. */
+.ribbon .pt:hover::before,.ribbon .pt.on::before{transform:scale(1.5)}
+.ribbon .pt.on{z-index:2}
+.ribbon .pt.up.on::before{opacity:1}
+.ribbon .pt.deep.on::before{background:rgba(232,192,122,.45);opacity:1}
 .ribbon .lab{position:relative;height:14px;font-family:var(--mono);font-size:10px;color:var(--ddim)}
 .ribbon .lab span{position:absolute;transform:translateX(-50%)}
+.ribbon .rcap{margin-top:7px;font-size:12.5px;color:var(--ddim);min-height:18px;line-height:1.5}
+.ribbon .rcap b{font-family:var(--serif);font-size:14px;font-weight:900}
+.ribbon .rcap b.d{color:var(--dgold)} .ribbon .rcap b.u{color:#e9e2d2}
+.ribbon .rcap .y{font-family:var(--mono);margin-left:5px}
+.ribbon .rcap .w{margin-left:8px;font-size:11px;border:1px solid rgba(232,192,122,.4);
+  padding:1px 6px;color:var(--dgold)}
+/* 점을 누르면 아래 포스터에서 그 자리가 잠깐 빛납니다 */
+.pcell.lit .pshot,.gcell.lit{outline:2px solid var(--dgold);outline-offset:2px;
+  animation:litpulse 2.4s ease}
+.gcell{display:inline-block;line-height:0}
+@keyframes litpulse{0%,60%{box-shadow:0 0 0 4px rgba(232,192,122,.28)}100%{box-shadow:none}}
 
 .again{margin-top:22px;padding-top:20px;border-top:2px dashed var(--rule)}
 .again p{font-size:13px;color:var(--dim);margin:11px 0 0;line-height:1.7}
@@ -660,7 +684,7 @@ button.ghost:hover{border-color:var(--verm);color:var(--verm)}
 <footer class="foot">
   <p>영화 정보와 포스터는 <a href="https://www.themoviedb.org" target="_blank" rel="noopener">TMDB</a>에서 가져왔습니다.
     이 서비스는 TMDB의 승인을 받거나 인증된 것이 아닙니다.</p>
-  <p class="en">This product uses the TMDB API but is not endorsed or certified by TMDB.<br><span class="ver">화면 버전 2026-09-08-b</span></p>
+  <p class="en">This product uses the TMDB API but is not endorsed or certified by TMDB.<br><span class="ver">화면 버전 2026-09-08-c</span></p>
 </footer>
 </div>
 
@@ -1172,33 +1196,73 @@ $('#submitBtn').onclick = async ()=>{
   }catch(e){ st.className='err'; st.textContent='실패: '+e.message; }
 };
 
-function ribbon(years, dark){
+/* 연도표는 '수면'입니다. 널리 알려진 작품은 선 위, 수면 아래 작품은 선 아래에 찍습니다.
+   점을 누르면 어떤 작품인지 알려주고, 아래 포스터에서 그 자리를 짚어 줍니다. */
+function ribbon(items){
   const A=1940,B=2030,pos=y=>((y-A)/(B-A)*100).toFixed(1), MARK=[1950,1970,1990,2010,2025];
+  const deepN = items.filter(x=>x.deep).length;
   return `<div class="ribbon"><div class="bar">
     ${MARK.map(y=>`<div class="tick" style="left:${pos(y)}%"></div>`).join('')}
-    ${years.map(y=>`<div class="pt" style="left:${pos(y)}%"></div>`).join('')}</div>
-    <div class="lab">${MARK.map(y=>`<span style="left:${pos(y)}%">${y}</span>`).join('')}</div></div>`;
+    ${items.map(x=>`<button type="button" class="pt${x.deep?' deep':' up'}"
+        style="left:${pos(x.y)}%" data-film="${esc(x.t)}" data-y="${x.y}"
+        title="${esc(x.t)} · ${x.y}${x.deep?' · 수면 아래':''}"></button>`).join('')}</div>
+    <div class="lab">${MARK.map(y=>`<span style="left:${pos(y)}%">${y}</span>`).join('')}</div>
+    <div class="rcap">${deepN
+      ? `선 아래 <b>${deepN}편</b>이 수면 아래입니다. 점을 누르면 어떤 작품인지 보여드립니다.`
+      : `점을 누르면 어떤 작품인지 보여드립니다.`}</div></div>`;
 }
 function stats(works){
-  const years = works.map(w=>BY[w.t]&&BY[w.t][3]).filter(Boolean).sort((a,b)=>a-b);
+  // 연도·감독은 카드에 저장된 값을 먼저 쓰고, 없을 때만 사전을 봅니다.
+  // 사전만 보면 사전 밖 작품이 연도표에서 통째로 빠집니다.
+  const yearOf = (w)=> +w.year || (BY[w.t] ? BY[w.t][3] : null) || null;
+  const dirOf  = (w)=> w.dir || (BY[w.t] ? BY[w.t][4] : '') || '';
+
+  const items = works.map(w=>({ t:w.t, y:yearOf(w), deep:(popOf(w.t,w)||0) >= DEEP }))
+                     .filter(x=>x.y).sort((a,b)=>a.y-b.y);
+  const years = items.map(x=>x.y);
   const med = years.length?years[Math.floor(years.length/2)]:null;
   const span = years.length?years[years.length-1]-years[0]:0;
-  const dirs={}; works.forEach(w=>{const r=BY[w.t]; if(r) dirs[r[4]]=(dirs[r[4]]||0)+1;});
+
+  const dirs={};
+  works.forEach(w=>{ const d=dirOf(w);
+    if(d) String(d).split(',').forEach(x=>{ x=x.trim(); if(x) dirs[x]=(dirs[x]||0)+1; }); });
   const top = Object.entries(dirs).sort((a,b)=>b[1]-a[1]).filter(d=>d[1]>1)[0];
+
   // 사전에 있든 없든, 알려진 정도를 아는 작품은 모두 셉니다.
   const known = works.filter(w=>popOf(w.t,w)!==null).length;
   const deep = works.filter(w=>{ const p=popOf(w.t,w); return p!==null && p>=DEEP; }).length;
-  return {years,med,span,top,deep,known};
+  return {items,years,med,span,top,deep,known};
 }
+/* 연도표의 점을 누르면 — 그 카드 안에서만 반응합니다. */
+document.addEventListener('click', e=>{
+  const b = e.target.closest('.ribbon .pt'); if(!b) return;
+  const card = b.closest('.ticket') || document;
+  const t = b.dataset.film, deep = b.classList.contains('deep');
+  card.querySelectorAll('.ribbon .pt.on').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');
+  const cap = card.querySelector('.rcap');
+  if(cap) cap.innerHTML = `<b class="${deep?'d':'u'}">${esc(t)}</b>
+    <span class="y">${esc(b.dataset.y)}</span>
+    <span class="w">${deep?'수면 아래':'널리 알려진 작품'}</span>`;
+  // 아래 포스터에서 같은 작품을 짚어 줍니다.
+  const cell = card.querySelector(`[data-film="${CSS.escape(t)}"].pcell`)
+            || card.querySelector(`.gcell[data-film="${CSS.escape(t)}"]`);
+  if(cell){
+    card.querySelectorAll('.pcell.lit,.gcell.lit').forEach(x=>x.classList.remove('lit'));
+    void cell.offsetWidth; cell.classList.add('lit');
+    cell.scrollIntoView({behavior:'smooth', block:'nearest'});
+    setTimeout(()=>cell.classList.remove('lit'), 2400);
+  }
+});
 function showCard(){
   const s = stats(draft.works);
   $('#result').innerHTML = `<div class="ticket"><div class="stub">ADMIT ONE · ${draft.works.length} FILMS</div>
     <div class="tbody">
       <p class="nm">${esc(draft.name)}</p>
       ${draft.decl?`<p class="q">“${esc(draft.decl)}”</p>`:''}
-      <div class="grid">${draft.works.map(w=>poster(w.t,'po-l')).join('')}</div>
+      <div class="grid">${draft.works.map(w=>`<span class="gcell" data-film="${esc(w.t)}">`+poster(w.t,'po-l')+`</span>`).join('')}</div>
       ${s.top?`<div class="topdir">가장 많이 고른 감독 — <b>${esc(s.top[0])} ${s.top[1]}편</b></div>`:''}
-      ${ribbon(s.years)}
+      ${ribbon(s.items)}
       <div class="kpi">
         <div><b>${draft.works.length}</b><span>등록한 영화</span></div>
         <div><b>${s.med||'—'}</b><span>취향 중앙값</span></div>
@@ -1298,7 +1362,7 @@ function renderClub(){
         <div class="pgrid">${grid}</div>
         ${memoHtml}
         ${s.top?`<div class="topdir">가장 많이 고른 감독 — <b>${esc(s.top[0])} ${s.top[1]}편</b></div>`:''}
-        ${ribbon(s.years)}
+        ${ribbon(s.items)}
         <div class="kpi">
           <div><b>${ws.length}</b><span>등록한 영화</span></div>
           <div><b>${s.med||'—'}</b><span>취향 중앙값</span></div>
@@ -1459,7 +1523,7 @@ function hiddenCard(m){
     + '<div class="pgrid" style="pointer-events:none">'
     + ws.map(w=>'<span class="pcell"><span class="pshot">'+poster(w.t,'po-l')+'</span>'
         + '<span class="ptitle">'+esc(w.t)+'</span></span>').join('')
-    + '</div>' + ribbon(st.years)
+    + '</div>' + ribbon(st.items)
     + '<div class="kpi">'
     + '<div><b>'+ws.length+'</b><span>등록한 영화</span></div>'
     + '<div><b>'+(st.med||'—')+'</b><span>취향 중앙값</span></div>'
