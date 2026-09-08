@@ -185,8 +185,8 @@ https://mymoviemap.vercel.app/api/tmdb?repair=1           ← 전부 다시 찾�
 아래 두 주소를 열어 **버전이 같은지** 보세요.
 
 ```
-https://mymoviemap.vercel.app/api/club?diag=1     → "버전": "2026-09-08-a"
-https://mymoviemap.vercel.app/api/tmdb?diag=1     → "버전": "2026-09-08-a"
+https://mymoviemap.vercel.app/api/club?diag=1     → "버전": "2026-09-08-b"
+https://mymoviemap.vercel.app/api/tmdb?diag=1     → "버전": "2026-09-08-b"
 ```
 
 화면 쪽 버전은 사이트 맨 아래 회색 작은 글씨(`화면 버전 …`)에 있습니다.
