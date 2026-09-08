@@ -4,7 +4,7 @@
 //   POST /api/club          → 카드 한 장 저장 (그 사람 칸만 건드립니다)
 
 import { getStore, findConfig, loadMembers, cleanName,
-         K_MEMBERS_H, K_MEMBERS, K_POSTERS } from './_store.js';
+         K_MEMBERS_H, K_MEMBERS, K_POSTERS, K_FAME } from './_store.js';
 
 const NEED_STORAGE = {
   error:
@@ -47,11 +47,12 @@ export default async function handler(req, res) {
 
   try {
     if (req.method === 'GET') {
-      const [{ list }, posters] = await Promise.all([
+      const [{ list }, posters, fame] = await Promise.all([
         loadMembers(store),
         store.get(K_POSTERS, {}),
+        store.get(K_FAME, {}),
       ]);
-      return res.status(200).json({ members: list, posters: posters || {} });
+      return res.status(200).json({ members: list, posters: posters || {}, fame: fame || {} });
     }
 
     if (req.method === 'POST') {
@@ -94,11 +95,12 @@ export default async function handler(req, res) {
         await store.set(K_POSTERS, { ...cur, ...add });
       }
 
-      const [{ list }, posters] = await Promise.all([
+      const [{ list }, posters, fame] = await Promise.all([
         loadMembers(store),
         store.get(K_POSTERS, {}),
+        store.get(K_FAME, {}),
       ]);
-      return res.status(200).json({ ok: true, members: list, posters: posters || {} });
+      return res.status(200).json({ ok: true, members: list, posters: posters || {}, fame: fame || {} });
     }
 
     res.setHeader('Allow', 'GET, POST');

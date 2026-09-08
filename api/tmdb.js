@@ -13,7 +13,7 @@
 // 열쇠가 없어도 사이트는 그대로 돌아갑니다. 내장 사전 338편으로만 검색되고
 // 포스터가 안 붙을 뿐입니다.
 
-import { getStore, K_POSTERS } from './_store.js';
+import { getStore, K_POSTERS, K_FAME } from './_store.js';
 
 const KEY = process.env.TMDB_KEY || process.env.TMDB_API_KEY || '';
 const IMG = (p, size = 'w185') => (p ? `https://image.tmdb.org/t/p/${size}${p}` : '');
@@ -63,14 +63,18 @@ function score(m, t, o, y) {
 }
 
 /* TMDB 번호를 아는 작품은 검색할 필요가 없습니다. 그 번호가 곧 정답입니다. */
-async function posterById(id) {
-  try {
-    const d = await tmdb('/movie/' + encodeURIComponent(id), {});
-    return IMG(d.poster_path);
-  } catch { return ''; }
+async function movieById(id) {
+  try { return await tmdb('/movie/' + encodeURIComponent(id), {}); }
+  catch { return null; }
 }
 
-async function findPoster(t, o, y) {
+/* 얼마나 알려진 작품인가 — TMDB 표 수와 제작국. '수면 아래' 판정에 씁니다. */
+const fameOf = (m) => (m ? {
+  v: m.vote_count || 0,
+  c: (m.origin_country || [])[0] || (m.production_countries?.[0]?.iso_3166_1) || '',
+} : null);
+
+async function findMovie(t, o, y) {
   const queries = [];
   if (o && norm(o) !== norm(t)) queries.push(o);   // 원제가 훨씬 잘 걸립니다
   queries.push(t);
@@ -85,15 +89,14 @@ async function findPoster(t, o, y) {
       if ([...seen.values()].some((m) => score(m, t, o, y) >= 140)) break;   // 확실한 게 나왔으면 그만
     }
   }
-  if (!seen.size) return '';
+  if (!seen.size) return null;
 
   const best = [...seen.values()]
     .map((m) => ({ m, s: score(m, t, o, y) }))
     .sort((a, b) => b.s - a.s)[0];
 
-  // 제목이 맞거나(100+) 연도까지 맞아야 답니다. 애매하면 빈 포스터.
-  if (best.s < 100) return '';
-  return IMG(best.m.poster_path);
+  // 제목이 맞거나(100+) 연도까지 맞아야 인정합니다. 애매하면 아무것도 안 답니다.
+  return best.s < 100 ? null : best.m;
 }
 
 /* 포스터 캐시 — 한 번 찾은 포스터는 저장해 두고 다시 안 물어봅니다. */
@@ -113,6 +116,21 @@ async function cacheMerge(add, keepExisting) {
     await s.set(K_POSTERS, next);
   } catch { /* 캐시는 실패해도 무시 */ }
 }
+/* 표 수·제작국 캐시 — 포스터와 같은 방식으로 한 번만 찾아 둡니다. */
+async function fameGet() {
+  const s = getStore();
+  if (!s) return {};
+  try { return (await s.get(K_FAME, {})) || {}; } catch { return {}; }
+}
+async function fameMerge(add) {
+  const s = getStore();
+  if (!s || !Object.keys(add).length) return;
+  try {
+    const cur = (await s.get(K_FAME, {})) || {};
+    await s.set(K_FAME, { ...cur, ...add });
+  } catch { /* 캐시는 실패해도 무시 */ }
+}
+
 // 잘못 박힌 포스터를 지웁니다. 지우면 다음 방문 때 새 방식으로 다시 찾습니다.
 async function cacheDrop(titles) {
   const s = getStore();
@@ -146,6 +164,8 @@ export default async function handler(req, res) {
     const only = (v === '1' || v === 'all') ? null
       : v.split(',').map((x) => x.trim()).filter(Boolean);
     const n = await cacheDrop(only);
+    const s0 = getStore();
+    if (s0 && !only) { try { await s0.set(K_FAME, {}); } catch {} }
     return res.status(200).json({
       ok: true, 지운_포스터_수: n,
       대상: only ? only : '전체',
@@ -162,26 +182,37 @@ export default async function handler(req, res) {
       if (!titles.length) return res.status(200).json({ ok: true, posters: {} });
 
       const force = !!req.body?.force;
-      const cache = force ? {} : await cacheGet();
-      const out = {}, fresh = {};
+      const [pCache, fCache] = await Promise.all([
+        force ? {} : cacheGet(),
+        force ? {} : fameGet(),
+      ]);
+      const out = {}, fresh = {};          // 포스터
+      const fOut = {}, fFresh = {};        // 표 수·제작국
 
       for (const it of titles) {
         const t = String(it.t || '').trim();
         if (!t) continue;
-        const hit = cache[t];
-        // 주소가 이미 있으면 그대로. 빈칸으로 남아 있어도 번호를 알면 한 번 더 확인합니다.
-        if (hit) { out[t] = hit; continue; }
-        if (hit === '' && !it.id) { out[t] = ''; continue; }
+        const hit = pCache[t], fHit = fCache[t];
+        const needPoster = !hit && !(hit === '' && !it.id);
+        const needFame = fHit === undefined;
+        if (!needPoster && !needFame) { out[t] = hit; fOut[t] = fHit; continue; }
+
         try {
-          const url = it.id ? (await posterById(it.id)) || (await findPoster(t, it.o, it.y))
-                            : await findPoster(t, it.o, it.y);
-          out[t] = url;
-          // 못 찾은 것도 '' 로 캐시해 재조회를 막되, 빈 결과를 덮어쓰지는 않습니다.
-          if (url || hit === undefined) fresh[t] = url;
-        } catch { out[t] = ''; }
+          // 한 번 찾은 결과에서 포스터와 표 수를 함께 꺼냅니다. 두 번 물을 이유가 없습니다.
+          let m = it.id ? await movieById(it.id) : null;
+          if (!m || (!m.poster_path && !m.vote_count)) m = await findMovie(t, it.o, it.y) || m;
+
+          const url = m ? IMG(m.poster_path) : '';
+          out[t] = hit || url;
+          if (url || hit === undefined) fresh[t] = out[t];
+
+          const f = fameOf(m);
+          if (f) { fOut[t] = f; fFresh[t] = f; }
+          else { fOut[t] = fHit ?? null; if (fHit === undefined) fFresh[t] = null; }
+        } catch { out[t] = hit || ''; fOut[t] = fHit ?? null; }
       }
-      await cacheMerge(fresh);
-      return res.status(200).json({ ok: true, posters: out });
+      await Promise.all([cacheMerge(fresh), fameMerge(fFresh)]);
+      return res.status(200).json({ ok: true, posters: out, fame: fOut });
     }
 
     /* ── 상세: 감독·러닝타임·국가 ── */
@@ -195,6 +226,7 @@ export default async function handler(req, res) {
         ok: true,
         director: dirs.join(', '),
         year: (d.release_date || '').slice(0, 4),
+        votes: d.vote_count || 0,
         runtime: d.runtime || null,
         country: (d.origin_country || [])[0] || (d.production_countries?.[0]?.iso_3166_1) || '',
         genres: (d.genres || []).map((g) => g.name),

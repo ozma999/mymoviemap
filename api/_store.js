@@ -100,6 +100,7 @@ export function getStore() {
 export const K_MEMBERS_H = 'movie_dna:members_h';   // 해시: 이름 → 카드
 export const K_MEMBERS   = 'movie_dna:members';     // (구버전) 배열 — 읽기 전용·백업으로만 남겨 둠
 export const K_POSTERS   = 'movie_dna:posters';
+export const K_FAME      = 'movie_dna:fame';        // 제목 → {v:TMDB 표 수, c:제작국}
 export const K_NOTES_L   = 'movie_dna:notes_l';     // 리스트: 메모를 뒤에 덧붙이기만
 export const K_NOTES     = 'movie_dna:notes';       // (구버전) 배열
 export const K_NOTES_X   = 'movie_dna:notes_x';     // 지운 메모 id 목록(구버전 것도 확실히 지우기 위해)
