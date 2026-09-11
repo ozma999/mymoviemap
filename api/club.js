@@ -6,7 +6,7 @@
 import { getStore, findConfig, loadMembers, cleanName,
          K_MEMBERS_H, K_MEMBERS, K_POSTERS, K_FAME } from './_store.js';
 
-export const VER = '2026-09-08-c';   // 배포된 게 어느 버전인지 확인용 (/api/club?diag=1)
+export const VER = '2026-09-08-e';   // 배포된 게 어느 버전인지 확인용 (/api/club?diag=1)
 
 const NEED_STORAGE = {
   error:

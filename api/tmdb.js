@@ -15,7 +15,7 @@
 
 import { getStore, K_POSTERS, K_FAME } from './_store.js';
 
-export const VER = '2026-09-08-c';   // 배포 확인용 (/api/tmdb?diag=1)
+export const VER = '2026-09-08-e';   // 배포 확인용 (/api/tmdb?diag=1)
 
 const KEY = process.env.TMDB_KEY || process.env.TMDB_API_KEY || '';
 const IMG = (p, size = 'w185') => (p ? `https://image.tmdb.org/t/p/${size}${p}` : '');
@@ -66,15 +66,22 @@ function score(m, t, o, y) {
 
 /* TMDB 번호를 아는 작품은 검색할 필요가 없습니다. 그 번호가 곧 정답입니다. */
 async function movieById(id) {
-  try { return await tmdb('/movie/' + encodeURIComponent(id), {}); }
+  try { return await tmdb('/movie/' + encodeURIComponent(id), { append_to_response: 'credits' }); }
   catch { return null; }
 }
 
-/* 얼마나 알려진 작품인가 — TMDB 표 수와 제작국. '수면 아래' 판정에 씁니다. */
+/* 그 작품에 대해 알아 둘 것 — 표 수·제작국·연도·감독.
+   연도가 있어야 연도표에 점을 찍을 수 있습니다. 예전에 낸 카드에는 연도가 없어서
+   이 값이 없으면 그 작품이 연도표에서 통째로 빠집니다. */
 const fameOf = (m) => (m ? {
   v: m.vote_count || 0,
   c: (m.origin_country || [])[0] || (m.production_countries?.[0]?.iso_3166_1) || '',
+  y: +(m.release_date || '').slice(0, 4) || null,
+  d: (((m.credits && m.credits.crew) || [])
+       .filter((c) => c.job === 'Director').map((c) => c.name).join(', ')) || '',
 } : null);
+/* 예전 형식({v,c}만 있는 것)은 연도가 없으니 다시 받아 옵니다. */
+const fameFull = (f) => f === null || (f && Object.prototype.hasOwnProperty.call(f, 'y'));
 
 async function findMovie(t, o, y) {
   const queries = [];
@@ -198,7 +205,7 @@ export default async function handler(req, res) {
         if (!t) continue;
         const hit = pCache[t], fHit = fCache[t];
         const needPoster = !hit && !(hit === '' && !it.id);
-        const needFame = fHit === undefined;
+        const needFame = fHit === undefined || !fameFull(fHit);
         if (!needPoster && !needFame) { out[t] = hit; fOut[t] = fHit; continue; }
 
         try {

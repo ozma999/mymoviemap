@@ -173,6 +173,57 @@ input::placeholder,textarea::placeholder{color:#a89e8a}
   padding:5px 11px;font-size:13px;cursor:pointer;font-family:var(--sans)}
 .sugg button:hover{color:var(--verm);border-color:var(--verm)}
 
+/* ── 클럽 보기 안내문 ── */
+.clubintro{margin:26px 0 4px}
+.clubintro .lead{font-family:var(--serif);font-size:17px;font-weight:700;
+  line-height:1.6;margin:0 0 9px}
+.clubintro ul{margin:0;padding:0;list-style:none;font-size:13.5px;color:var(--dim);line-height:1.75}
+.clubintro li{padding-left:14px;position:relative;margin-bottom:2px}
+.clubintro li::before{content:'';position:absolute;left:0;top:9px;width:5px;height:5px;
+  background:var(--verm)}
+.clubintro b{color:var(--ink);font-weight:700}
+
+/* ── 클럽이 겹친 지점 (상단 TOP 3) ── */
+.ctop{border:2px solid var(--ink);background:var(--panel);padding:16px 18px;margin:18px 0 4px}
+.ctop .hd{font-family:var(--serif);font-size:16px;font-weight:900;margin-bottom:12px}
+.ctop .hd span{font-family:var(--sans);font-size:12px;font-weight:400;color:var(--dim);margin-left:8px}
+.ctop .row{display:flex;gap:16px;flex-wrap:wrap}
+/* 포스터는 원본이 185px입니다. 늘리면 흐려지니 자라지 않게 고정폭으로 둡니다. */
+.ctop .citem{flex:0 1 132px;max-width:132px;min-width:0;display:flex;flex-direction:column;gap:4px;
+  background:none;border:none;padding:0;cursor:pointer;text-align:left;position:relative;font-family:var(--sans)}
+.ctop .citem .rank{position:absolute;left:-5px;top:-5px;z-index:2;width:22px;height:22px;
+  background:var(--verm);color:#fff;font-family:var(--mono);font-size:12px;font-weight:700;
+  display:flex;align-items:center;justify-content:center}
+.ctop .citem .po{width:100%;height:auto;aspect-ratio:2/3;object-fit:cover;display:block}
+.ctop .ci-t{font-size:13.5px;font-weight:700;margin-top:5px;line-height:1.35}
+.ctop .ci-n{font-family:var(--mono);font-size:11.5px;color:var(--verm);font-weight:700}
+.ctop .ci-w{font-size:11.5px;color:var(--dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ctop .citem:hover .ci-t{color:var(--verm)}
+.ctop .note{font-size:12px;color:var(--dim);margin:12px 0 0}
+
+/* ── 열한 번째 자리 버튼 (통계 줄 오른쪽) ── */
+.ticket .kpi .el-btn{margin-left:auto;align-self:center;display:flex;align-items:center;gap:9px;
+  background:none;border:1px dashed var(--dgold);color:var(--dgold);padding:8px 13px;
+  cursor:pointer;font-family:var(--sans);text-align:left;max-width:250px}
+.ticket .kpi .el-btn:hover,.ticket .kpi .el-btn.on{background:rgba(232,192,122,.12);border-style:solid}
+.ticket .kpi .el-btn .el-n{width:26px;height:26px;flex:none;border:1px solid var(--dgold);
+  display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:13px}
+.ticket .kpi .el-btn .el-p{flex:none;line-height:0}
+.ticket .kpi .el-btn .el-p .po{width:26px;height:39px;object-fit:cover;display:block}
+.ticket .kpi .el-btn .el-t{min-width:0}
+/* 통계 숫자용 모노 서체를 물려받지 않도록 한글은 본문 서체로 되돌립니다. */
+.ticket .kpi .el-btn .el-t b{display:block;font-family:var(--sans);font-size:13px;
+  font-weight:700;line-height:1.35;color:var(--dgold);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ticket .kpi .el-btn .el-t span{display:block;font-size:11px;color:var(--ddim)}
+.ticket .kpi .el-btn.done{border-style:solid}
+.ver .bad{color:var(--verm);font-family:var(--sans);font-weight:700}
+@media(max-width:600px){
+  .ctop .row{gap:10px}
+  .ctop .citem{flex:0 1 100px;max-width:100px}
+  .ticket .kpi .el-btn{margin-left:0;width:100%;max-width:none}
+}
+
 /* ── 포스터 ── */
 .po{flex:none;display:block;object-fit:cover;background:var(--inset);
   border:2px solid var(--ink)}
@@ -265,6 +316,7 @@ button.go:disabled{background:var(--rule);color:#8b8271;cursor:not-allowed;box-s
 .ribbon .lab span{position:absolute;transform:translateX(-50%)}
 .ribbon .rcap{margin-top:7px;font-size:12.5px;color:var(--ddim);min-height:18px;line-height:1.5}
 .ribbon .rcap b{font-family:var(--serif);font-size:14px;font-weight:900}
+.ribbon .rcap .miss{color:#8a8070;font-size:11.5px}
 .ribbon .rcap b.d{color:var(--dgold)} .ribbon .rcap b.u{color:#e9e2d2}
 .ribbon .rcap .y{font-family:var(--mono);margin-left:5px}
 .ribbon .rcap .w{margin-left:8px;font-size:11px;border:1px solid rgba(232,192,122,.4);
@@ -655,9 +707,14 @@ button.ghost:hover{border-color:var(--verm);color:var(--verm)}
 
 <!-- ═══════════ 클럽 보기 ═══════════ -->
 <div class="view" id="v-club">
-  <p class="clubintro">다른 사람의 열 편을 보고, 마음이 가는 <b>포스터를 눌러 메모를 남기세요.</b>
-    메모는 카드 전체가 아니라 <b>한 편의 영화</b>에 붙습니다.
-    맨 끝 빈 칸은 <b>열한 번째 자리</b> — 그 사람에게 권하고 싶은 한 편을 넣어 주세요.</p>
+  <div class="clubintro">
+    <p class="lead">다른 사람의 열 편을 구경하고, 마음이 가는 곳에 말을 얹어 주세요.</p>
+    <ul>
+      <li><b>포스터를 누르면</b> 그 한 편에 메모를 남길 수 있습니다. 카드 전체가 아니라 <b>영화 한 편</b>에 붙습니다.</li>
+      <li><b>「열한 번째 자리」</b> 버튼으로 그 사람에게 권하고 싶은 한 편을 넣어 주세요.</li>
+    </ul>
+  </div>
+  <div id="clubTop"></div>
   <div class="whoami" id="whoami"></div>
   <h4 class="sec">클럽 명단 <button class="ghost" id="reload">새로고침</button></h4>
   <div id="clubList"><div class="empty">불러오는 중…</div></div>
@@ -684,7 +741,7 @@ button.ghost:hover{border-color:var(--verm);color:var(--verm)}
 <footer class="foot">
   <p>영화 정보와 포스터는 <a href="https://www.themoviedb.org" target="_blank" rel="noopener">TMDB</a>에서 가져왔습니다.
     이 서비스는 TMDB의 승인을 받거나 인증된 것이 아닙니다.</p>
-  <p class="en">This product uses the TMDB API but is not endorsed or certified by TMDB.<br><span class="ver">화면 버전 2026-09-08-c</span></p>
+  <p class="en">This product uses the TMDB API but is not endorsed or certified by TMDB.<br><span class="ver" id="verLine">화면 2026-09-08-e · 서버 확인 중…</span></p>
 </footer>
 </div>
 
@@ -714,6 +771,7 @@ const MOOD_DESC = {
 };
 const ZONE = ["마음이 데워짐","조금 따뜻함","그 사이","조금 아픔","마음이 부서짐"];
 const STAMPS = ["나도","이건 봐야겠다","의외다"];
+const SCREEN_VER = '2026-09-08-e';   // 하단에 표시됩니다. 서버 버전과 같아야 정상입니다
 const MAXG = 3, MAXM = 4, GOAL = 10, MIN = 5;
 const MEK = 'movie_dna:me';
 
@@ -762,7 +820,9 @@ function popOf(t, w){
   if(f && f.v) return popFromVotes(f.v, f.c || (w && w.ctry));
   return null;                  // 아직 모름 — 세지 않습니다
 }
-const DEEP = 5;                 // 대중값 5 이상이면 수면 아래
+const DEEP = 6;                 // 대중값 6 이상이면 수면 아래 (보정 표 수 400 미만)
+// 5에서 6으로 한 칸 올렸습니다. 「이프 온리」처럼 미국 제작이지만 한국에서 사랑받은 영화는
+// TMDB 표가 낮게 잡히는데 제작국 배율은 미국(×1)이라, 5 기준으로는 수면 아래로 오인됩니다.
 
 /* 제목 → {연도, TMDB 번호}. 클럽 카드에 담겨 온 정보를 포스터 찾기에 재사용합니다. */
 let WMETA = {};
@@ -797,7 +857,10 @@ function needPoster(t,y,o,id){
   // 포스터도 알려진 정도도 다 알고 있으면 물어볼 게 없습니다.
   const known = POSTERS[t];
   const havePoster = !!known || (known === '' && !id);
-  const haveFame = FAME[t] !== undefined || !!BY[t];   // 사전에 있으면 대중값을 이미 압니다
+  // 사전에 있으면 대중값·연도를 이미 압니다. 저장된 값은 연도까지 있어야 '다 안다'로 칩니다
+  // (예전 형식은 표 수만 있어서, 그대로 두면 연도표에 점을 못 찍습니다).
+  const f = FAME[t];
+  const haveFame = !!BY[t] || f === null || (f !== undefined && f.y !== undefined);
   if(havePoster && haveFame) return;
   if(pQueue.some(x=>x.t===t)) return;
   // 한글 제목만으로 찾으면 엉뚱한 영화가 걸립니다. 원제·연도·번호를 같이 넘깁니다.
@@ -847,7 +910,13 @@ fetch('/movie_dict.json').then(r=>r.json()).then(d=>{
 }).catch(()=>{ $('#dictN').textContent='—'; });
 fetch('/api/tmdb?diag=1').then(r=>r.json()).then(j=>{
   TMDB_ON = !!j['열쇠_꽂힘']; if(!TMDB_ON) showTmdbNote();
-}).catch(()=>{});
+  // 화면과 서버 버전을 나란히 적어 둡니다. 다르면 파일이 덜 올라간 것입니다.
+  const el = $('#verLine'); if(!el) return;
+  const sv = j['버전'] || '(예전 파일)';
+  const same = sv === SCREEN_VER;
+  el.innerHTML = `화면 ${esc(SCREEN_VER)} · 서버 ${esc(sv)}`
+    + (same ? '' : ` <b class="bad">← 다릅니다. 파일이 덜 올라갔습니다</b>`);
+}).catch(()=>{ const el=$('#verLine'); if(el) el.textContent = '화면 ' + SCREEN_VER; });
 
 // 이미 낸 카드가 있는지 미리 확인합니다
 fetch('/api/club').then(r=>r.json()).then(j=>{
@@ -1198,9 +1267,11 @@ $('#submitBtn').onclick = async ()=>{
 
 /* 연도표는 '수면'입니다. 널리 알려진 작품은 선 위, 수면 아래 작품은 선 아래에 찍습니다.
    점을 누르면 어떤 작품인지 알려주고, 아래 포스터에서 그 자리를 짚어 줍니다. */
-function ribbon(items){
+function ribbon(items, noYear){
   const A=1940,B=2030,pos=y=>((y-A)/(B-A)*100).toFixed(1), MARK=[1950,1970,1990,2010,2025];
   const deepN = items.filter(x=>x.deep).length;
+  // 연도를 모르면 점을 찍을 수 없습니다. 조용히 빼면 '왜 두 개뿐이지?'가 됩니다.
+  const miss = noYear ? ` <span class="miss">연도를 아직 못 찾은 ${noYear}편은 빠져 있습니다.</span>` : '';
   return `<div class="ribbon"><div class="bar">
     ${MARK.map(y=>`<div class="tick" style="left:${pos(y)}%"></div>`).join('')}
     ${items.map(x=>`<button type="button" class="pt${x.deep?' deep':' up'}"
@@ -1209,16 +1280,19 @@ function ribbon(items){
     <div class="lab">${MARK.map(y=>`<span style="left:${pos(y)}%">${y}</span>`).join('')}</div>
     <div class="rcap">${deepN
       ? `선 아래 <b>${deepN}편</b>이 수면 아래입니다. 점을 누르면 어떤 작품인지 보여드립니다.`
-      : `점을 누르면 어떤 작품인지 보여드립니다.`}</div></div>`;
+      : `점을 누르면 어떤 작품인지 보여드립니다.`}${miss}</div></div>`;
 }
 function stats(works){
-  // 연도·감독은 카드에 저장된 값을 먼저 쓰고, 없을 때만 사전을 봅니다.
-  // 사전만 보면 사전 밖 작품이 연도표에서 통째로 빠집니다.
-  const yearOf = (w)=> +w.year || (BY[w.t] ? BY[w.t][3] : null) || null;
-  const dirOf  = (w)=> w.dir || (BY[w.t] ? BY[w.t][4] : '') || '';
+  // 연도·감독은 ①카드에 저장된 값 ②사전 ③TMDB에서 받아 둔 값 순으로 찾습니다.
+  // 예전에 낸 카드에는 연도가 없어서, ③이 없으면 그 작품이 연도표에서 통째로 빠집니다.
+  const yearOf = (w)=> +w.year || (BY[w.t] ? BY[w.t][3] : null)
+                    || (FAME[w.t] && FAME[w.t].y) || null;
+  const dirOf  = (w)=> w.dir || (BY[w.t] ? BY[w.t][4] : '')
+                    || (FAME[w.t] && FAME[w.t].d) || '';
 
-  const items = works.map(w=>({ t:w.t, y:yearOf(w), deep:(popOf(w.t,w)||0) >= DEEP }))
-                     .filter(x=>x.y).sort((a,b)=>a.y-b.y);
+  const all = works.map(w=>({ t:w.t, y:yearOf(w), deep:(popOf(w.t,w)||0) >= DEEP }));
+  const items = all.filter(x=>x.y).sort((a,b)=>a.y-b.y);
+  const noYear = all.length - items.length;      // 연도를 아직 모르는 작품 수
   const years = items.map(x=>x.y);
   const med = years.length?years[Math.floor(years.length/2)]:null;
   const span = years.length?years[years.length-1]-years[0]:0;
@@ -1231,7 +1305,7 @@ function stats(works){
   // 사전에 있든 없든, 알려진 정도를 아는 작품은 모두 셉니다.
   const known = works.filter(w=>popOf(w.t,w)!==null).length;
   const deep = works.filter(w=>{ const p=popOf(w.t,w); return p!==null && p>=DEEP; }).length;
-  return {items,years,med,span,top,deep,known};
+  return {items,years,med,span,top,deep,known,noYear};
 }
 /* 연도표의 점을 누르면 — 그 카드 안에서만 반응합니다. */
 document.addEventListener('click', e=>{
@@ -1262,7 +1336,7 @@ function showCard(){
       ${draft.decl?`<p class="q">“${esc(draft.decl)}”</p>`:''}
       <div class="grid">${draft.works.map(w=>`<span class="gcell" data-film="${esc(w.t)}">`+poster(w.t,'po-l')+`</span>`).join('')}</div>
       ${s.top?`<div class="topdir">가장 많이 고른 감독 — <b>${esc(s.top[0])} ${s.top[1]}편</b></div>`:''}
-      ${ribbon(s.items)}
+      ${ribbon(s.items, s.noYear)}
       <div class="kpi">
         <div><b>${draft.works.length}</b><span>등록한 영화</span></div>
         <div><b>${s.med||'—'}</b><span>취향 중앙값</span></div>
@@ -1336,9 +1410,40 @@ function stampCount(to,film){
   const c=STAMPDATA[key(to,film)]||{};
   return STAMPS.reduce((s,k)=>s+((c[k]||[]).length),0);
 }
+/* 클럽이 겹친 지점 — 여러 명이 같이 고른 작품 세 편.
+   같은 영화를 고른 사람이 아무도 없으면 굳이 빈 자리를 만들지 않고 접어 둡니다. */
+function renderClubTop(){
+  const box = $('#clubTop'); if(!box) return;
+  const cnt = {}, who = {};
+  MEMBERS.forEach(m=>{
+    const seen = new Set();
+    (m.works||[]).forEach(w=>{
+      const t = typeof w==='string' ? w : w.t;
+      if(!t || seen.has(t)) return; seen.add(t);       // 한 사람이 두 번 세지 않게
+      cnt[t]=(cnt[t]||0)+1; (who[t]=who[t]||[]).push(m.id);
+    });
+  });
+  const top = Object.keys(cnt).filter(t=>cnt[t]>=2)
+    .sort((a,b)=> cnt[b]-cnt[a] || a.localeCompare(b,'ko')).slice(0,3);
+  if(!top.length){ box.innerHTML = ''; return; }
+
+  box.innerHTML = `<div class="ctop">
+    <div class="hd">클럽이 겹친 지점 <span>여러 명이 함께 고른 작품</span></div>
+    <div class="row">${top.map((t,i)=>`
+      <button type="button" class="citem" data-back="${esc(t)}">
+        <span class="rank">${i+1}</span>
+        ${poster(t,'po-l')}
+        <span class="ci-t">${esc(t)}</span>
+        <span class="ci-n">${cnt[t]}명</span>
+        <span class="ci-w">${esc(who[t].join(' · '))}</span>
+      </button>`).join('')}</div>
+    <p class="note">누르면 그 작품의 <b>작품 뒷면</b>이 열립니다 — 누가 골랐는지, 어떤 메모가 붙었는지.</p>
+  </div>`;
+}
 function renderClub(){
   const box=$('#clubList');
-  if(!MEMBERS.length){ box.innerHTML='<div class="empty">아직 아무도 카드를 내지 않았습니다. 첫 번째가 되어 보세요.</div>'; return; }
+  if(!MEMBERS.length){ box.innerHTML='<div class="empty">아직 아무도 카드를 내지 않았습니다. 첫 번째가 되어 보세요.</div>';
+    renderClubTop(); return; }
   box.innerHTML = MEMBERS.slice().reverse().map(m=>{
     const ws=(m.works||[]).map(w=>typeof w==='string'?{t:w,mood:3}:w);
     const s=stats(ws);
@@ -1350,7 +1455,7 @@ function renderClub(){
           ${nc?`<span class="badge">${nc}</span>`:''}
           ${sc?`<span class="dogs">${'<i></i>'.repeat(Math.min(sc,5))}</span>`:''}</span>
         <span class="ptitle">${esc(w.t)}</span></span>`;
-    }).join('') + elevenCell(m.id);
+    }).join('');
     const memoHtml = (openMemoKey && openMemoKey.startsWith(m.id+'|'))
       ? memoPanel(m.id, openMemoKey.slice(m.id.length+1))
       : (openEleven===m.id ? elevenPanel(m.id) : '');
@@ -1362,16 +1467,18 @@ function renderClub(){
         <div class="pgrid">${grid}</div>
         ${memoHtml}
         ${s.top?`<div class="topdir">가장 많이 고른 감독 — <b>${esc(s.top[0])} ${s.top[1]}편</b></div>`:''}
-        ${ribbon(s.items)}
+        ${ribbon(s.items, s.noYear)}
         <div class="kpi">
           <div><b>${ws.length}</b><span>등록한 영화</span></div>
           <div><b>${s.med||'—'}</b><span>취향 중앙값</span></div>
           <div><b>${s.span}<u>년</u></b><span>연대 폭</span></div>
           <div><b>${s.deep}</b><span>수면 아래 작품</span></div>
+          ${elevenBtn(m.id)}
         </div>
         ${(m.tags&&m.tags.length)?`<div class="tags">${esc(m.tags.join(' · '))}</div>`:''}
       </div></div>`;
   }).join('');
+  renderClubTop();
   patchPosters();
   bindEleven();
   const ta = document.getElementById('memoIn');
@@ -1523,7 +1630,7 @@ function hiddenCard(m){
     + '<div class="pgrid" style="pointer-events:none">'
     + ws.map(w=>'<span class="pcell"><span class="pshot">'+poster(w.t,'po-l')+'</span>'
         + '<span class="ptitle">'+esc(w.t)+'</span></span>').join('')
-    + '</div>' + ribbon(st.items)
+    + '</div>' + ribbon(st.items, st.noYear)
     + '<div class="kpi">'
     + '<div><b>'+ws.length+'</b><span>등록한 영화</span></div>'
     + '<div><b>'+(st.med||'—')+'</b><span>취향 중앙값</span></div>'
@@ -1631,6 +1738,19 @@ async function loadSug(){
 }
 const sugFor = to => SUG.pending.filter(x=>x.to===to);
 
+/* 열한 번째 자리 — 포스터 열 장 사이의 빈 칸이 아니라, 통계 줄 오른쪽 버튼입니다.
+   내가 고른 열 편과 성격이 다르니 같은 줄에 세워 두지 않습니다. */
+function elevenBtn(to){
+  const ad = SUG.adopted[to];
+  const n  = sugFor(to).length;
+  const sel = openEleven===to;
+  if(ad) return `<button type="button" class="el-btn done${sel?' on':''}" data-el="${esc(to)}">
+    <span class="el-p">${poster(ad.film,'po-s')}</span>
+    <span class="el-t"><b>${esc(ad.film)}</b><span>열한 번째 · ${esc(ad.by)} 추천</span></span></button>`;
+  return `<button type="button" class="el-btn${sel?' on':''}" data-el="${esc(to)}">
+    <span class="el-n">${n?n:'+'}</span>
+    <span class="el-t"><b>열한 번째 자리</b><span>${n?`추천 ${n}편 와 있습니다`:'한 편 권해 주세요'}</span></span></button>`;
+}
 function elevenCell(to){
   const ad = SUG.adopted[to];
   const n  = sugFor(to).length;
@@ -1730,6 +1850,11 @@ function bindEleven(){
   };
 }
 
+// 상단 「클럽이 겹친 지점」은 #clubList 밖에 있어서 따로 받습니다.
+$('#clubTop').addEventListener('click', e=>{
+  const b = e.target.closest('[data-back]');
+  if(b) openBackside(b.dataset.back);
+});
 $('#clubList').addEventListener('click', e=>{
   const em = e.target.closest('[data-editmine]');
   if(em){
@@ -1738,7 +1863,8 @@ $('#clubList').addEventListener('click', e=>{
   }
 });
 $('#clubList').addEventListener('click', async e=>{
-  const cell = e.target.closest('.pcell.eleven');
+  // 열한 번째 자리는 이제 통계 줄의 버튼입니다 (.el-btn). 예전 포스터 칸도 받아 둡니다.
+  const cell = e.target.closest('.el-btn,.pcell.eleven');
   if(cell){
     const to = cell.dataset.el;
     if(openEleven !== to){ elevenPick=null; elevenWhy=''; }
