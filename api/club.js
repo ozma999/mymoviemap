@@ -5,8 +5,9 @@
 
 import { getStore, findConfig, loadMembers, cleanName,
          K_MEMBERS_H, K_MEMBERS, K_POSTERS, K_FAME } from './_store.js';
+import { impactOf, renameCard, deleteCard } from './_rename.js';
 
-export const VER = '2026-09-08-e';   // 배포된 게 어느 버전인지 확인용 (/api/club?diag=1)
+export const VER = '2026-09-11-a';   // 배포된 게 어느 버전인지 확인용 (/api/club?diag=1)
 
 const NEED_STORAGE = {
   error:
@@ -50,6 +51,13 @@ export default async function handler(req, res) {
   if (!store) return res.status(503).json(NEED_STORAGE);
 
   try {
+    /* 지우기 전에 '무엇이 같이 사라지는지' 세어 봅니다. */
+    if (req.method === 'GET' && req.query && req.query.impact) {
+      const nm = cleanName(req.query.impact);
+      if (!nm) return res.status(400).json({ error: '이름이 필요합니다.' });
+      return res.status(200).json(await impactOf(store, nm));
+    }
+
     if (req.method === 'GET') {
       const [{ list }, posters, fame] = await Promise.all([
         loadMembers(store),
@@ -60,6 +68,34 @@ export default async function handler(req, res) {
     }
 
     if (req.method === 'POST') {
+      /* ── 이름만 바꾸기 / 카드 지우기 ──
+         지우기는 화면에서 두 번 확인하고, 서버에서도 이름을 한 번 더 대조합니다.
+         화면 코드가 잘못되어도 실수로 지워지지 않게 하기 위해서입니다. */
+      const op = req.body && req.body.op;
+      if (op === 'rename') {
+        const from = cleanName(req.body.from), to = cleanName(req.body.to);
+        if (!from || !to) return res.status(400).json({ error: '이름이 비어 있습니다.' });
+        if (from === to) return res.status(400).json({ error: '같은 이름입니다.' });
+        if (to.length > 24) return res.status(400).json({ error: '이름이 너무 깁니다 (24자까지).' });
+        const r = await renameCard(store, from, to);
+        if (r.error) return res.status(400).json(r);
+        const [{ list }, posters, fame] = await Promise.all([
+          loadMembers(store), store.get(K_POSTERS, {}), store.get(K_FAME, {}),
+        ]);
+        return res.status(200).json({ ...r, members: list, posters: posters || {}, fame: fame || {} });
+      }
+      if (op === 'delete') {
+        const nm = cleanName(req.body.name), cf = cleanName(req.body.confirm);
+        if (!nm) return res.status(400).json({ error: '이름이 비어 있습니다.' });
+        if (nm !== cf) return res.status(400).json({ error: '확인용 이름이 다릅니다. 지우지 않았습니다.' });
+        const r = await deleteCard(store, nm);
+        if (r.error) return res.status(400).json(r);
+        const [{ list }, posters, fame] = await Promise.all([
+          loadMembers(store), store.get(K_POSTERS, {}), store.get(K_FAME, {}),
+        ]);
+        return res.status(200).json({ ...r, members: list, posters: posters || {}, fame: fame || {} });
+      }
+
       const { name, works, tags, decl } = req.body || {};
       if (!name || !Array.isArray(works) || works.length === 0) {
         return res.status(400).json({ error: '이름과 작품 목록(1편 이상)이 필요합니다.' });

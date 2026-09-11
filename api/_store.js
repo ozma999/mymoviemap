@@ -67,6 +67,7 @@ export function getStore() {
       lrem: async (k, v) => { await r.lrem(k, 0, JSON.stringify(v)); },
       sadd: async (k, v) => { await r.sadd(k, String(v)); },
       smembers: async (k) => ((await r.smembers(k)) || []).map(String),
+      del: async (k) => { await r.del(k); },
     };
   } else {
     const r = new IORedis(cfg.url, { maxRetriesPerRequest: 3, connectTimeout: 8000 });
@@ -87,6 +88,7 @@ export function getStore() {
       lrem: async (k, v) => { await r.lrem(k, 0, JSON.stringify(v)); },
       sadd: async (k, v) => { await r.sadd(k, String(v)); },
       smembers: async (k) => ((await r.smembers(k)) || []).map(String),
+      del: async (k) => { await r.del(k); },
     };
   }
   return _client;

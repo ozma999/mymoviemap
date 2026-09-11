@@ -173,6 +173,38 @@ input::placeholder,textarea::placeholder{color:#a89e8a}
   padding:5px 11px;font-size:13px;cursor:pointer;font-family:var(--sans)}
 .sugg button:hover{color:var(--verm);border-color:var(--verm)}
 
+/* ── 이름 바꾸기 · 카드 지우기 ── */
+.mine.on .acts{display:flex;gap:7px;margin-left:auto;flex-wrap:wrap}
+.mine.on .acts button{margin-left:0}
+.mine .ghost.danger{border-color:rgba(232,69,44,.55);color:var(--verm)}
+.mine .ghost.danger:hover{background:rgba(232,69,44,.08)}
+.mop{border:2px solid var(--rule);background:#fff;padding:15px 17px;margin-top:10px}
+.mop.danger{border-color:var(--verm)}
+.mop-h{font-family:var(--serif);font-size:15px;font-weight:900;margin-bottom:6px}
+.mop.danger .mop-h{color:var(--verm)}
+.mop .note{font-size:12.5px;color:var(--dim);line-height:1.7;margin:0 0 11px}
+.mop .note b{color:var(--ink)}
+.mop-row{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.mop-row .old{font-family:var(--serif);font-weight:900;font-size:15px}
+.mop-row .arw{color:var(--dim)}
+.mop-row input{flex:1;min-width:140px;padding:9px 11px;font-size:14px}
+.mop-row button{background:var(--ink);color:var(--paper);border:none;padding:10px 16px;
+  font-size:13.5px;cursor:pointer;font-family:var(--sans);font-weight:700}
+.mop-row button.ghost{background:none;border:2px solid var(--rule);color:var(--dim);font-weight:400}
+.mop-row button.danger{background:var(--verm)}
+.mop-row button:disabled{opacity:.5;cursor:default}
+.mop-list{list-style:none;margin:0 0 13px;padding:0;border-top:1px solid var(--rule2)}
+.mop-list li{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+  padding:7px 0;border-bottom:1px solid var(--rule2);font-size:13px}
+.mop-list li span{color:var(--dim)}
+.mop-list li b{font-family:var(--mono);font-size:15px;color:var(--verm)}
+.mop-msg{font-size:12.5px;margin-top:9px;min-height:1px}
+.mop-msg.err{color:var(--verm);font-weight:700}
+@media(max-width:600px){
+  .mine.on .acts{margin-left:0;width:100%}
+  .mine.on .acts button{flex:1}
+}
+
 /* ── 클럽 보기 안내문 ── */
 .clubintro{margin:26px 0 4px}
 .clubintro .lead{font-family:var(--serif);font-size:17px;font-weight:700;
@@ -741,7 +773,7 @@ button.ghost:hover{border-color:var(--verm);color:var(--verm)}
 <footer class="foot">
   <p>영화 정보와 포스터는 <a href="https://www.themoviedb.org" target="_blank" rel="noopener">TMDB</a>에서 가져왔습니다.
     이 서비스는 TMDB의 승인을 받거나 인증된 것이 아닙니다.</p>
-  <p class="en">This product uses the TMDB API but is not endorsed or certified by TMDB.<br><span class="ver" id="verLine">화면 2026-09-08-e · 서버 확인 중…</span></p>
+  <p class="en">This product uses the TMDB API but is not endorsed or certified by TMDB.<br><span class="ver" id="verLine">화면 2026-09-11-a · 서버 확인 중…</span></p>
 </footer>
 </div>
 
@@ -771,7 +803,7 @@ const MOOD_DESC = {
 };
 const ZONE = ["마음이 데워짐","조금 따뜻함","그 사이","조금 아픔","마음이 부서짐"];
 const STAMPS = ["나도","이건 봐야겠다","의외다"];
-const SCREEN_VER = '2026-09-08-e';   // 하단에 표시됩니다. 서버 버전과 같아야 정상입니다
+const SCREEN_VER = '2026-09-11-a';   // 하단에 표시됩니다. 서버 버전과 같아야 정상입니다
 const MAXG = 3, MAXM = 4, GOAL = 10, MIN = 5;
 const MEK = 'movie_dna:me';
 
@@ -875,8 +907,8 @@ async function flushPosters(){
       body:JSON.stringify({titles:batch})});
     const j = await r.json();
     if(j.ok){
-      Object.assign(POSTERS, j.posters||{}); Object.assign(FAME, j.fame||{});
-      const before = Object.keys(FAME).length;
+      const before = Object.keys(FAME).length;      // 합치기 '전' 개수를 먼저 세야 합니다
+      Object.assign(POSTERS, j.posters||{});
       Object.assign(FAME, j.fame||{});
       TMDB_ON = true; patchPosters();
       // 알려진 정도가 새로 들어왔으면 '수면 아래' 숫자를 다시 계산해 그립니다.
@@ -933,9 +965,17 @@ function renderMine(){
   if(draft.loaded){
     box.innerHTML = `<div class="mine on">
       <span class="who"><b>${esc(draft.loaded)}</b>님의 카드를 고치는 중</span>
-      <span class="sub">다시 내면 먼저 낸 카드를 덮어씁니다. 내 카드가 아니라면 —</span>
-      <button class="ghost" id="mineCancel">새 카드로 시작</button></div>`;
-    $('#mineCancel').onclick = ()=>{ resetDraft(); };
+      <span class="sub">다시 내면 먼저 낸 카드를 덮어씁니다.</span>
+      <span class="acts">
+        <button class="ghost" id="mineRename">이름만 바꾸기</button>
+        <button class="ghost danger" id="mineDelete">이 카드 지우기</button>
+        <button class="ghost" id="mineCancel">새 카드로 시작</button>
+      </span></div>
+      <div id="mineOp"></div>`;
+    $('#mineCancel').onclick = ()=>{ mineOp=null; resetDraft(); };
+    $('#mineRename').onclick = ()=>{ mineOp = mineOp==='rename'?null:'rename'; renderMineOp(); };
+    $('#mineDelete').onclick = ()=>{ mineOp = mineOp==='del1'?null:'del1'; delImpact=null; renderMineOp(); };
+    renderMineOp();
     return;
   }
   if(!MEMBERS.length || draft.works.length || draft.name){ box.innerHTML=''; return; }
@@ -956,8 +996,145 @@ function renderMine(){
   box.querySelectorAll('[data-claim]').forEach(b=>b.onclick=()=>loadMyCard(b.dataset.claim));
 }
 
+/* ── 이름 바꾸기 / 카드 지우기 ──────────────────────────────────
+   이름은 메모·도장·블라인드 기록·추천에도 박혀 있어서, 바꿀 때 같이 옮겨야 합니다.
+   지우기는 되돌릴 수 없으므로 두 번 확인합니다: ①무엇이 사라지는지 보고 ②이름을 직접 적기. */
+let mineOp = null;        // null | 'rename' | 'del1' | 'del2'
+let delImpact = null;
+let opBusy = false;
+
+async function clubOp(body){
+  opBusy = true; renderMineOp();
+  try{
+    const r = await fetch('/api/club',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(body)});
+    const j = await r.json();
+    if(!r.ok) throw new Error(j.error || ('HTTP '+r.status));
+    MEMBERS = j.members || MEMBERS;
+    Object.assign(POSTERS, j.posters||{}); Object.assign(FAME, j.fame||{});
+    indexWorks();
+    return j;
+  } finally { opBusy = false; }
+}
+
+function renderMineOp(){
+  const box = $('#mineOp'); if(!box) return;
+  const cur = draft.loaded;
+  if(!mineOp || !cur){ box.innerHTML=''; return; }
+
+  if(mineOp === 'rename'){
+    box.innerHTML = `<div class="mop">
+      <div class="mop-h">이름만 바꾸기</div>
+      <p class="note">고른 열 편과 메모는 그대로 두고 <b>이름만</b> 바꿉니다.
+        그 이름으로 남긴 메모·도장·블라인드 기록·추천도 함께 따라갑니다.</p>
+      <div class="mop-row">
+        <span class="old">${esc(cur)}</span><span class="arw">→</span>
+        <input type="text" id="rnIn" maxlength="24" placeholder="새 이름" value="">
+        <button id="rnGo"${opBusy?' disabled':''}>${opBusy?'바꾸는 중…':'바꾸기'}</button>
+      </div>
+      <div class="mop-msg" id="rnMsg"></div></div>`;
+    const go = $('#rnGo'), inp = $('#rnIn');
+    inp.focus();
+    const run = async ()=>{
+      const to = cleanName(inp.value);
+      const msg = $('#rnMsg');
+      if(!to){ msg.className='mop-msg err'; msg.textContent='새 이름을 적어 주세요.'; return; }
+      if(to === cur){ msg.className='mop-msg err'; msg.textContent='지금과 같은 이름입니다.'; return; }
+      if(MEMBERS.some(m=>m.id===to)){ msg.className='mop-msg err';
+        msg.textContent=`「${to}」은(는) 이미 쓰고 있는 이름입니다.`; return; }
+      try{
+        const j = await clubOp({op:'rename', from:cur, to});
+        draft.loaded = to; draft.name = to;
+        ME = to; try{ localStorage.setItem(MEK, ME); }catch{}
+        $('#name').value = to;
+        mineOp = null; render();
+        const st=$('#status'); st.className='ok';
+        st.textContent = `이름을 「${cur}」에서 「${to}」로 바꿨습니다. 메모 ${j.옮긴_메모}건도 함께 옮겼습니다.`;
+        st.scrollIntoView({behavior:'smooth', block:'center'});
+      }catch(e){
+        const m=$('#rnMsg'); if(m){ m.className='mop-msg err'; m.textContent='실패: '+e.message; }
+        renderMineOp();
+      }
+    };
+    go.onclick = run;
+    inp.addEventListener('keydown', e=>{ if(e.key==='Enter') run(); });
+    return;
+  }
+
+  // ── 지우기 1단계: 무엇이 사라지는지 먼저 봅니다 ──
+  if(mineOp === 'del1'){
+    if(!delImpact){
+      box.innerHTML = `<div class="mop danger"><div class="mop-h">지우기 전에 확인</div>
+        <p class="note">무엇이 함께 사라지는지 세어 보는 중…</p></div>`;
+      fetch('/api/club?impact='+encodeURIComponent(cur)).then(r=>r.json()).then(j=>{
+        delImpact = j; if(mineOp==='del1') renderMineOp();
+      }).catch(()=>{ delImpact = {오류:true}; if(mineOp==='del1') renderMineOp(); });
+      return;
+    }
+    const d = delImpact;
+    const rows = [
+      ['고른 영화', d.영화_수],
+      ['이 카드에 붙은 메모', d.내_카드에_붙은_메모],
+      ['이 이름으로 남긴 메모', d.내가_남긴_메모],
+      ['이 이름으로 찍은 도장', d.내가_찍은_도장],
+      ['받은 추천 · 채택한 열한 번째', (d.받은_추천||0)+(d.채택한_열한번째||0)],
+      ['블라인드 기록', d.블라인드_기록],
+    ].filter(r=>r[1]);
+    box.innerHTML = `<div class="mop danger">
+      <div class="mop-h">이 카드를 지웁니다 — 되돌릴 수 없습니다</div>
+      <p class="note"><b>${esc(cur)}</b>님의 카드와, 이 이름에 달린 것을 함께 지웁니다.</p>
+      <ul class="mop-list">${rows.length
+        ? rows.map(r=>`<li><span>${esc(r[0])}</span><b>${r[1]}</b></li>`).join('')
+        : '<li><span>함께 지울 것 없음</span><b>—</b></li>'}</ul>
+      <div class="mop-row">
+        <button class="ghost" id="dlNo">그만두기</button>
+        <button class="danger" id="dlNext">네, 지우겠습니다</button>
+      </div></div>`;
+    $('#dlNo').onclick = ()=>{ mineOp=null; renderMineOp(); };
+    $('#dlNext').onclick = ()=>{ mineOp='del2'; renderMineOp(); };
+    return;
+  }
+
+  // ── 지우기 2단계: 이름을 직접 적어야 넘어갑니다 ──
+  if(mineOp === 'del2'){
+    box.innerHTML = `<div class="mop danger">
+      <div class="mop-h">마지막 확인</div>
+      <p class="note">정말 지우려면 아래에 <b>${esc(cur)}</b> 라고 그대로 적어 주세요.
+        실수로 눌러서 사라지는 일을 막기 위한 마지막 단계입니다.</p>
+      <div class="mop-row">
+        <input type="text" id="dlIn" maxlength="24" placeholder="${esc(cur)}" value="">
+        <button class="danger" id="dlGo"${opBusy?' disabled':''}>${opBusy?'지우는 중…':'영구 삭제'}</button>
+        <button class="ghost" id="dlBack">뒤로</button>
+      </div>
+      <div class="mop-msg" id="dlMsg"></div></div>`;
+    const inp = $('#dlIn'); inp.focus();
+    $('#dlBack').onclick = ()=>{ mineOp='del1'; renderMineOp(); };
+    const run = async ()=>{
+      const msg = $('#dlMsg');
+      if(cleanName(inp.value) !== cur){
+        msg.className='mop-msg err'; msg.textContent='이름이 다릅니다. 그대로 적어 주세요.'; return;
+      }
+      try{
+        const j = await clubOp({op:'delete', name:cur, confirm:cleanName(inp.value)});
+        mineOp = null; delImpact = null;
+        if(ME === cur){ ME=''; try{ localStorage.removeItem(MEK); }catch{} }
+        resetDraft();
+        const st=$('#status'); st.className='ok';
+        st.textContent = `「${cur}」 카드를 지웠습니다. 메모 ${j.지운_메모}건도 함께 지웠습니다.`;
+        renderMine();
+      }catch(e){
+        const m=$('#dlMsg'); if(m){ m.className='mop-msg err'; m.textContent='실패: '+e.message; }
+        renderMineOp();
+      }
+    };
+    $('#dlGo').onclick = run;
+    inp.addEventListener('keydown', e=>{ if(e.key==='Enter') run(); });
+  }
+}
+
 function loadMyCard(id){
   const m = MEMBERS.find(x=>x.id===id); if(!m) return;
+  mineOp = null; delImpact = null;
   draft.tags  = (m.tags||[]).slice();
   draft.works = (m.works||[]).map(w=>{
     const ww = typeof w==='string' ? {t:w, mood:3} : w;
@@ -979,6 +1156,7 @@ function loadMyCard(id){
 }
 
 function resetDraft(){
+  mineOp = null; delImpact = null;
   draft.tags=[]; draft.works=[]; draft.name=''; draft.decl=''; draft.loaded=null;
   $('#name').value=''; $('#decl').value='';
   $('#status').className=''; $('#status').textContent='';
@@ -1233,7 +1411,8 @@ $('#moodRows').addEventListener('click', e=>{
   const w=draft.works.find(x=>x.t===b.dataset.mt); if(!w) return;
   w.mood=+b.dataset.mv; w.seeded=false; render();
 });
-const cleanName = v => String(v||'').replace(/\|/g,'').replace(/\s+/g,' ');
+// 서버(_store.js)의 cleanName과 같아야 합니다. 다르면 확인용 이름이 안 맞습니다.
+const cleanName = v => String(v||'').replace(/\|/g,'').replace(/\s+/g,' ').trim();
 $('#name').addEventListener('input', e=>{
   const v = cleanName(e.target.value);
   if(v !== e.target.value) e.target.value = v;      // 파이프는 키 구분자라 못 씁니다

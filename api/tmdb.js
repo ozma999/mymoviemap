@@ -15,7 +15,7 @@
 
 import { getStore, K_POSTERS, K_FAME } from './_store.js';
 
-export const VER = '2026-09-08-e';   // 배포 확인용 (/api/tmdb?diag=1)
+export const VER = '2026-09-11-a';   // 배포 확인용 (/api/tmdb?diag=1)
 
 const KEY = process.env.TMDB_KEY || process.env.TMDB_API_KEY || '';
 const IMG = (p, size = 'w185') => (p ? `https://image.tmdb.org/t/p/${size}${p}` : '');
